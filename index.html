@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quest-Buch</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <h1>Willkommen im Quest-Buch</h1>
+    <p>Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!</p>
+    <button id="admin-login-button" onclick="adminLogin()">Admin Login</button>
+</header>
+
+<main>
+<section id="xp-counter">
+    <h2>Dein aktueller XP-Stand: <span id="xp">0</span></h2>
+    <h3>Dein Level: <span id="level">1</span></h3>
+    <div id="xp-bar-container" style="width: 100%; background: #eee; margin-top: 10px;">
+        <div id="xp-progress" style="width: 0%; height: 20px; background: green;"></div>
+    </div>
+</section>
+
+<section id="quests">
+    <h2>Deine Quests für heute</h2>
+    <ul>
+        <li>
+            <strong>Quest 1:</strong> Gehe für 30 Minuten spazieren.
+            <button onclick="questErledigt(1)">Erledigt</button>
+        </li>
+        <li>
+            <strong>Quest 2:</strong> 10 Minuten meditieren.
+            <button onclick="questErledigt(2)">Erledigt</button>
+        </li>
+        <li>
+            <strong>Quest 3:</strong> Schreibe eine kurze Dankbarkeitsliste.
+            <button onclick="questErledigt(3)">Erledigt</button>
+        </li>
+    </ul>
+</section>
+</main>
+<footer>
+    <p>Erhalte XP für jede abgeschlossene Quest und steigere dein Level!</p>
+</footer>
+
+<!-- Container für den Level-Up-Ladebalken -->
+<div id="level-up-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; justify-content: center; align-items: center;">
+    <div id="level-up-bar-container" style="width: 80%; background: #ccc; border-radius: 25px; overflow: hidden;">
+        <div id="level-up-progress" style="width: 0%; height: 30px; background: linear-gradient(to right, #ff0, #f00); transition: width 3s;"></div>
+    </div>
+</div>
+
+<!-- Nur einmal script.js einbinden -->
+<script src="script.js"></script>
+
+</body>
+</html>
