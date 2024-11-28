@@ -40,44 +40,93 @@ function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
     const ctx = canvas.getContext('2d');
     
-    // Canvas initialisieren
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Animation
     let progress = 0;
     let explosionRadius = 0;
     const maxProgress = 100;
+    let fireworks = [];
 
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Bildschirm löschen
-
-        // Ladebalken zeichnen
-        ctx.fillStyle = '#FF0000';
-        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
-
-        // Explosion zeichnen
-        if (progress === maxProgress) {
-            ctx.beginPath();
-            ctx.arc(canvas.width / 2, canvas.height / 2, explosionRadius, 0, 2 * Math.PI);
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-            ctx.fill();
-            explosionRadius += 5;
-
-            if (explosionRadius > 100) {
-                explosionRadius = 0;
-                canvas.style.display = 'none'; // Nach der Explosion Canvas ausblenden
-            }
+    function createFirework(x, y) {
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: x,
+                y: y,
+                radius: Math.random() * 5 + 2,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                angle: Math.random() * 2 * Math.PI,
+                speed: Math.random() * 5 + 2,
+                life: Math.random() * 50 + 50
+            });
         }
+        return particles;
+    }
 
-        progress += 1; // Fortschritt steigern
-        if (progress < maxProgress) {
-            requestAnimationFrame(animate);
+    function drawFireworks() {
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.x += Math.cos(p.angle) * p.speed;
+            p.y += Math.sin(p.angle) * p.speed;
+            p.life--;
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+            }
         }
     }
 
-    // Animation starten
-    canvas.style.display = 'block'; // Canvas sichtbar machen
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(0.5, 'yellow');
+        gradient.addColorStop(1, 'green');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
+
+        if (progress === maxProgress) {
+            drawFireworks();
+            if (fireworks.length === 0) {
+                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+            }
+            explosionRadius += 5;
+            if (fireworks.length === 0) {
+                showLevelUp();
+                return;
+            }
+        }
+
+        progress += 1;
+        if (progress < maxProgress) {
+            requestAnimationFrame(animate);
+        } else {
+            requestAnimationFrame(() => {
+                drawFireworks();
+                if (fireworks.length > 0) {
+                    requestAnimationFrame(animate);
+                }
+            });
+        }
+    }
+
+    function showLevelUp() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
+        setTimeout(() => {
+            canvas.style.display = 'none';
+        }, 2000);
+    }
+
+    canvas.style.display = 'block';
     animate();
 }
 
