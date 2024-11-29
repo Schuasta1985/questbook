@@ -4,6 +4,17 @@ let level = 1;
 let currentUser = null;
 let isAdmin = false; // Admin Login Status
 
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    if (!avatarElement) {
+        console.error("Avatar-Element wurde nicht gefunden.");
+        return;
+    }
+    const avatarUrl = getAvatarForUser(currentUser);
+    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
+    avatarElement.src = avatarUrl;
+}
+
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
     zeigeStartseite(); // Aufruf der Funktion für die Startseite
@@ -148,6 +159,7 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         ladeQuestStatus();
         zeigeQuestbook();
+        zeigeAvatar(); // Avatar anzeigen (nachdem das Questbuch geladen wurde)
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -178,6 +190,14 @@ function zeigeQuestbook() {
             <p>Level: <span id="level">${level}</span></p>
             <p>XP: <span id="xp">${xp}</span></p>
             <button onclick="ausloggen()">Ausloggen</button>
+            
+            <!-- Avatar Container -->
+            <div id="avatar-container" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center;">
+                <video id="avatar" autoplay loop muted style="width: 100px; height: auto; border-radius: 50%;">
+                    <source src="${getAvatarForUser(currentUser)}" type="video/mp4">
+                    Dein Browser unterstützt keine Videos.
+                </video>
+            </div>
             
             <!-- Canvas für Level-Up Animation -->
             <canvas id="level-up-canvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
