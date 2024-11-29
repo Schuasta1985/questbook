@@ -427,24 +427,7 @@ function ladeQuestStatus() {
         });
     }
 }
-// Quest-Status laden
-function ladeQuestStatus() {
-    const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-    if (gespeicherterQuestStatus) {
-        const questStatus = JSON.parse(gespeicherterQuestStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
-                }
-            }
-        });
-    }
-}
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
