@@ -142,6 +142,11 @@ function ladeQuestStatus() {
         });
     }
 }
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    const avatarUrl = getAvatarForUser(currentUser);
+    avatarElement.src = avatarUrl;
+}
 
 // Benutzeranmeldung
 function benutzerAnmeldung() {
