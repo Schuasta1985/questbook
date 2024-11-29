@@ -164,6 +164,7 @@ function benutzerAnmeldung() {
         ladeFortschritte();
         aktualisiereXPAnzeige();
         ladeQuestStatus();
+        zeigeAvatar(); // Avatar anzeigen
         zeigeQuestbook();
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
