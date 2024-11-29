@@ -80,7 +80,7 @@ function zeigeLevelUpAnimation() {
         }
     }
 
-    function animate() {
+function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
@@ -126,10 +126,6 @@ function showLevelUp() {
     setTimeout(() => {
         canvas.style.display = 'none';
     }, 2000);
-}
-
-    canvas.style.display = 'block';
-    animate();
 }
 
 // Benutzeranmeldung
