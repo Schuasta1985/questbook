@@ -165,6 +165,8 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         ladeQuestStatus();
         zeigeQuestbook();
+        // Setze den Avatar
+        document.getElementById("avatar").src = getAvatarForUser(currentUser);
     
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
