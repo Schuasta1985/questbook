@@ -93,20 +93,20 @@ function animate() {
     if (progress === maxProgress) {
         fireworks = createFirework(canvas.width / 2, canvas.height / 2);
         drawFireworks();
-    }
-
-    progress += 1;
-    if (progress < maxProgress) {
-        requestAnimationFrame(animate);
     } else {
-        requestAnimationFrame(() => {
-            drawFireworks();
-            if (fireworks.length > 0) {
-                requestAnimationFrame(animate);
-            } else {
-                showLevelUp();
-            }
-        });
+        progress += 1;
+        if (progress < maxProgress) {
+            requestAnimationFrame(animate);
+        } else {
+            requestAnimationFrame(() => {
+                drawFireworks();
+                if (fireworks.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    showLevelUp();
+                }
+            });
+        }
     }
 }
 
