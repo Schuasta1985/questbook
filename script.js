@@ -124,6 +124,24 @@ function animate() {
     canvas.style.display = 'block';
     animate();
 }
+// Quest-Status laden
+function ladeQuestStatus() {
+    const gespeicherterStatus = localStorage.getItem(`${currentUser}_questStatus`);
+    if (gespeicherterStatus) {
+        const questStatus = JSON.parse(gespeicherterStatus);
+        const questItems = document.querySelectorAll("#quests li");
+        questItems.forEach((questItem, index) => {
+            if (questStatus[index]) {
+                questItem.style.textDecoration = "line-through";
+                questItem.style.opacity = "0.6";
+                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                if (erledigtButton) {
+                    erledigtButton.disabled = true;
+                }
+            }
+        });
+    }
+}
 
 // Benutzeranmeldung
 function benutzerAnmeldung() {
@@ -411,23 +429,5 @@ function überprüfeLevelAufstieg() {
         console.log(`Level-Up erfolgt! Neues Level: ${level}`);
         aktualisiereXPAnzeige();
         zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
-    }
-}
-// Quest-Status laden
-function ladeQuestStatus() {
-    const gespeicherterStatus = localStorage.getItem(`${currentUser}_questStatus`);
-    if (gespeicherterStatus) {
-        const questStatus = JSON.parse(gespeicherterStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
-                }
-            }
-        });
     }
 }
