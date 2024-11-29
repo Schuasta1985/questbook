@@ -80,52 +80,56 @@ function zeigeLevelUpAnimation() {
         }
     }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, 'red');
-    gradient.addColorStop(0.5, 'yellow');
-    gradient.addColorStop(1, 'green');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(0.5, 'yellow');
+        gradient.addColorStop(1, 'green');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
 
-    if (progress === maxProgress) {
-        drawFireworks();
-        if (fireworks.length === 0) {
-            fireworks = createFirework(canvas.width / 2, canvas.height / 2);
-        }
-        explosionRadius += 5;
-        if (fireworks.length === 0) {
-            showLevelUp();
-            return;
-        }
-    }
-
-    progress += 1;
-    if (progress < maxProgress) {
-        requestAnimationFrame(animate);
-    } else {
-        requestAnimationFrame(() => {
+        if (progress === maxProgress) {
             drawFireworks();
-            if (fireworks.length > 0) {
-                requestAnimationFrame(animate);
-            } else {
-                showLevelUp();
+            if (fireworks.length === 0) {
+                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
             }
-        });
-    }
-}
+            explosionRadius += 5;
+            if (fireworks.length === 0) {
+                showLevelUp();
+                return;
+            }
+        }
 
-function showLevelUp() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = "100px Arial";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
-    setTimeout(() => {
-        canvas.style.display = 'none';
-    }, 2000);
+        progress += 1;
+        if (progress < maxProgress) {
+            requestAnimationFrame(animate);
+        } else {
+            requestAnimationFrame(() => {
+                drawFireworks();
+                if (fireworks.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    showLevelUp();
+                }
+            });
+        }
+    }
+
+    function showLevelUp() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
+        setTimeout(() => {
+            canvas.style.display = 'none';
+        }, 2000);
+    }
+
+    canvas.style.display = 'block';
+    animate();
 }
 
 // Benutzeranmeldung
