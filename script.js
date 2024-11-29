@@ -80,20 +80,28 @@ function zeigeLevelUpAnimation() {
         }
     }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, 'red');
-    gradient.addColorStop(0.5, 'yellow');
-    gradient.addColorStop(1, 'green');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(0.5, 'yellow');
+        gradient.addColorStop(1, 'green');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
 
-    if (progress === maxProgress) {
-        fireworks = createFirework(canvas.width / 2, canvas.height / 2);
-        drawFireworks();
-    } else {
+        if (progress === maxProgress) {
+            drawFireworks();
+            if (fireworks.length === 0) {
+                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+            }
+            explosionRadius += 5;
+            if (fireworks.length === 0) {
+                showLevelUp();
+                return;
+            }
+        }
+
         progress += 1;
         if (progress < maxProgress) {
             requestAnimationFrame(animate);
@@ -102,13 +110,10 @@ function animate() {
                 drawFireworks();
                 if (fireworks.length > 0) {
                     requestAnimationFrame(animate);
-                } else {
-                    showLevelUp();
                 }
             });
         }
     }
-}
 
     function showLevelUp() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -124,34 +129,12 @@ function animate() {
     canvas.style.display = 'block';
     animate();
 }
-// Quest-Status laden
-function ladeQuestStatus() {
-    const gespeicherterStatus = localStorage.getItem(`${currentUser}_questStatus`);
-    if (gespeicherterStatus) {
-        const questStatus = JSON.parse(gespeicherterStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
-                }
-            }
-        });
-    }
-}
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    const avatarUrl = getAvatarForUser(currentUser);
-    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
-    avatarElement.src = avatarUrl;
-}
+
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
     const passwort = document.getElementById("benutzerPasswort").value;
+
     const benutzerPasswoerter = {
         Thomas: "passwort1",
         Elke: "passwort2",
@@ -164,8 +147,8 @@ function benutzerAnmeldung() {
         ladeFortschritte();
         aktualisiereXPAnzeige();
         ladeQuestStatus();
-        zeigeAvatar(); // Avatar anzeigen
         zeigeQuestbook();
+        zeigeAvatar(); // Avatar anzeigen
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -204,7 +187,6 @@ function zeigeQuestbook() {
 
     // Quests laden
     ladeQuests();
-    zeigeAvatar();
 }
 
 // Avatar für Benutzer festlegen
@@ -217,6 +199,15 @@ function getAvatarForUser(user) {
         return "avatars/jamie.mp4";
     }
     return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
+}
+
+// Avatar anzeigen
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    const avatarUrl = getAvatarForUser(currentUser);
+    if (avatarElement) {
+        avatarElement.src = avatarUrl;
+    }
 }
 
 // Admin-Funktionen anzeigen
