@@ -204,6 +204,7 @@ function zeigeQuestbook() {
 
     // Quests laden
     ladeQuests();
+    zeigeAvatar();
 }
 
 // Avatar für Benutzer festlegen
