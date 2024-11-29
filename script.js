@@ -129,24 +129,7 @@ function zeigeLevelUpAnimation() {
     canvas.style.display = 'block';
     animate();
 }
-// Quest-Status laden
-function ladeQuestStatus() {
-    const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-    if (gespeicherterQuestStatus) {
-        const questStatus = JSON.parse(gespeicherterQuestStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
-                }
-            }
-        });
-    }
-}
+
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
@@ -165,9 +148,6 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         ladeQuestStatus();
         zeigeQuestbook();
-        // Setze den Avatar
-        document.getElementById("avatar").src = getAvatarForUser(currentUser);
-    
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -200,7 +180,7 @@ function zeigeQuestbook() {
             <button onclick="ausloggen()">Ausloggen</button>
             
             <!-- Avatar hinzufügen -->
-        <img id="avatar" src="${getAvatarForUser(currentUser)}" alt="Avatar">
+            <img id="avatar" src="${getAvatarForUser(currentUser)}" alt="Avatar">
             
             <!-- Canvas für Level-Up Animation -->
             <canvas id="level-up-canvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
@@ -209,8 +189,6 @@ function zeigeQuestbook() {
 
     // Quests laden
     ladeQuests();
-    zeigeAvatar(); // Avatar anzeigen
-       document.getElementById("avatar").src = getAvatarForUser(currentUser);
 }
 
 // Avatar für Benutzer festlegen
@@ -223,15 +201,6 @@ function getAvatarForUser(user) {
         return "avatars/jamie.mp4";
     }
     return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
-}
-
-// Avatar anzeigen
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    const avatarUrl = getAvatarForUser(currentUser);
-    if (avatarElement) {
-        avatarElement.src = avatarUrl;
-    }
 }
 
 // Admin-Funktionen anzeigen
@@ -429,6 +398,7 @@ function ladeFortschritte() {
         level = parseInt(gespeichertesLevel, 10);
     }
 }
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
