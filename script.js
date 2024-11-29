@@ -180,6 +180,9 @@ function zeigeQuestbook() {
             <p>XP: <span id="xp">${xp}</span></p>
             <button onclick="ausloggen()">Ausloggen</button>
             
+            <!-- Avatar hinzufügen -->
+            <img id="avatar" src="https://via.placeholder.com/100?text=Avatar" alt="Avatar">
+            
             <!-- Canvas für Level-Up Animation -->
             <canvas id="level-up-canvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
         </div>
