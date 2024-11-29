@@ -145,9 +145,9 @@ function ladeQuestStatus() {
 function zeigeAvatar() {
     const avatarElement = document.getElementById("avatar");
     const avatarUrl = getAvatarForUser(currentUser);
+    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
     avatarElement.src = avatarUrl;
 }
-
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
