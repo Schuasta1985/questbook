@@ -179,9 +179,6 @@ function zeigeQuestbook() {
             <p>XP: <span id="xp">${xp}</span></p>
             <button onclick="ausloggen()">Ausloggen</button>
             
-            <!-- Avatar hinzufügen -->
-            <img id="avatar" src="${getAvatarForUser(currentUser)}" alt="Avatar">
-            
             <!-- Canvas für Level-Up Animation -->
             <canvas id="level-up-canvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
         </div>
@@ -419,5 +416,24 @@ function überprüfeLevelAufstieg() {
         console.log(`Level-Up erfolgt! Neues Level: ${level}`);
         aktualisiereXPAnzeige();
         zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
+    }
+}
+
+// Quest-Status laden
+function ladeQuestStatus() {
+    const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+    if (gespeicherterQuestStatus) {
+        const questStatus = JSON.parse(gespeicherterQuestStatus);
+        const questItems = document.querySelectorAll("#quests li");
+        questItems.forEach((questItem, index) => {
+            if (questStatus[index]) {
+                questItem.style.textDecoration = "line-through";
+                questItem.style.opacity = "0.6";
+                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                if (erledigtButton) {
+                    erledigtButton.disabled = true;
+                }
+            }
+        });
     }
 }
