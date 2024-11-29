@@ -210,6 +210,7 @@ function zeigeQuestbook() {
     // Quests laden
     ladeQuests();
     zeigeAvatar(); // Avatar anzeigen
+       document.getElementById("avatar").src = getAvatarForUser(currentUser);
 }
 
 // Avatar für Benutzer festlegen
