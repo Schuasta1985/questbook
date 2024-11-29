@@ -147,7 +147,6 @@ function ladeQuestStatus() {
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
     const passwort = document.getElementById("benutzerPasswort").value;
-
     const benutzerPasswoerter = {
         Thomas: "passwort1",
         Elke: "passwort2",
