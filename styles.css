@@ -27,17 +27,20 @@ h1 {
 }
 
 #xp-bar-container {
-    width: 100%;
-    background: #8B4513; /* Holzbraun */
-    margin-top: 10px;
-    border-radius: 5px;
+    width: 80%;  /* Reduziere die Breite leicht für eine bessere Darstellung */
+    height: 20px;
+    margin: 20px auto;  /* Zentriere die XP-Bar */
+    background-color: rgba(255, 255, 255, 0.3);  /* Leicht transparenter Hintergrund */
+    border-radius: 10px;  /* Abgerundete Ecken */
+    overflow: hidden;
 }
 
 #xp-progress {
+    height: 100%;
     width: 0%;
-    height: 20px;
-    background: #50C878; /* Smaragdgrün */
-    border-radius: 5px;
+    background-color: limegreen;  /* Standardfarbe für XP-Fortschritt */
+    border-radius: 10px;
+    transition: width 0.5s ease;  /* Sanfte Übergangsanimation */
 }
 
 /* Avatar-Container anpassen */
@@ -158,4 +161,19 @@ button.erledigt-button {
 
 button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
+}
+#xp-level-container {
+    margin: 20px auto;
+    padding: 15px;
+    border: 3px solid gold;  /* Goldene Umrandung */
+    background-color: rgba(0, 0, 0, 0.7);  /* Hintergrundfarbe leicht transparent */
+    color: white;  /* Schriftfarbe für bessere Lesbarkeit */
+    width: fit-content;  /* Automatische Anpassung der Breite */
+    text-align: center;  /* Zentrierte Texte */
+    box-shadow: 0 0 15px gold;  /* Schimmernder Effekt */
+}
+
+#xp-display, #level-display {
+    font-size: 1.5em;  /* Vergrößere Schriftgröße */
+    margin: 5px 0;
 }
