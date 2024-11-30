@@ -210,26 +210,34 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        const questbookContainer = document.getElementById("quests");
+        // Überprüfe, ob der Container bereits Schaltflächen enthält, bevor neue hinzugefügt werden
+        if (!document.getElementById("admin-buttons-container")) {
+            const questbookContainer = document.getElementById("quests");
 
-        // Überprüfen, ob die Schaltflächen bereits existieren, bevor neue hinzugefügt werden
-        if (!document.getElementById("createQuestButton")) {
+            // Erstelle einen Container für die Admin-Schaltflächen
+            const adminButtonsContainer = document.createElement("div");
+            adminButtonsContainer.id = "admin-buttons-container";
+
             const createButton = document.createElement("button");
             createButton.textContent = "Neue Quest erstellen";
             createButton.id = "createQuestButton";
             createButton.onclick = neueQuestErstellen;
-            questbookContainer.appendChild(createButton);
-        }
 
-        if (!document.getElementById("deleteQuestsButton")) {
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Alle Quests löschen";
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsLöschen;
-            questbookContainer.appendChild(deleteButton);
+
+            // Füge die Schaltflächen zum Container hinzu
+            adminButtonsContainer.appendChild(createButton);
+            adminButtonsContainer.appendChild(deleteButton);
+
+            // Füge den Container zum Quests-Bereich hinzu
+            questbookContainer.appendChild(adminButtonsContainer);
         }
     }
 }
+
 // Admin-Login
 function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
