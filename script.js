@@ -50,32 +50,18 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
-        // Sichtbarkeit der Abschnitte aktualisieren, aber nur, wenn die Elemente vorhanden sind
-        const xpCounter = document.getElementById("xp-counter");
-        const questsSection = document.getElementById("quests-section");
-        const logoutButton = document.getElementById("logout-button");
+        // Sichtbarkeit der Abschnitte aktualisieren
+        document.getElementById("xp-counter").style.display = "block";
+        document.getElementById("quests-section").style.display = "block";
+        document.getElementById("logout-button").style.display = "block";
 
-        if (xpCounter) {
-            xpCounter.style.display = "block";
-        }
-
-        if (questsSection) {
-            questsSection.style.display = "block";
-        }
-
-        if (logoutButton) {
-            logoutButton.style.display = "block";
-        }
-
-        // Login-Bereich ausblenden, nur wenn das Element vorhanden ist
-        const loginSection = document.getElementById("login-section");
-        if (loginSection) {
-            loginSection.style.display = "none";
-        }
+        // Login-Bereich ausblenden
+        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
@@ -181,23 +167,33 @@ function speichereGlobalenQuestStatus() {
 
 // XP-Anzeige und Level-Up überprüfen
 function aktualisiereXPAnzeige() {
-    const levelElement = document.getElementById('level-display');
-    const xpProgressElement = document.getElementById('xp-progress');
+    const xpElement = document.getElementById('xp');
+    const levelElement = document.getElementById('level');
+
+    if (xpElement) {
+        xpElement.textContent = xp;
+    }
 
     if (levelElement) {
         levelElement.textContent = level;
     }
 
+    // Fortschrittsbalken zum nächsten Level
+    const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
+    const xpProgressElement = document.getElementById('xp-progress');
+    const xpLabel = document.getElementById('xp-label');
+
     if (xpProgressElement) {
-        const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
-        const progress = Math.min((xp / xpFürLevelUp) * 100, 100);
+        const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
 
-        const fehlendeXP = xpFürLevelUp - xp;
-        xpProgressElement.textContent = `Noch ${fehlendeXP} XP bis zum nächsten Level-Up`;
+        if (xpLabel) {
+            const xpRemaining = xpFürLevelUp - xp;
+            xpLabel.textContent = `Noch ${xpRemaining} XP bis zum nächsten Level-Up`;
+        }
     }
 
-    überprüfeLevelAufstieg();
+    überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
     speichereFortschritte();
 }
 
@@ -209,11 +205,11 @@ function überprüfeLevelAufstieg() {
         xp -= xpFürLevelUp;
         level++;
         aktualisiereXPAnzeige();
-        zeigeLevelUpAnimation();
+        zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
     }
 }
 
-// Level-Up Animation
+// Level-Up Animation mit schwarzem Hintergrund
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
     if (!canvas) {
@@ -221,20 +217,19 @@ function zeigeLevelUpAnimation() {
         return;
     }
 
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) {
         console.error("Canvas-Kontext nicht verfügbar.");
         return;
     }
 
-    // Bildschirm Schwarz machen
-    document.body.style.backgroundColor = 'black';
-    setTimeout(() => {
-        document.body.style.backgroundColor = '';
-    }, 3000);
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // Schwarzer Hintergrund
+    canvas.style.display = 'block';
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     let progress = 0;
     const maxProgress = 100;
@@ -275,6 +270,10 @@ function zeigeLevelUpAnimation() {
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // Zeichne schwarzen Hintergrund erneut
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
         if (progress < maxProgress) {
             progress += 1;
             requestAnimationFrame(animate);
@@ -293,6 +292,8 @@ function zeigeLevelUpAnimation() {
 
     function showLevelUp() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.font = "100px Arial";
         ctx.fillStyle = "white";
         ctx.textAlign = "center";
@@ -302,7 +303,6 @@ function zeigeLevelUpAnimation() {
         }, 2000);
     }
 
-    canvas.style.display = 'block';
     animate();
 }
 
@@ -371,11 +371,12 @@ function zeigeQuestbook() {
         ladeQuests(); // Quests laden
     }
 
-    const levelElement = document.getElementById("level-display");
-    const xpProgressElement = document.getElementById("xp-progress");
+    const xpElement = document.getElementById("xp");
+    const levelElement = document.getElementById("level");
 
-    if (levelElement && xpProgressElement) {
-        aktualisiereXPAnzeige();
+    if (xpElement && levelElement) {
+        xpElement.textContent = xp;
+        levelElement.textContent = level;
     }
 
     // Zeige Admin Funktionen falls nötig
