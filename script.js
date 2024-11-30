@@ -209,17 +209,17 @@ function zeigeAvatar() {
     }
 }
 
-// Level-Up Animation anzeigen mit Explosion
+// Level-Up-Animation mit Explosion
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
     const ctx = canvas.getContext('2d');
-    
-    // Setze die Größe des Canvas entsprechend dem Fenster
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+    let fireworks = [];
 
+    // Erstelle ein Feuerwerk
     function createFirework(x, y) {
         const particles = [];
         for (let i = 0; i < 100; i++) {
@@ -236,9 +236,8 @@ function zeigeLevelUpAnimation() {
         return particles;
     }
 
+    // Zeichne das Feuerwerk
     function drawFireworks() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         for (let i = fireworks.length - 1; i >= 0; i--) {
             const p = fireworks[i];
             ctx.beginPath();
@@ -252,18 +251,38 @@ function zeigeLevelUpAnimation() {
                 fireworks.splice(i, 1);
             }
         }
+    }
+
+    // Animation des Feuerwerks
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (fireworks.length === 0) {
+            fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+        }
+        drawFireworks();
 
         if (fireworks.length > 0) {
-            requestAnimationFrame(drawFireworks);
+            requestAnimationFrame(animate);
         } else {
-            // Verstecke das Canvas nach der Animation
-            canvas.style.display = 'none';
+            showLevelUpText();
         }
     }
 
-    // Zeige das Canvas an, starte die Animation
+    // Zeige den Level-Up-Text an
+    function showLevelUpText() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
+        setTimeout(() => {
+            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
+        }, 2000);
+    }
+
     canvas.style.display = 'block';
-    drawFireworks();
+    animate();
 }
 
 
