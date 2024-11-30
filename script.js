@@ -46,7 +46,7 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
-        ladeQuestStatus(); // Lade den Status der Quests des aktuellen Benutzers
+        ladeGlobalenQuestStatus(); // Lade den globalen Status der Quests
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
@@ -60,32 +60,6 @@ function benutzerAnmeldung() {
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
-}
-
-// Avatar für Benutzer festlegen
-function getAvatarForUser(user) {
-    if (user === "Thomas") {
-        return "avatars/thomas.mp4";
-    } else if (user === "Elke") {
-        return "avatars/elke.mp4";
-    } else if (user === "Jamie") {
-        return "avatars/jamie.mp4";
-    }
-    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
-}
-
-// Avatar anzeigen
-function zeigeAvatar() {
-    const avatarContainer = document.getElementById("avatar-container");
-    if (!avatarContainer) {
-        console.error("Avatar-Container wurde nicht gefunden.");
-        return;
-    }
-
-    const avatarUrl = getAvatarForUser(currentUser);
-    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
-
-    avatarContainer.innerHTML = `<video src="${avatarUrl}" autoplay loop muted width="150"></video>`;
 }
 
 // Fortschritte speichern
@@ -115,25 +89,24 @@ function ladeFortschritte() {
 }
 
 // Quest-Status laden
-function ladeQuestStatus() {
-    if (currentUser) {
-        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-        if (gespeicherterQuestStatus) {
-            const questStatus = JSON.parse(gespeicherterQuestStatus);
-            const questItems = document.querySelectorAll("#quests li");
-            questItems.forEach((questItem, index) => {
-                if (questStatus[index]) {
-                    questItem.style.textDecoration = "line-through";
-                    questItem.style.opacity = "0.6";
-                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                    if (erledigtButton) {
-                        erledigtButton.disabled = true;
-                    }
+function ladeGlobalenQuestStatus() {
+    const gespeicherterQuestStatus = localStorage.getItem("global_questStatus");
+    if (gespeicherterQuestStatus) {
+        const questStatus = JSON.parse(gespeicherterQuestStatus);
+        const questItems = document.querySelectorAll("#quests li");
+        questItems.forEach((questItem, index) => {
+            if (questStatus[index]) {
+                questItem.style.textDecoration = "line-through";
+                questItem.style.opacity = "0.6";
+                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                if (erledigtButton) {
+                    erledigtButton.disabled = true;
                 }
-            });
-        }
+            }
+        });
     }
 }
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
@@ -188,20 +161,6 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Animation bei Level-Up anzeigen
-function zeigeLevelUpAnimation() {
-    const avatarContainer = document.getElementById('avatar-container');
-    if (avatarContainer) {
-        avatarContainer.innerHTML += '<div class="level-up-animation">Level Up!</div>';
-        setTimeout(() => {
-            const animationElement = avatarContainer.querySelector('.level-up-animation');
-            if (animationElement) {
-                animationElement.remove();
-            }
-        }, 2000);
-    }
-}
-
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
@@ -224,6 +183,29 @@ function zeigeQuestbook() {
     if (isAdmin) {
         zeigeAdminFunktionen();
     }
+}
+
+// Avatar für Benutzer festlegen
+function getAvatarForUser(user) {
+    if (user === "Thomas") {
+        return "avatars/thomas.mp4";
+    } else if (user === "Elke") {
+        return "avatars/elke.mp4";
+    } else if (user === "Jamie") {
+        return "avatars/jamie.mp4";
+    }
+    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
+}
+
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    if (!avatarElement) {
+        console.error("Avatar-Element wurde nicht gefunden.");
+        return;
+    }
+    const avatarUrl = getAvatarForUser(currentUser);
+    avatarElement.src = avatarUrl;
+    avatarElement.style.display = "block";  // Avatar sichtbar machen
 }
 
 // Admin-Funktionen anzeigen
@@ -256,7 +238,7 @@ function zeigeAdminFunktionen() {
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Alle Quests löschen";
             deleteButton.id = "deleteQuestsButton";
-            deleteButton.onclick = questsLöschen;
+            deleteButton.onclick = questsZuruecksetzen;
 
             // Füge die Schaltflächen zum Container hinzu
             adminButtonsContainer.appendChild(createButton);
@@ -268,18 +250,23 @@ function zeigeAdminFunktionen() {
     }
 }
 
-// Admin-Login (ohne die HTML-Struktur zu überschreiben)
-function adminLogin() {
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
+// Neue Funktion: Alle Quests zurücksetzen (Admin)
+function questsZuruecksetzen() {
+    if (confirm("Möchtest du wirklich alle Quests zurücksetzen, sodass sie wieder verfügbar sind?")) {
+        const questList = document.getElementById("quests").children;
 
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
-        isAdmin = true;
-        zeigeQuestbook();
-        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
-    } else {
-        alert("Falsche Anmeldedaten!");
+        for (let quest of questList) {
+            quest.style.textDecoration = "none";
+            quest.style.opacity = "1";
+            const erledigtButton = quest.querySelector("button:not(.edit-button)");
+            if (erledigtButton) {
+                erledigtButton.disabled = false;
+            }
+        }
+
+        // Globalen Status im Speicher löschen
+        localStorage.removeItem("global_questStatus");
+        console.log("Alle Quests wurden zurückgesetzt.");
     }
 }
 
@@ -337,35 +324,7 @@ function questErledigt(questNummer) {
             erledigtButton.disabled = true;
         }
 
-        // Queststatus nach Erledigung speichern
-        speichereQuestStatus();
+        // Globalen Queststatus speichern
+        speichereGlobalenQuestStatus();
     }
 }
-
-// Neue Funktion: Alle Quests löschen
-function questsLöschen() {
-    if (confirm("Möchtest du wirklich alle Quests löschen?")) {
-        const questList = document.getElementById("quests");
-        questList.innerHTML = ""; // Alle Quests aus der UI löschen
-
-        // Speicher löschen
-        localStorage.removeItem("quests");
-        console.log("Alle Quests wurden gelöscht.");
-    }
-}
-
-// Speichern des Quest-Status
-function speichereQuestStatus() {
-    const questItems = document.querySelectorAll("#quests li");
-    const questStatus = [];
-
-    questItems.forEach(questItem => {
-        const istErledigt = questItem.style.textDecoration === "line-through";
-        questStatus.push(istErledigt);
-    });
-
-    if (currentUser) {
-        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
-    }
-}
-
