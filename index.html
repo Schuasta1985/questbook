@@ -17,11 +17,11 @@
         <section id="xp-counter">
             <h2>Dein aktueller XP-Stand: <span id="xp">0</span></h2>
             <h3>Dein Level: <span id="level">1</span></h3>
-            <div id="xp-bar-container" style="width: 100%; background: #eee; margin-top: 10px;">
-                <div id="xp-progress" style="width: 0%; height: 20px; background: green;"></div>
+            <div id="xp-bar-container">
+                <div id="xp-progress"></div>
             </div>
              <!-- Füge das Avatar-Bild hier ein -->
-            <img id="avatar" src="https://via.placeholder.com/100?text=Avatar" alt="Benutzer Avatar" style="margin-top: 10px;">
+            <img id="avatar" src="avatars/landkarte.png" alt="Benutzer Avatar">
         </section>
 
         <section>
@@ -55,14 +55,14 @@
     </div>
 
     <!-- Container für den Level-Up-Ladebalken -->
-    <div id="level-up-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; justify-content: center; align-items: center;">
-        <div id="level-up-bar-container" style="width: 80%; background: #ccc; border-radius: 25px; overflow: hidden;">
-            <div id="level-up-progress" style="width: 0%; height: 30px; background: linear-gradient(to right, #ff0, #f00); transition: width 3s;"></div>
+    <div id="level-up-overlay">
+        <div id="level-up-bar-container">
+            <div id="level-up-progress"></div>
         </div>
     </div>
 
     <!-- Nur einmal script.js einbinden -->
     <script src="script.js"></script>
-    <canvas id="level-up-canvas" style="display: none;"></canvas>
+    <canvas id="level-up-canvas"></canvas>
 </body>
 </html>
