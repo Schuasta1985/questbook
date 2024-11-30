@@ -17,37 +17,25 @@
     <div id="login-section"></div>
 
     <main>
-        <section id="xp-counter">
+        <section id="xp-counter" style="display: none;">
             <h2>Dein aktueller XP-Stand: <span id="xp">0</span></h2>
             <h3>Dein Level: <span id="level">1</span></h3>
             <div id="xp-bar-container">
                 <div id="xp-progress"></div>
             </div>
-             <!-- Füge das Avatar-Bild hier ein -->
+            <!-- Füge das Avatar-Bild hier ein -->
             <img id="avatar" src="https://via.placeholder.com/100?text=Avatar" alt="Benutzer Avatar">
         </section>
 
-        <section>
+        <section id="quests-section" style="display: none;">
             <h2>Deine Quests für heute</h2>
-            <ul id="quests">
-                <li>
-                    <strong>Quest 1:</strong> Gehe für 30 Minuten spazieren.
-                    <button onclick="questErledigt(1)">Erledigt</button>
-                </li>
-                <li>
-                    <strong>Quest 2:</strong> 10 Minuten meditieren.
-                    <button onclick="questErledigt(2)">Erledigt</button>
-                </li>
-                <li>
-                    <strong>Quest 3:</strong> Schreibe eine kurze Dankbarkeitsliste.
-                    <button onclick="questErledigt(3)">Erledigt</button>
-                </li>
-            </ul>
+            <ul id="quests"></ul>
         </section>
     </main>
 
     <footer>
         <p>Erhalte XP für jede abgeschlossene Quest und steigere dein Level!</p>
+        <button onclick="ausloggen()" style="display: none;" id="logout-button">Ausloggen</button>
     </footer>
 
     <!-- Admin Login Overlay in der rechten unteren Ecke -->
