@@ -181,16 +181,14 @@ function aktualisiereXPAnzeige() {
     // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
-    const xpTextElement = document.getElementById('xp-text');
 
     if (xpProgressElement) {
         const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
-        xpProgressElement.style.background = `linear-gradient(to right, #00FF00, #FF0000)`;
-    }
 
-    if (xpTextElement) {
-        xpTextElement.textContent = `Noch ${xpFürLevelUp - xp} XP bis zum nächsten Level-Up`;
+        // Anzeige für fehlende XP bis zum nächsten Level
+        const xpRemaining = xpFürLevelUp - xp;
+        xpProgressElement.textContent = `Noch ${xpRemaining} XP bis zum nächsten Level-Up`;
     }
 
     überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
