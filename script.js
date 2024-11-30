@@ -25,6 +25,9 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
+            <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
+            <input type="password" id="adminPasswort" placeholder="Admin Passwort">
+            <button onclick="adminLogin()">Admin Anmelden</button>
         `;
     }
 }
@@ -250,12 +253,12 @@ function überprüfeLevelAufstieg() {
 // Level-Up Animation
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
+    if (!canvas) {
         console.error("Canvas für Level-Up-Animation nicht gefunden.");
         return;
     }
+
+    const ctx = canvas.getContext('2d');
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -388,6 +391,21 @@ function zeigeAdminFunktionen() {
             // Füge den Container zum Quests-Bereich hinzu
             questbookContainer.appendChild(adminButtonsContainer);
         }
+    }
+}
+
+// Admin-Login
+function adminLogin() {
+    const username = document.getElementById("adminBenutzername").value;
+    const password = document.getElementById("adminPasswort").value;
+
+    if (username === "admin" && password === "1234") {
+        alert("Admin erfolgreich eingeloggt!");
+        isAdmin = true;
+        zeigeQuestbook();
+        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
+    } else {
+        alert("Falsche Anmeldedaten!");
     }
 }
 
