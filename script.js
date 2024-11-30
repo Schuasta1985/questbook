@@ -1,25 +1,12 @@
 // Globale Variablen für XP, Level und Benutzerstatus
-let xp = 0;  // Nur EINMAL deklarieren
+let xp = 0;
 let level = 1;
 let currentUser = null;
 let isAdmin = false; // Admin Login Status
 
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    if (!avatarElement) {
-        console.error("Avatar-Element wurde nicht gefunden.");
-        return;
-    }
-    const avatarUrl = getAvatarForUser(currentUser);
-    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
-    avatarElement.src = avatarUrl;
-}
-
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
-    ladeFortschritte(); // Fortschritte laden
-    aktualisiereXPAnzeige(); // XP und Level laden
-    zeigeQuestbook(); // Questbuch laden
+    zeigeStartseite(); // Zeigt nur die Login-Seite
 };
 
 // Startseite anzeigen, ohne das gesamte HTML zu überschreiben
@@ -39,91 +26,6 @@ function zeigeStartseite() {
             <button onclick="benutzerAnmeldung()">Anmelden</button>
         `;
     }
-}
-
-// Level-Up-Animation
-function zeigeLevelUpAnimation() {
-    const canvas = document.getElementById('level-up-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let progress = 0;
-    const maxProgress = 100;
-    let fireworks = [];
-
-    function createFirework(x, y) {
-        const particles = [];
-        for (let i = 0; i < 100; i++) {
-            particles.push({
-                x: x,
-                y: y,
-                radius: Math.random() * 5 + 2,
-                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                angle: Math.random() * 2 * Math.PI,
-                speed: Math.random() * 5 + 2,
-                life: Math.random() * 50 + 50
-            });
-        }
-        return particles;
-    }
-
-    function drawFireworks() {
-        for (let i = fireworks.length - 1; i >= 0; i--) {
-            const p = fireworks[i];
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
-            ctx.fill();
-            p.x += Math.cos(p.angle) * p.speed;
-            p.y += Math.sin(p.angle) * p.speed;
-            p.life--;
-            if (p.life <= 0) {
-                fireworks.splice(i, 1);
-            }
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, 'red');
-        gradient.addColorStop(0.5, 'yellow');
-        gradient.addColorStop(1, 'green');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
-
-        if (progress < maxProgress) {
-            progress += 1;
-            requestAnimationFrame(animate);
-        } else {
-            if (fireworks.length === 0) {
-                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
-            }
-            drawFireworks();
-            if (fireworks.length === 0) {
-                showLevelUp();
-            } else {
-                requestAnimationFrame(animate);
-            }
-        }
-    }
-
-    function showLevelUp() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "100px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
-        setTimeout(() => {
-            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
-        }, 2000);
-    }
-
-    canvas.style.display = 'block';
-    animate();
 }
 
 // Benutzeranmeldung
@@ -186,64 +88,54 @@ function getAvatarForUser(user) {
     return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
 }
 
-// Admin-Funktionen anzeigen
-function zeigeAdminFunktionen() {
-    if (isAdmin) {
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (!questItem.querySelector(".edit-button")) {
-                const editButton = document.createElement("button");
-                editButton.textContent = "Bearbeiten";
-                editButton.className = "edit-button";
-                editButton.onclick = () => questBearbeiten(index + 1);
-                questItem.appendChild(editButton);
-            }
-        });
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    if (!avatarElement) {
+        console.error("Avatar-Element wurde nicht gefunden.");
+        return;
+    }
+    const avatarUrl = getAvatarForUser(currentUser);
+    avatarElement.src = avatarUrl;
+}
 
-        // Überprüfe, ob der Container bereits Schaltflächen enthält, bevor neue hinzugefügt werden
-        if (!document.getElementById("admin-buttons-container")) {
-            const questbookContainer = document.getElementById("quests");
+// Fortschritte speichern und laden
+function speichereFortschritte() {
+    if (currentUser) {
+        localStorage.setItem(`${currentUser}_xp`, xp);
+        localStorage.setItem(`${currentUser}_level`, level);
+    }
+}
 
-            // Erstelle einen Container für die Admin-Schaltflächen
-            const adminButtonsContainer = document.createElement("div");
-            adminButtonsContainer.id = "admin-buttons-container";
+function ladeFortschritte() {
+    if (currentUser) {
+        const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
+        const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
 
-            const createButton = document.createElement("button");
-            createButton.textContent = "Neue Quest erstellen";
-            createButton.id = "createQuestButton";
-            createButton.onclick = neueQuestErstellen;
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Alle Quests löschen";
-            deleteButton.id = "deleteQuestsButton";
-            deleteButton.onclick = questsLöschen;
-
-            // Füge die Schaltflächen zum Container hinzu
-            adminButtonsContainer.appendChild(createButton);
-            adminButtonsContainer.appendChild(deleteButton);
-
-            // Füge den Container zum Quests-Bereich hinzu
-            questbookContainer.appendChild(adminButtonsContainer);
+        if (gespeicherteXP !== null) {
+            xp = parseInt(gespeicherteXP, 10);
         }
+
+        if (gespeichertesLevel !== null) {
+            level = parseInt(gespeichertesLevel, 10);
+        }
+
+        aktualisiereXPAnzeige();
     }
 }
 
-// Admin-Login (ohne die HTML-Struktur zu überschreiben)
-function adminLogin() {
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
+// Level-Aufstieg überprüfen
+function überprüfeLevelAufstieg() {
+    const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
 
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
-        isAdmin = true;
-        zeigeQuestbook();
-        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
-    } else {
-        alert("Falsche Anmeldedaten!");
+    while (xp >= xpFürLevelUp) {
+        xp -= xpFürLevelUp;
+        level++;
+        aktualisiereXPAnzeige();
+        zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
     }
 }
 
-// XP-Anzeige und Level-Up überprüfen
+// XP-Anzeige und Fortschrittsbalken aktualisieren
 function aktualisiereXPAnzeige() {
     const xpElement = document.getElementById('xp');
     const levelElement = document.getElementById('level');
@@ -256,7 +148,6 @@ function aktualisiereXPAnzeige() {
         levelElement.textContent = level;
     }
 
-    // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
 
