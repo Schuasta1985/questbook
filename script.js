@@ -46,7 +46,6 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
-        ladeGlobalenQuestStatus();
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
@@ -320,6 +319,7 @@ function questErledigt(questNummer) {
 // Quests laden
 function ladeQuests() {
     const gespeicherteQuests = localStorage.getItem("quests");
+    const gespeicherterQuestStatus = JSON.parse(localStorage.getItem("globalQuestStatus")) || [];
 
     if (gespeicherteQuests) {
         const quests = JSON.parse(gespeicherteQuests);
@@ -334,14 +334,22 @@ function ladeQuests() {
             `;
             listItem.setAttribute("data-xp", quest.xp);
             questList.appendChild(listItem);
+
+            // Falls die Quest bereits erledigt ist, markieren wir sie sofort
+            if (gespeicherterQuestStatus[index]) {
+                listItem.style.textDecoration = "line-through";
+                listItem.style.opacity = "0.6";
+                const erledigtButton = listItem.querySelector("button:not(.edit-button)");
+                if (erledigtButton) {
+                    erledigtButton.disabled = true;
+                }
+            }
         });
 
-        // Admin-Funktionen anzeigen, falls der Admin eingeloggt ist
         if (isAdmin) {
             zeigeAdminFunktionen();
         }
     } else {
-        // Wenn keine Quests gespeichert sind, initialisiere sie
         const defaultQuests = [
             { beschreibung: "Hausarbeit machen", xp: 10 },
             { beschreibung: "Einkaufen gehen", xp: 20 },
@@ -350,27 +358,6 @@ function ladeQuests() {
 
         localStorage.setItem("quests", JSON.stringify(defaultQuests));
         ladeQuests();
-    }
-}
-
-// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
-function zeigeQuestbook() {
-    const questContainer = document.getElementById("quests");
-    if (questContainer) {
-        questContainer.innerHTML = ''; // Vorhandene Quests löschen
-        ladeQuests();
-    }
-
-    const xpElement = document.getElementById("xp");
-    const levelElement = document.getElementById("level");
-
-    if (xpElement && levelElement) {
-        xpElement.textContent = xp;
-        levelElement.textContent = level;
-    }
-
-    if (isAdmin) {
-        zeigeAdminFunktionen();
     }
 }
 
