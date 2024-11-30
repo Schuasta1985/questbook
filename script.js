@@ -387,6 +387,7 @@ function questErledigt(questNummer) {
         speichereQuestStatus();
     }
 }
+
 function neueQuestErstellen() {
     const beschreibung = prompt("Bitte gib die Beschreibung der neuen Quest ein:");
     const xpWert = parseInt(prompt("XP für diese Quest:", "10"), 10);
@@ -405,6 +406,7 @@ function neueQuestErstellen() {
         console.log("Neue Quest wurde erstellt:", beschreibung);
     }
 }
+
 // Neue Funktion: Alle Quests löschen
 function questsLöschen() {
     if (confirm("Möchtest du wirklich alle Quests löschen?")) {
@@ -416,6 +418,7 @@ function questsLöschen() {
         console.log("Alle Quests wurden gelöscht.");
     }
 }
+
 // Speichern des Quest-Status
 function speichereQuestStatus() {
     const questItems = document.querySelectorAll("#quests li");
@@ -433,24 +436,28 @@ function speichereQuestStatus() {
 
 // Fortschritte speichern
 function speichereFortschritte() {
-    localStorage.setItem(`${currentUser}_xp`, xp);
-    localStorage.setItem(`${currentUser}_level`, level);
+    if (currentUser) {
+        localStorage.setItem(`${currentUser}_xp`, xp);
+        localStorage.setItem(`${currentUser}_level`, level);
+    }
 }
 
 // Fortschritte laden (überarbeitet)
 function ladeFortschritte() {
-    const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
-    const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
+    if (currentUser) {
+        const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
+        const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
 
-    if (gespeicherteXP !== null) {
-        xp = parseInt(gespeicherteXP, 10);
+        if (gespeicherteXP !== null) {
+            xp = parseInt(gespeicherteXP, 10);
+        }
+
+        if (gespeichertesLevel !== null) {
+            level = parseInt(gespeichertesLevel, 10);
+        }
+
+        aktualisiereXPAnzeige();
     }
-
-    if (gespeichertesLevel !== null) {
-        level = parseInt(gespeichertesLevel, 10);
-    }
-
-    aktualisiereXPAnzeige();
 }
 
 // Ausloggen
@@ -478,19 +485,21 @@ function überprüfeLevelAufstieg() {
 
 // Quest-Status laden
 function ladeQuestStatus() {
-    const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-    if (gespeicherterQuestStatus) {
-        const questStatus = JSON.parse(gespeicherterQuestStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
+    if (currentUser) {
+        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+        if (gespeicherterQuestStatus) {
+            const questStatus = JSON.parse(gespeicherterQuestStatus);
+            const questItems = document.querySelectorAll("#quests li");
+            questItems.forEach((questItem, index) => {
+                if (questStatus[index]) {
+                    questItem.style.textDecoration = "line-through";
+                    questItem.style.opacity = "0.6";
+                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                    if (erledigtButton) {
+                        erledigtButton.disabled = true;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
