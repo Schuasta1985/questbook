@@ -169,6 +169,8 @@ function speichereGlobalenQuestStatus() {
 function aktualisiereXPAnzeige() {
     const xpElement = document.getElementById('xp');
     const levelElement = document.getElementById('level');
+    const xpLabel = document.getElementById('xp-label');
+    const xpProgressElement = document.getElementById('xp-progress');
 
     if (xpElement) {
         xpElement.textContent = xp;
@@ -180,14 +182,17 @@ function aktualisiereXPAnzeige() {
 
     // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
-    const xpProgressElement = document.getElementById('xp-progress');
 
     if (xpProgressElement) {
-        const progress = Math.min((xp / xpFürLevelUp) * 100, 100);
+        const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
     }
 
-    überprüfeLevelAufstieg();
+    if (xpLabel) {
+        xpLabel.textContent = `Noch ${xpFürLevelUp - xp} XP bis Level-Up`;
+    }
+
+    überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
     speichereFortschritte();
 }
 
