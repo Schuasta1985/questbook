@@ -210,6 +210,7 @@ function überprüfeLevelAufstieg() {
 }
 
 // Level-Up Animation
+// Level-Up Animation
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
     if (!canvas) {
@@ -223,8 +224,18 @@ function zeigeLevelUpAnimation() {
         return;
     }
 
+    // Den gesamten Bildschirm abdecken und den Canvas sichtbar machen
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '1000';
+
+    // Den Hintergrund schwarz machen, um den Feuerwerkseffekt hervorzuheben
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     let progress = 0;
     const maxProgress = 100;
@@ -263,14 +274,9 @@ function zeigeLevelUpAnimation() {
     }
 
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, 'red');
-        gradient.addColorStop(0.5, 'yellow');
-        gradient.addColorStop(1, 'green');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
+        // Den Hintergrund schwarz halten und die Canvas-Inhalte neu zeichnen
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         if (progress < maxProgress) {
             progress += 1;
@@ -280,10 +286,10 @@ function zeigeLevelUpAnimation() {
                 fireworks = createFirework(canvas.width / 2, canvas.height / 2);
             }
             drawFireworks();
-            if (fireworks.length === 0) {
-                showLevelUp();
-            } else {
+            if (fireworks.length > 0) {
                 requestAnimationFrame(animate);
+            } else {
+                showLevelUp();
             }
         }
     }
@@ -299,7 +305,6 @@ function zeigeLevelUpAnimation() {
         }, 2000);
     }
 
-    canvas.style.display = 'block';
     animate();
 }
 
