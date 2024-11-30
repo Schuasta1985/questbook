@@ -370,7 +370,35 @@ function questErledigt(questNummer) {
         speichereQuestStatus();
     }
 }
+function neueQuestErstellen() {
+    const beschreibung = prompt("Bitte gib die Beschreibung der neuen Quest ein:");
+    const xpWert = parseInt(prompt("XP für diese Quest:", "10"), 10);
 
+    if (beschreibung) {
+        const questList = document.getElementById("quests");
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <span class="quest-text"><strong>Quest:</strong> ${beschreibung}</span>
+            <button onclick="questErledigt(${questList.children.length + 1})">Erledigt</button>
+        `;
+        listItem.setAttribute("data-xp", xpWert || 10);
+        questList.appendChild(listItem);
+
+        speichereQuestÄnderungen();
+        console.log("Neue Quest wurde erstellt:", beschreibung);
+    }
+}
+// Neue Funktion: Alle Quests löschen
+function questsLöschen() {
+    if (confirm("Möchtest du wirklich alle Quests löschen?")) {
+        const questList = document.getElementById("quests");
+        questList.innerHTML = ""; // Alle Quests aus der UI löschen
+
+        // Speicher löschen
+        localStorage.removeItem("quests");
+        console.log("Alle Quests wurden gelöscht.");
+    }
+}
 // Speichern des Quest-Status
 function speichereQuestStatus() {
     const questItems = document.querySelectorAll("#quests li");
