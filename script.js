@@ -100,18 +100,19 @@ function zeigeLevelUpAnimation() {
         ctx.fillStyle = gradient;
         ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
 
-        if (progress >= maxProgress) {
+        if (progress < maxProgress) {
+            progress += 1;
+            requestAnimationFrame(animate);
+        } else {
             if (fireworks.length === 0) {
                 fireworks = createFirework(canvas.width / 2, canvas.height / 2);
             }
             drawFireworks();
             if (fireworks.length === 0) {
                 showLevelUp();
-                return;
+            } else {
+                requestAnimationFrame(animate);
             }
-        } else {
-            progress += 1;
-            requestAnimationFrame(animate);
         }
     }
 
