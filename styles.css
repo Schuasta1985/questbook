@@ -1,9 +1,9 @@
 /* Globale Einstellungen */
 body {
-    background: url('avatars/landkarte.png') no-repeat center center fixed;
+    background: url('avatars/deinHintergrundbild.png') no-repeat center center fixed;
     background-size: cover;
     font-family: 'Poppins', sans-serif; /* Moderne und gut lesbare Schriftart */
-    color: #ece2b6; /* Sandiges Beige für normalen Text */
+    color: #4a3b2d; /* Dunkelbraun für Text */
     text-align: center; /* Zentriert den gesamten Text */
 }
 
@@ -14,9 +14,42 @@ h1 {
     margin-top: 50px;
 }
 
-/* Überschriften der Abschnitte */
-h2, h3 {
-    color: #f8f4e3; /* Elfenbein Weiß */
+/* Benutzer-Auswahl und Anmeldetexte */
+label, input, select {
+    color: #4a3b2d; /* Dunkelbraun für bessere Lesbarkeit */
+    display: block;
+    margin: 10px auto;
+    font-size: 1.2em; /* Schriftgröße anpassen für bessere Lesbarkeit */
+}
+
+/* Admin-Login anpassen */
+#admin-login-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    text-align: left;
+    font-size: 0.8em; /* Kleinere Schriftgröße für den Admin-Login */
+    background-color: rgba(255, 255, 255, 0.8); /* Leicht transparente Hintergrundfarbe für besseren Kontrast */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#adminBenutzername, #adminPasswort {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    font-size: 0.8em; /* Kleinere Eingabefelder */
+}
+
+#admin-login-button {
+    background-color: #556b2f;
+    color: #ffd700;
+    padding: 5px 10px;
+    font-size: 0.8em; /* Kleinere Schriftgröße */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 /* Buttons */
@@ -55,35 +88,6 @@ button:hover {
     border-radius: 10px;
 }
 
-/* Admin-Login */
-#admin-login-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #556b2f;
-    color: #ffd700;
-    padding: 5px 10px;
-    font-size: 0.9em; /* Kleinere Schriftgröße */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#admin-login-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 200px;
-    text-align: left;
-    font-size: 0.9em;
-}
-
-#adminBenutzername, #adminPasswort {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-}
-
 /* Avatar */
 #avatar {
     margin-top: 10px;
@@ -94,15 +98,4 @@ button:hover {
 /* Anmeldeabschnitt */
 #startseite {
     margin-top: 20px;
-}
-
-label, input, select {
-    display: block;
-    margin: 10px auto;
-    font-size: 1.2em; /* Schriftgröße anpassen für bessere Lesbarkeit */
-}
-
-/* Buttons im Questbuch-Adminbereich */
-#quests button {
-    margin-top: 5px;
 }
