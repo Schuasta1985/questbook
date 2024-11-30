@@ -209,10 +209,63 @@ function zeigeAvatar() {
     }
 }
 
-// Level-Up Animation anzeigen
+// Level-Up Animation anzeigen mit Explosion
 function zeigeLevelUpAnimation() {
-    alert(`Glückwunsch! Du hast Level ${level} erreicht!`);
+    const canvas = document.getElementById('level-up-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Setze die Größe des Canvas entsprechend dem Fenster
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+
+    function createFirework(x, y) {
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: x,
+                y: y,
+                radius: Math.random() * 5 + 2,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                angle: Math.random() * 2 * Math.PI,
+                speed: Math.random() * 5 + 2,
+                life: Math.random() * 50 + 50
+            });
+        }
+        return particles;
+    }
+
+    function drawFireworks() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.x += Math.cos(p.angle) * p.speed;
+            p.y += Math.sin(p.angle) * p.speed;
+            p.life--;
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        if (fireworks.length > 0) {
+            requestAnimationFrame(drawFireworks);
+        } else {
+            // Verstecke das Canvas nach der Animation
+            canvas.style.display = 'none';
+        }
+    }
+
+    // Zeige das Canvas an, starte die Animation
+    canvas.style.display = 'block';
+    drawFireworks();
 }
+
 
 // Admin-Funktionen anzeigen
 function zeigeAdminFunktionen() {
