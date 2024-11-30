@@ -28,7 +28,6 @@ function zeigeStartseite() {
         `;
     }
 }
-
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
@@ -258,8 +257,27 @@ function zeigeLevelUpAnimation() {
     canvas.style.display = 'block';
     animate();
 }
+// Quest erledigt markieren
+function questErledigt(questNummer) {
+    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
 
-// Quests laden
+    if (quest) {
+        const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
+        xp += xpWert;
+        aktualisiereXPAnzeige();
+        überprüfeLevelAufstieg();
+
+        quest.style.textDecoration = "line-through";
+        quest.style.opacity = "0.6";
+        const erledigtButton = quest.querySelector("button:not(.edit-button)");
+        if (erledigtButton) {
+            erledigtButton.disabled = true;
+        }
+        speichereGlobalenQuestStatus();
+    }
+}
+
+// Verschiebe die Funktionsdefinition `ladeQuests()` über die Funktion `zeigeQuestbook()`
 function ladeQuests() {
     const gespeicherteQuests = localStorage.getItem("quests");
 
@@ -296,26 +314,6 @@ function ladeQuests() {
     }
 }
 
-// Quest erledigt markieren
-function questErledigt(questNummer) {
-    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
-
-    if (quest) {
-        const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
-        xp += xpWert;
-        aktualisiereXPAnzeige();
-        überprüfeLevelAufstieg();
-
-        quest.style.textDecoration = "line-through";
-        quest.style.opacity = "0.6";
-        const erledigtButton = quest.querySelector("button:not(.edit-button)");
-        if (erledigtButton) {
-            erledigtButton.disabled = true;
-        }
-        speichereGlobalenQuestStatus();
-    }
-}
-
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
@@ -337,7 +335,6 @@ function zeigeQuestbook() {
         zeigeAdminFunktionen();
     }
 }
-
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
     if (user === "Thomas") {
