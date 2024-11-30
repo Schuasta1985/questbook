@@ -371,6 +371,7 @@ function zeigeQuestbook() {
         ladeQuests(); // Quests laden
     }
 
+    // Sicherstellen, dass Level und XP richtig angezeigt werden
     const xpElement = document.getElementById("xp");
     const levelElement = document.getElementById("level");
 
@@ -384,6 +385,7 @@ function zeigeQuestbook() {
         zeigeAdminFunktionen();
     }
 }
+
 
 // Admin Login
 function adminLogin() {
