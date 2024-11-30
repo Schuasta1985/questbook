@@ -33,6 +33,7 @@ function zeigeStartseite() {
                 <option value="Thomas">Thomas</option>
                 <option value="Elke">Elke</option>
                 <option value="Jamie">Jamie</option>
+                <option value="Massel">Massel</option>
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
@@ -49,6 +50,7 @@ function benutzerAnmeldung() {
         Thomas: "passwort1",
         Elke: "passwort2",
         Jamie: "passwort3",
+        Massel: "1234",
     };
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
