@@ -155,20 +155,6 @@ function benutzerAnmeldung() {
     }
 }
 
-// Admin-Login
-function adminLogin() {
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
-
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
-        isAdmin = true;
-        zeigeQuestbook();
-        zeigeAdminFunktionen();  // Ensure admin functions are shown after login
-    } else {
-        alert("Falsche Anmeldedaten!");
-    }
-}
 // Questbuch anzeigen
 function zeigeQuestbook() {
     document.body.innerHTML = `
@@ -236,6 +222,20 @@ function zeigeAdminFunktionen() {
         deleteButton.textContent = "Alle Quests löschen";
         deleteButton.onclick = questsLöschen;
         questbookContainer.appendChild(deleteButton);
+    }
+}
+// Admin-Login
+function adminLogin() {
+    const username = document.getElementById("adminBenutzername").value;
+    const password = document.getElementById("adminPasswort").value;
+
+    if (username === "admin" && password === "1234") {
+        alert("Admin erfolgreich eingeloggt!");
+        isAdmin = true;
+        zeigeQuestbook();
+        zeigeAdminFunktionen();  // Ensure admin functions are shown after login
+    } else {
+        alert("Falsche Anmeldedaten!");
     }
 }
 
