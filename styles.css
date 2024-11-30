@@ -8,7 +8,7 @@ body {
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
 
-/* Header-Stile */
+/* Header */
 header {
     text-align: center;
     margin-top: 20px;
@@ -18,11 +18,52 @@ h1 {
     font-size: 3rem;
     font-weight: 600;
     color: #F5F5DC;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Schatten für bessere Lesbarkeit */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-h2, h3, p {
-    color: #C2B280; /* Sandiges Beige */
+/* XP-Zähler und Level */
+#xp-counter {
+    margin-top: 20px;
+}
+
+#xp-bar-container {
+    width: 100%;
+    background: #8B4513; /* Holzbraun */
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+#xp-progress {
+    width: 0%;
+    height: 20px;
+    background: #50C878; /* Smaragdgrün */
+    border-radius: 5px;
+}
+
+/* Avatar */
+#avatar {
+    margin-top: 20px;
+    border-radius: 50%;
+    border: 2px solid #F5F5DC;
+}
+
+/* Benutzer Login */
+#login-section {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#login-section label, #login-section select, #login-section input, #login-section button {
+    margin: 10px 0;
+    font-size: 1.2rem;
+}
+
+#benutzerDropdown, #benutzerPasswort {
+    width: calc(100% - 40px);
+    max-width: 300px;
+    padding: 10px;
 }
 
 /* Buttons */
@@ -40,51 +81,7 @@ button:hover {
     background-color: #B22222; /* Sattes Rot */
 }
 
-/* Fortschrittsbalken */
-#xp-bar-container {
-    width: 100%;
-    background: #8B4513; /* Holzbraun */
-    margin-top: 10px;
-    border-radius: 5px;
-}
-
-#xp-progress {
-    width: 0%;
-    height: 20px;
-    background: #50C878; /* Smaragdgrün */
-    border-radius: 5px;
-}
-
-/* Level-Up Animation Overlay */
-#level-up-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#level-up-bar-container {
-    width: 80%;
-    background: #ccc;
-    border-radius: 25px;
-    overflow: hidden;
-}
-
-#level-up-progress {
-    width: 0%;
-    height: 30px;
-    background: linear-gradient(to right, #ff0, #f00);
-    transition: width 3s;
-}
-
-/* Admin Login Box */
+/* Admin Login */
 .admin-login {
     position: fixed;
     bottom: 20px;
@@ -93,46 +90,19 @@ button:hover {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 200px; /* Setze eine Breite für die Admin-Box */
-    text-align: center;
+    width: 180px; /* Reduzierte Breite */
 }
 
 .admin-login input {
     margin: 5px 0;
     padding: 5px;
     width: calc(100% - 20px);
-    font-size: 1rem; /* Lesbarkeit verbessern */
+    font-size: 0.9rem; /* Kleinere Schriftgröße */
 }
 
 .admin-login button {
     width: 100%;
     margin-top: 10px;
-}
-
-/* Avatar-Bild */
-#avatar {
-    margin-top: 20px;
-    border: 2px solid #f5f5dc;
-    border-radius: 50%;
-}
-
-/* Questliste */
-ul#quests {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul#quests li {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #333;
-    border-radius: 5px;
-    margin: 10px 0;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-ul#quests li strong {
-    color: #8b4513; /* Holzbraun für Quest-Titel */
+    font-size: 0.9rem; /* Kleinere Schriftgröße */
+    padding: 5px 10px; /* Kleinere Buttons */
 }
