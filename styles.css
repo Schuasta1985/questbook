@@ -24,14 +24,12 @@ h1 {
 /* XP-Zähler und Level */
 #xp-counter {
     margin-top: 20px;
-    text-align: center;
 }
 
 #xp-bar-container {
-    width: 80%;
-    max-width: 600px;
+    width: 100%;
     background: #8B4513; /* Holzbraun */
-    margin: 20px auto; /* Zentrierung */
+    margin-top: 10px;
     border-radius: 5px;
 }
 
@@ -42,14 +40,21 @@ h1 {
     border-radius: 5px;
 }
 
+/* Avatar-Container anpassen */
 #avatar-container {
-    position: absolute;
-    top: 20%; /* Passe dies an, um den Avatar richtig zu positionieren */
-    left: 10%; /* Passe dies an, um den Avatar richtig zu positionieren */
-    width: 100px; /* Gleiche Größe wie das Video-Element */
-    height: 100px; /* Gleiche Größe wie das Video-Element */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;  /* Abstand nach oben */
+    margin-bottom: 20px;  /* Abstand nach unten */
 }
 
+#avatar-container video {
+    border-radius: 50%;  /* Avatar rund machen */
+    width: 150px;  /* Größe des Avatars */
+    height: 150px;
+    border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
+}
 
 /* Benutzer Login */
 #login-section {
@@ -65,7 +70,7 @@ h1 {
 }
 
 #benutzerDropdown, #benutzerPasswort {
-    width: 90%;
+    width: calc(100% - 40px);
     max-width: 300px;
     padding: 10px;
 }
@@ -111,33 +116,40 @@ button:hover {
     padding: 5px 10px; /* Kleinere Buttons */
 }
 
-/* Quest-Section */
-#quest-section {
-    margin-top: 30px;
-    text-align: center;
+/* Überschrift für Quests zentrieren */
+#quests-section h2 {
+    text-align: center;  /* Zentriert den Text */
+    margin-bottom: 10px;  /* Abstand zum nächsten Element */
 }
 
+/* Quests-Container anpassen */
 #quests {
-    list-style-type: none;
+    list-style-type: none;  /* Entfernt die Aufzählungszeichen */
     padding: 0;
-    max-width: 600px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Quests in der Mitte ausrichten */
 }
 
 #quests li {
-    background: rgba(255, 255, 255, 0.8);
-    color: #333;
-    border-radius: 5px;
-    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.8);  /* Leichter Hintergrund für bessere Lesbarkeit */
     padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 90%;  /* Damit die Quests gleichmäßig wirken */
+    max-width: 600px;  /* Maximalbreite, um die Darstellung zu verbessern */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Footer */
-footer {
-    margin-top: 40px;
-    text-align: center;
-    color: #C2B280; /* Sandiges Beige */
+button.erledigt-button {
+    background-color: #4CAF50; /* Grün */
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button.erledigt-button:hover {
+    background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
 }
