@@ -210,18 +210,24 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        // Buttons zum Erstellen und Löschen von Quests
         const questbookContainer = document.getElementById("quests");
 
-        const createButton = document.createElement("button");
-        createButton.textContent = "Neue Quest erstellen";
-        createButton.onclick = neueQuestErstellen;
-        questbookContainer.appendChild(createButton);
+        // Überprüfen, ob die Schaltflächen bereits existieren, bevor neue hinzugefügt werden
+        if (!document.getElementById("createQuestButton")) {
+            const createButton = document.createElement("button");
+            createButton.textContent = "Neue Quest erstellen";
+            createButton.id = "createQuestButton";
+            createButton.onclick = neueQuestErstellen;
+            questbookContainer.appendChild(createButton);
+        }
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Alle Quests löschen";
-        deleteButton.onclick = questsLöschen;
-        questbookContainer.appendChild(deleteButton);
+        if (!document.getElementById("deleteQuestsButton")) {
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Alle Quests löschen";
+            deleteButton.id = "deleteQuestsButton";
+            deleteButton.onclick = questsLöschen;
+            questbookContainer.appendChild(deleteButton);
+        }
     }
 }
 // Admin-Login
