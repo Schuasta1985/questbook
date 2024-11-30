@@ -27,20 +27,30 @@ h1 {
 }
 
 #xp-bar-container {
-    width: 80%;  /* Reduziere die Breite leicht für eine bessere Darstellung */
-    height: 20px;
-    margin: 20px auto;  /* Zentriere die XP-Bar */
-    background-color: rgba(255, 255, 255, 0.3);  /* Leicht transparenter Hintergrund */
-    border-radius: 10px;  /* Abgerundete Ecken */
+    width: 80%;
+    height: 25px;
+    margin: 20px auto;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
     overflow: hidden;
+    position: relative;  /* Position für das XP-Label */
 }
 
 #xp-progress {
     height: 100%;
     width: 0%;
-    background-color: limegreen;  /* Standardfarbe für XP-Fortschritt */
+    background: linear-gradient(to right, limegreen, yellow, orange, red); /* Farbverlauf von grün nach rot */
     border-radius: 10px;
     transition: width 0.5s ease;  /* Sanfte Übergangsanimation */
+}
+#xp-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    color: black;
+    z-index: 1;  /* XP-Anzeige sichtbar über dem XP-Balken */
 }
 
 /* Avatar-Container anpassen */
