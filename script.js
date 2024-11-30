@@ -70,7 +70,7 @@ function benutzerAnmeldung() {
         // Sichtbarkeit der Abschnitte aktualisieren
         document.getElementById("xp-counter").style.display = "block";
         document.getElementById("quests-section").style.display = "block";
-        document.getElementById("logout-button").style.display = "block";
+        document.getElementById("logout-button").style.display = "block"; // Ausloggen-Button anzeigen
 
         // Login-Bereich ausblenden
         document.getElementById("login-section").style.display = "none";
@@ -146,7 +146,7 @@ function ausloggen() {
     // Abschnitte wieder verstecken
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("quests-section").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
+    document.getElementById("logout-button").style.display = "none"; // Ausloggen-Button verstecken
 
     // Login-Bereich wieder anzeigen
     document.getElementById("login-section").style.display = "block";
