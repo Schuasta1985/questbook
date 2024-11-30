@@ -28,6 +28,24 @@ function zeigeStartseite() {
         `;
     }
 }
+
+// Avatar anzeigen, je nach Benutzer
+function zeigeAvatar() {
+    if (currentUser) {
+        const avatarElement = document.getElementById("avatar-container");
+        const avatarPath = getAvatarForUser(currentUser);
+
+        if (avatarElement) {
+            avatarElement.innerHTML = `
+                <video autoplay loop muted>
+                    <source src="${avatarPath}" type="video/mp4">
+                    Dein Browser unterstützt das Video-Tag nicht.
+                </video>
+            `;
+        }
+    }
+}
+
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
