@@ -27,21 +27,22 @@ h1 {
 }
 
 #xp-bar-container {
+    position: relative;
     width: 80%;
-    height: 25px;
+    background: #8B4513; /* Holzbraun */
     margin: 20px auto;
-    background-color: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;  /* Position für das XP-Label */
+    height: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Fortschrittsbalken */
 #xp-progress {
     height: 100%;
     width: 0%;
-    background: linear-gradient(to right, limegreen, yellow, orange, red); /* Farbverlauf von grün nach rot */
-    border-radius: 10px;
-    transition: width 0.5s ease;  /* Sanfte Übergangsanimation */
+    background: linear-gradient(to right, #50C878, #FFD700);
+    border-radius: 15px;
+    transition: width 0.5s ease-in-out;
 }
 #xp-label {
     position: absolute;
@@ -186,4 +187,13 @@ button.erledigt-button:hover {
 #xp-display, #level-display {
     font-size: 1.5em;  /* Vergrößere Schriftgröße */
     margin: 5px 0;
+}
+/* XP-Text im Fortschrittsbalken */
+#xp-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    font-weight: bold;
 }
