@@ -134,7 +134,6 @@ function ladeQuestStatus() {
         }
     }
 }
-
 // Ausloggen
 function ausloggen() {
     currentUser = null;
@@ -337,6 +336,8 @@ function questErledigt(questNummer) {
         if (erledigtButton) {
             erledigtButton.disabled = true;
         }
+
+        // Queststatus nach Erledigung speichern
         speichereQuestStatus();
     }
 }
@@ -367,3 +368,4 @@ function speichereQuestStatus() {
         localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
     }
 }
+
