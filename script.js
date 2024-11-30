@@ -50,13 +50,28 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
-        // Sichtbarkeit der Abschnitte aktualisieren
-        document.getElementById("xp-counter").style.display = "block";
-        document.getElementById("quests-section").style.display = "block";
-        document.getElementById("logout-button").style.display = "block";
+        // Überprüfe, ob die Elemente existieren, bevor wir darauf zugreifen
+        const xpCounter = document.getElementById("xp-counter");
+        const questsSection = document.getElementById("quests-section");
+        const logoutButton = document.getElementById("logout-button");
+
+        if (xpCounter) {
+            xpCounter.style.display = "block";
+        }
+
+        if (questsSection) {
+            questsSection.style.display = "block";
+        }
+
+        if (logoutButton) {
+            logoutButton.style.display = "block";
+        }
 
         // Login-Bereich ausblenden
-        document.getElementById("login-section").style.display = "none";
+        const loginSection = document.getElementById("login-section");
+        if (loginSection) {
+            loginSection.style.display = "none";
+        }
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
