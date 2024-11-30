@@ -1,5 +1,5 @@
 // Globale Variablen für XP, Level und Benutzerstatus
-let xp = 0;  // Nur EINMAL deklarieren
+let xp = 0;
 let level = 1;
 let currentUser = null;
 let isAdmin = false; // Admin Login Status
@@ -183,11 +183,11 @@ function aktualisiereXPAnzeige() {
     const xpProgressElement = document.getElementById('xp-progress');
 
     if (xpProgressElement) {
-        const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
+        const progress = Math.min((xp / xpFürLevelUp) * 100, 100);
         xpProgressElement.style.width = `${progress}%`;
     }
 
-    überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
+    überprüfeLevelAufstieg();
     speichereFortschritte();
 }
 
@@ -199,7 +199,7 @@ function überprüfeLevelAufstieg() {
         xp -= xpFürLevelUp;
         level++;
         aktualisiereXPAnzeige();
-        zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
+        zeigeLevelUpAnimation();
     }
 }
 
@@ -289,7 +289,7 @@ function zeigeLevelUpAnimation() {
         ctx.textAlign = "center";
         ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
         setTimeout(() => {
-            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
+            canvas.style.display = 'none';
         }, 2000);
     }
 
@@ -313,7 +313,7 @@ function questErledigt(questNummer) {
         if (erledigtButton) {
             erledigtButton.disabled = true;
         }
-        speichereGlobalenQuestStatus(); // Speichern, damit die Quest auch beim erneuten Einloggen als erledigt markiert bleibt
+        speichereGlobalenQuestStatus();
     }
 }
 
@@ -348,9 +348,8 @@ function ladeQuests() {
             { beschreibung: "Joggen", xp: 15 }
         ];
 
-        // Speichere die Standardquests, wenn sie nicht existieren
         localStorage.setItem("quests", JSON.stringify(defaultQuests));
-        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
+        ladeQuests();
     }
 }
 
@@ -359,7 +358,7 @@ function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
     if (questContainer) {
         questContainer.innerHTML = ''; // Vorhandene Quests löschen
-        ladeQuests(); // Quests laden
+        ladeQuests();
     }
 
     const xpElement = document.getElementById("xp");
@@ -370,7 +369,6 @@ function zeigeQuestbook() {
         levelElement.textContent = level;
     }
 
-    // Zeige Admin Funktionen falls nötig
     if (isAdmin) {
         zeigeAdminFunktionen();
     }
@@ -385,7 +383,6 @@ function adminLogin() {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         zeigeQuestbook();
-        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -405,11 +402,9 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        // Überprüfe, ob der Container bereits Schaltflächen enthält, bevor neue hinzugefügt werden
         if (!document.getElementById("admin-buttons-container")) {
             const questbookContainer = document.getElementById("quests");
 
-            // Erstelle einen Container für die Admin-Schaltflächen
             const adminButtonsContainer = document.createElement("div");
             adminButtonsContainer.id = "admin-buttons-container";
 
@@ -423,11 +418,9 @@ function zeigeAdminFunktionen() {
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
-            // Füge die Schaltflächen zum Container hinzu
             adminButtonsContainer.appendChild(createButton);
             adminButtonsContainer.appendChild(deleteButton);
 
-            // Füge den Container zum Quests-Bereich hinzu
             questbookContainer.appendChild(adminButtonsContainer);
         }
     }
@@ -448,15 +441,12 @@ function neueQuestErstellen() {
     }
 }
 
-// Quests zurücksetzen
+// Quests zurücksetzen (Admin)
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        const questList = document.getElementById("quests");
-        questList.innerHTML = ""; // Alle Quests aus der UI löschen
-
-        // Speicher löschen
-        localStorage.removeItem("globalQuestStatus");
-        console.log("Alle Quests wurden zurückgesetzt.");
-        ladeQuests(); // Quests neu laden
+        const quests = JSON.parse(localStorage.getItem("quests")) || [];
+        quests.forEach(quest => quest.status = false);
+        localStorage.setItem("globalQuestStatus", JSON.stringify(quests.map(() => false)));
+        ladeQuests();
     }
 }
