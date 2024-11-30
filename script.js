@@ -63,7 +63,6 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
-        ladeGlobalenQuestStatus();
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
@@ -87,7 +86,7 @@ function speichereFortschritte() {
     }
 }
 
-// Fortschritte laden (überarbeitet)
+// Fortschritte laden
 function ladeFortschritte() {
     if (currentUser) {
         const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
@@ -105,7 +104,20 @@ function ladeFortschritte() {
     }
 }
 
-// Quest-Status laden
+// Speichern des globalen Quest-Status
+function speichereGlobalenQuestStatus() {
+    const questItems = document.querySelectorAll("#quests li");
+    const questStatus = [];
+
+    questItems.forEach(questItem => {
+        const istErledigt = questItem.style.textDecoration === "line-through";
+        questStatus.push(istErledigt);
+    });
+
+    localStorage.setItem("globalQuestStatus", JSON.stringify(questStatus));
+}
+
+// Laden des globalen Quest-Status
 function ladeGlobalenQuestStatus() {
     const gespeicherterQuestStatus = localStorage.getItem("globalQuestStatus");
     if (gespeicherterQuestStatus) {
@@ -124,33 +136,77 @@ function ladeGlobalenQuestStatus() {
     }
 }
 
-// Speichern des globalen Quest-Status
-function speichereGlobalenQuestStatus() {
-    const questItems = document.querySelectorAll("#quests li");
-    const questStatus = [];
+// Quests laden
+function ladeQuests() {
+    const gespeicherteQuests = localStorage.getItem("quests");
 
-    questItems.forEach(questItem => {
-        const istErledigt = questItem.style.textDecoration === "line-through";
-        questStatus.push(istErledigt);
-    });
+    if (gespeicherteQuests) {
+        const quests = JSON.parse(gespeicherteQuests);
+        const questList = document.getElementById("quests");
+        questList.innerHTML = "";  // Quests vorher löschen
 
-    localStorage.setItem("globalQuestStatus", JSON.stringify(questStatus));
+        quests.forEach((quest, index) => {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+                <span class="quest-text"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                <button onclick="questErledigt(${index})">Erledigt</button>
+            `;
+            listItem.setAttribute("data-xp", quest.xp);
+            questList.appendChild(listItem);
+        });
+
+        ladeGlobalenQuestStatus();
+    } else {
+        // Wenn keine Quests gespeichert sind, initialisiere sie
+        const defaultQuests = [
+            { beschreibung: "Hausarbeit machen", xp: 10 },
+            { beschreibung: "Einkaufen gehen", xp: 20 },
+            { beschreibung: "Joggen", xp: 15 }
+        ];
+
+        // Speichere die Standardquests, wenn sie nicht existieren
+        localStorage.setItem("quests", JSON.stringify(defaultQuests));
+        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
+    }
 }
 
-// Ausloggen
-function ausloggen() {
-    currentUser = null;
-    isAdmin = false;
-    localStorage.removeItem("currentUser");
+// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
+function zeigeQuestbook() {
+    const questContainer = document.getElementById("quests");
+    if (questContainer) {
+        questContainer.innerHTML = ''; // Vorhandene Quests löschen
+        ladeQuests(); // Quests laden
+    }
 
-    // Abschnitte wieder verstecken
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("logout-button").style.display = "none"; // Ausloggen-Button verstecken
+    const xpElement = document.getElementById("xp");
+    const levelElement = document.getElementById("level");
 
-    // Login-Bereich wieder anzeigen
-    document.getElementById("login-section").style.display = "block";
-    zeigeStartseite();
+    if (xpElement && levelElement) {
+        xpElement.textContent = xp;
+        levelElement.textContent = level;
+    }
+
+    // Zeige Admin Funktionen falls nötig
+    if (isAdmin) {
+        zeigeAdminFunktionen();
+    }
+}
+
+// Quest erledigt markieren
+function questErledigt(questNummer) {
+    const gespeicherteQuests = JSON.parse(localStorage.getItem("quests"));
+    const quest = gespeicherteQuests[questNummer];
+
+    if (quest) {
+        xp += parseInt(quest.xp, 10) || 0;
+        aktualisiereXPAnzeige();
+        überprüfeLevelAufstieg();
+
+        // Markiere Quest als erledigt und speichere den Status global ab
+        quest.erledigt = true;
+        speichereGlobalenQuestStatus();
+        ladeQuests();  // Quests erneut laden, damit sie nicht mehr angezeigt werden
+    }
 }
 
 // XP-Anzeige und Level-Up überprüfen
@@ -195,7 +251,12 @@ function überprüfeLevelAufstieg() {
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
     const ctx = canvas.getContext('2d');
-    
+
+    if (!ctx) {
+        console.error("Canvas für Level-Up-Animation nicht gefunden.");
+        return;
+    }
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -275,84 +336,7 @@ function zeigeLevelUpAnimation() {
     canvas.style.display = 'block';
     animate();
 }
-// Quest erledigt markieren
-function questErledigt(questNummer) {
-    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
 
-    if (quest) {
-        const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
-        xp += xpWert;
-        aktualisiereXPAnzeige();
-        überprüfeLevelAufstieg();
-
-        quest.style.textDecoration = "line-through";
-        quest.style.opacity = "0.6";
-        const erledigtButton = quest.querySelector("button:not(.edit-button)");
-        if (erledigtButton) {
-            erledigtButton.disabled = true;
-        }
-        speichereGlobalenQuestStatus();
-    }
-}
-
-// Verschiebe die Funktionsdefinition `ladeQuests()` über die Funktion `zeigeQuestbook()`
-function ladeQuests() {
-    const gespeicherteQuests = localStorage.getItem("quests");
-
-    if (gespeicherteQuests) {
-        const quests = JSON.parse(gespeicherteQuests);
-        const questList = document.getElementById("quests");
-        questList.innerHTML = "";  // Quests vorher löschen
-
-        quests.forEach((quest, index) => {
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `
-                <span class="quest-text"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-                <button onclick="questErledigt(${index + 1})">Erledigt</button>
-            `;
-            listItem.setAttribute("data-xp", quest.xp);
-            questList.appendChild(listItem);
-        });
-
-        // Admin-Funktionen anzeigen, falls der Admin eingeloggt ist
-        if (isAdmin) {
-            zeigeAdminFunktionen();
-        }
-    } else {
-        // Wenn keine Quests gespeichert sind, initialisiere sie
-        const defaultQuests = [
-            { beschreibung: "Hausarbeit machen", xp: 10 },
-            { beschreibung: "Einkaufen gehen", xp: 20 },
-            { beschreibung: "Joggen", xp: 15 }
-        ];
-
-        // Speichere die Standardquests, wenn sie nicht existieren
-        localStorage.setItem("quests", JSON.stringify(defaultQuests));
-        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
-    }
-}
-
-// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
-function zeigeQuestbook() {
-    const questContainer = document.getElementById("quests");
-    if (questContainer) {
-        questContainer.innerHTML = ''; // Vorhandene Quests löschen
-        ladeQuests(); // Quests laden
-    }
-
-    const xpElement = document.getElementById("xp");
-    const levelElement = document.getElementById("level");
-
-    if (xpElement && levelElement) {
-        xpElement.textContent = xp;
-        levelElement.textContent = level;
-    }
-
-    // Zeige Admin Funktionen falls nötig
-    if (isAdmin) {
-        zeigeAdminFunktionen();
-    }
-}
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
     if (user === "Thomas") {
@@ -393,7 +377,7 @@ function zeigeAdminFunktionen() {
             createButton.onclick = neueQuestErstellen;
 
             const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Alle Quests löschen";
+            deleteButton.textContent = "Alle Quests zurücksetzen";
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
@@ -404,21 +388,6 @@ function zeigeAdminFunktionen() {
             // Füge den Container zum Quests-Bereich hinzu
             questbookContainer.appendChild(adminButtonsContainer);
         }
-    }
-}
-
-// Admin-Login (ohne die HTML-Struktur zu überschreiben)
-function adminLogin() {
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
-
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
-        isAdmin = true;
-        zeigeQuestbook();
-        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
-    } else {
-        alert("Falsche Anmeldedaten!");
     }
 }
 
@@ -434,4 +403,3 @@ function questsZuruecksetzen() {
         ladeQuests(); // Quests neu laden
     }
 }
-
