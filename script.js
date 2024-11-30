@@ -17,7 +17,9 @@ function zeigeAvatar() {
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
-    zeigeStartseite(); // Zeigt nur die Login-Seite
+    ladeFortschritte(); // Fortschritte laden
+    aktualisiereXPAnzeige(); // XP und Level laden
+    zeigeQuestbook(); // Questbuch laden
 };
 
 // Startseite anzeigen, ohne das gesamte HTML zu überschreiben
