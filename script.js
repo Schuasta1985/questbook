@@ -211,7 +211,7 @@ function zeigeAdminFunktionen() {
         });
 
         // Buttons zum Erstellen und Löschen von Quests
-        const questbookContainer = document.getElementById("questbook");
+        const questbookContainer = document.getElementById("quests");
 
         const createButton = document.createElement("button");
         createButton.textContent = "Neue Quest erstellen";
