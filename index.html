@@ -24,15 +24,19 @@
         </div>
     </div>
 
-<!-- Quests-Abschnitt -->
-<div id="quests-section">
-    <h2>Deine Quests für heute</h2>
-    <ul id="quests"></ul>
-</div>
+    <!-- Quests-Abschnitt -->
+    <div id="quests-section" style="display: none;">
+        <h2>Deine Quests für heute</h2>
+        <ul id="quests"></ul>
+    </div>
 
-<!-- Avatar-Container (nach den Quests platzieren) -->
-<div id="avatar-container"></div>
+    <!-- Avatar-Container (nach den Quests platzieren) -->
+    <div id="avatar-container"></div>
 
+    <!-- Canvas für Level-Up Animation -->
+    <div id="level-up-container">
+        <canvas id="level-up-canvas" style="display: none;"></canvas>
+    </div>
 
     <!-- Logout Button -->
     <button id="logout-button" onclick="ausloggen()" style="display: none;">Ausloggen</button>
