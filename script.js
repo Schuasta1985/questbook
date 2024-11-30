@@ -164,11 +164,11 @@ function adminLogin() {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         zeigeQuestbook();
+        zeigeAdminFunktionen();  // Ensure admin functions are shown after login
     } else {
         alert("Falsche Anmeldedaten!");
     }
 }
-
 // Questbuch anzeigen
 function zeigeQuestbook() {
     document.body.innerHTML = `
