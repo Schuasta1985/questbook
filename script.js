@@ -62,6 +62,30 @@ function benutzerAnmeldung() {
     }
 }
 
+// Ausloggen
+function ausloggen() {
+    currentUser = null;
+    isAdmin = false;
+    localStorage.removeItem("currentUser");
+
+    // Abschnitte wieder verstecken
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+
+    // Login-Bereich wieder anzeigen
+    document.getElementById("login-section").style.display = "block";
+    zeigeStartseite();
+}
+
+// Fortschritte speichern (nur eine Version dieser Funktion behalten)
+function speichereFortschritte() {
+    if (currentUser) {
+        localStorage.setItem(`${currentUser}_xp`, xp);
+        localStorage.setItem(`${currentUser}_level`, level);
+    }
+}
+
 // Fortschritte laden (überarbeitet)
 function ladeFortschritte() {
     if (currentUser) {
@@ -78,43 +102,6 @@ function ladeFortschritte() {
 
         aktualisiereXPAnzeige();
     }
-}
-
-// Quest-Status laden
-function ladeQuestStatus() {
-    if (currentUser) {
-        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-        if (gespeicherterQuestStatus) {
-            const questStatus = JSON.parse(gespeicherterQuestStatus);
-            const questItems = document.querySelectorAll("#quests li");
-            questItems.forEach((questItem, index) => {
-                if (questStatus[index]) {
-                    questItem.style.textDecoration = "line-through";
-                    questItem.style.opacity = "0.6";
-                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                    if (erledigtButton) {
-                        erledigtButton.disabled = true;
-                    }
-                }
-            });
-        }
-    }
-}
-
-// Ausloggen
-function ausloggen() {
-    currentUser = null;
-    isAdmin = false;
-    localStorage.removeItem("currentUser");
-
-    // Abschnitte wieder verstecken
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
-
-    // Login-Bereich wieder anzeigen
-    document.getElementById("login-section").style.display = "block";
-    zeigeStartseite();
 }
 
 // XP-Anzeige und Level-Up überprüfen
@@ -155,6 +142,27 @@ function überprüfeLevelAufstieg() {
     }
 }
 
+// Quest-Status laden
+function ladeQuestStatus() {
+    if (currentUser) {
+        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+        if (gespeicherterQuestStatus) {
+            const questStatus = JSON.parse(gespeicherterQuestStatus);
+            const questItems = document.querySelectorAll("#quests li");
+            questItems.forEach((questItem, index) => {
+                if (questStatus[index]) {
+                    questItem.style.textDecoration = "line-through";
+                    questItem.style.opacity = "0.6";
+                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                    if (erledigtButton) {
+                        erledigtButton.disabled = true;
+                    }
+                }
+            });
+        }
+    }
+}
+
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
@@ -189,6 +197,15 @@ function getAvatarForUser(user) {
         return "avatars/jamie.mp4";
     }
     return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
+}
+
+// Avatar anzeigen
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+    if (avatarElement) {
+        const avatarUrl = getAvatarForUser(currentUser);
+        avatarElement.src = avatarUrl;
+    }
 }
 
 // Admin-Funktionen anzeigen
@@ -332,29 +349,4 @@ function speichereQuestStatus() {
     }
 }
 
-// Fortschritte speichern
-function speichereFortschritte() {
-    if (currentUser) {
-        localStorage.setItem(`${currentUser}_xp`, xp);
-        localStorage.setItem(`${currentUser}_level`, level);
-    }
-}
-
-// Fortschritte laden (überarbeitet)
-function ladeFortschritte() {
-    if (currentUser) {
-        const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
-        const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
-
-        if (gespeicherteXP !== null) {
-            xp = parseInt(gespeicherteXP, 10);
-        }
-
-        if (gespeichertesLevel !== null) {
-            level = parseInt(gespeichertesLevel, 10);
-        }
-
-        aktualisiereXPAnzeige();
-    }
-}
 
