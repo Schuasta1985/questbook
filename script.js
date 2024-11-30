@@ -165,12 +165,13 @@ function speichereGlobalenQuestStatus() {
     localStorage.setItem("globalQuestStatus", JSON.stringify(questStatus));
 }
 
-// XP-Anzeige und Level-Up überprüfen
+// XP-Anzeige und Level-Up überprüfen (angepasst)
 function aktualisiereXPAnzeige() {
     const xpElement = document.getElementById('xp');
     const levelElement = document.getElementById('level');
-    const xpLabel = document.getElementById('xp-label');
+    const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
+    const xpTextElement = document.getElementById('xp-text');
 
     if (xpElement) {
         xpElement.textContent = xp;
@@ -180,22 +181,27 @@ function aktualisiereXPAnzeige() {
         levelElement.textContent = level;
     }
 
-    // Fortschrittsbalken zum nächsten Level
-    const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
-
-    if (xpProgressElement) {
+    if (xpProgressElement && xpTextElement) {
         const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
+
+        // Farbverlauf dynamisch ändern je nach Fortschritt
+        if (progress < 50) {
+            xpProgressElement.style.background = 'linear-gradient(to right, #ff0000, #ffa500)'; // Rot zu Orange
+        } else if (progress < 80) {
+            xpProgressElement.style.background = 'linear-gradient(to right, #ffa500, #ffff00)'; // Orange zu Gelb
+        } else {
+            xpProgressElement.style.background = 'linear-gradient(to right, #ffff00, #00ff00)'; // Gelb zu Grün
+        }
+
+        // Anzeige der verbleibenden XP
+        const verbleibendeXP = xpFürLevelUp - xp;
+        xpTextElement.textContent = `Noch ${verbleibendeXP} XP bis zum nächsten Level-Up`;
     }
 
-    if (xpLabel) {
-        xpLabel.textContent = `Noch ${xpFürLevelUp - xp} XP bis Level-Up`;
-    }
-
-    überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
+    überprüfeLevelAufstieg();
     speichereFortschritte();
 }
-
 // Level-Aufstieg überprüfen
 function überprüfeLevelAufstieg() {
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
