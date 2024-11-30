@@ -62,14 +62,6 @@ function benutzerAnmeldung() {
     }
 }
 
-// Fortschritte speichern
-function speichereFortschritte() {
-    if (currentUser) {
-        localStorage.setItem(`${currentUser}_xp`, xp);
-        localStorage.setItem(`${currentUser}_level`, level);
-    }
-}
-
 // Fortschritte laden (überarbeitet)
 function ladeFortschritte() {
     if (currentUser) {
