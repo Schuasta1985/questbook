@@ -26,6 +26,23 @@ h1 {
     margin-top: 20px;
 }
 
+#xp-level-container {
+    margin: 20px auto;
+    padding: 15px;
+    border: 3px solid gold;  /* Goldene Umrandung */
+    background-color: rgba(0, 0, 0, 0.7);  /* Hintergrundfarbe leicht transparent */
+    color: white;  /* Schriftfarbe für bessere Lesbarkeit */
+    width: fit-content;  /* Automatische Anpassung der Breite */
+    text-align: center;  /* Zentrierte Texte */
+    box-shadow: 0 0 15px gold;  /* Schimmernder Effekt */
+}
+
+#xp-display, #level-display {
+    font-size: 1.5em;  /* Vergrößere Schriftgröße */
+    margin: 5px 0;
+}
+
+/* Fortschrittsbalken */
 #xp-bar-container {
     position: relative;
     width: 80%;
@@ -36,7 +53,7 @@ h1 {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Fortschrittsbalken */
+/* XP-Fortschrittsbalken */
 #xp-progress {
     height: 100%;
     width: 0%;
@@ -44,6 +61,8 @@ h1 {
     border-radius: 15px;
     transition: width 0.5s ease-in-out;
 }
+
+/* XP-Text im Fortschrittsbalken */
 #xp-label {
     position: absolute;
     top: 50%;
@@ -172,28 +191,4 @@ button.erledigt-button {
 
 button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
-}
-#xp-level-container {
-    margin: 20px auto;
-    padding: 15px;
-    border: 3px solid gold;  /* Goldene Umrandung */
-    background-color: rgba(0, 0, 0, 0.7);  /* Hintergrundfarbe leicht transparent */
-    color: white;  /* Schriftfarbe für bessere Lesbarkeit */
-    width: fit-content;  /* Automatische Anpassung der Breite */
-    text-align: center;  /* Zentrierte Texte */
-    box-shadow: 0 0 15px gold;  /* Schimmernder Effekt */
-}
-
-#xp-display, #level-display {
-    font-size: 1.5em;  /* Vergrößere Schriftgröße */
-    margin: 5px 0;
-}
-/* XP-Text im Fortschrittsbalken */
-#xp-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #fff;
-    font-weight: bold;
 }
