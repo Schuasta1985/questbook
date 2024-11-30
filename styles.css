@@ -42,12 +42,14 @@ h1 {
     border-radius: 5px;
 }
 
-/* Avatar */
-#avatar {
-    margin-top: 20px;
-    border-radius: 50%;
-    border: 2px solid #F5F5DC;
+#avatar-container {
+    position: absolute;
+    top: 20%; /* Passe dies an, um den Avatar richtig zu positionieren */
+    left: 10%; /* Passe dies an, um den Avatar richtig zu positionieren */
+    width: 100px; /* Gleiche Größe wie das Video-Element */
+    height: 100px; /* Gleiche Größe wie das Video-Element */
 }
+
 
 /* Benutzer Login */
 #login-section {
