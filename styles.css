@@ -63,7 +63,7 @@ h1 {
 }
 
 #benutzerDropdown, #benutzerPasswort {
-    width: calc(100% - 40px);
+    width: 90%;
     max-width: 300px;
     padding: 10px;
 }
@@ -107,4 +107,35 @@ button:hover {
     margin-top: 10px;
     font-size: 0.9rem; /* Kleinere Schriftgröße */
     padding: 5px 10px; /* Kleinere Buttons */
+}
+
+/* Quest-Section */
+#quest-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+#quests {
+    list-style-type: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#quests li {
+    background: rgba(255, 255, 255, 0.8);
+    color: #333;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Footer */
+footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #C2B280; /* Sandiges Beige */
 }
