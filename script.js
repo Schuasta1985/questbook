@@ -160,6 +160,7 @@ function überprüfeLevelAufstieg() {
 }
 
 // XP-Anzeige und Fortschrittsbalken aktualisieren
+// XP-Anzeige und Level-Up überprüfen
 function aktualisiereXPAnzeige() {
     const xpElement = document.getElementById('xp');
     const levelElement = document.getElementById('level');
@@ -172,17 +173,17 @@ function aktualisiereXPAnzeige() {
         levelElement.textContent = level;
     }
 
+    // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
 
     if (xpProgressElement) {
-        const progress = (xp / xpFürLevelUp) * 100;
+        const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
     }
 
     speichereFortschritte();
 }
-
 // Quest bearbeiten
 function questBearbeiten(questNummer) {
     const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
