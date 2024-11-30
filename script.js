@@ -433,6 +433,21 @@ function zeigeAdminFunktionen() {
     }
 }
 
+// Neue Quest erstellen
+function neueQuestErstellen() {
+    const questBeschreibung = prompt("Gib die Beschreibung der neuen Quest ein:");
+    const questXP = parseInt(prompt("Gib die XP für diese Quest ein:"), 10);
+
+    if (questBeschreibung && !isNaN(questXP)) {
+        const quests = JSON.parse(localStorage.getItem("quests")) || [];
+        quests.push({ beschreibung: questBeschreibung, xp: questXP });
+        localStorage.setItem("quests", JSON.stringify(quests));
+        ladeQuests();
+    } else {
+        alert("Ungültige Eingabe. Bitte versuche es erneut.");
+    }
+}
+
 // Quests zurücksetzen
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
