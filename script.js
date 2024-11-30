@@ -187,6 +187,26 @@ function zeigeQuestbook() {
     }
 }
 
+// Avatar anzeigen
+function zeigeAvatar() {
+    const avatarElement = document.getElementById("avatar");
+
+    if (!avatarElement) {
+        console.error("Avatar-Element wurde nicht gefunden.");
+        return;
+    }
+
+    const avatarUrl = getAvatarForUser(currentUser);
+
+    if (avatarUrl) {
+        console.log("Avatar URL: ", avatarUrl); // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
+        avatarElement.src = avatarUrl;          // Avatar URL setzen
+        avatarElement.style.display = "block";  // Avatar sichtbar machen
+    } else {
+        console.error("Kein Avatar gefunden für Benutzer: ", currentUser);
+    }
+}
+
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
     if (user === "Thomas") {
@@ -195,19 +215,12 @@ function getAvatarForUser(user) {
         return "avatars/elke.mp4";
     } else if (user === "Jamie") {
         return "avatars/jamie.mp4";
+    } else if (user === "Massel") {
+        return "avatars/massel.mp4";
     }
-    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
+    return null; // Kein Avatar gefunden
 }
 
-// Avatar anzeigen
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    if (avatarElement) {
-        const avatarUrl = getAvatarForUser(currentUser);
-        avatarElement.src = avatarUrl;
-        avatarElement.style.display = "block";
-    }
-}
 
 // Level-Up-Animation mit Explosion
 function zeigeLevelUpAnimation() {
