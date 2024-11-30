@@ -17,33 +17,26 @@ function zeigeAvatar() {
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
-    zeigeStartseite(); // Aufruf der Funktion für die Startseite
+    zeigeStartseite(); // Zeigt nur die Login-Seite
 };
 
-// Startseite anzeigen
+// Startseite anzeigen, ohne das gesamte HTML zu überschreiben
 function zeigeStartseite() {
-    document.body.innerHTML = `
-        <div id="startseite">
-            <h1>Willkommen im Questbook</h1>
-            <div>
-                <label for="benutzerDropdown">Benutzer auswählen:</label>
-                <select id="benutzerDropdown">
-                    <option value="">-- Bitte wählen --</option>
-                    <option value="Thomas">Thomas</option>
-                    <option value="Elke">Elke</option>
-                    <option value="Jamie">Jamie</option>
-                </select>
-                <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
-                <button onclick="benutzerAnmeldung()">Anmelden</button>
-            </div>
-            <div>
-                <h2>Admin Login</h2>
-                <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
-                <input type="password" id="adminPasswort" placeholder="Admin Passwort">
-                <button onclick="adminLogin()">Admin Anmelden</button>
-            </div>
-        </div>
-    `;
+    const loginSection = document.getElementById("login-section");
+
+    if (loginSection) {
+        loginSection.innerHTML = `
+            <label for="benutzerDropdown">Benutzer auswählen:</label>
+            <select id="benutzerDropdown">
+                <option value="">-- Bitte wählen --</option>
+                <option value="Thomas">Thomas</option>
+                <option value="Elke">Elke</option>
+                <option value="Jamie">Jamie</option>
+            </select>
+            <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
+            <button onclick="benutzerAnmeldung()">Anmelden</button>
+        `;
+    }
 }
 
 // Level-Up-Animation
@@ -149,39 +142,34 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         ladeQuestStatus();
         zeigeQuestbook();
-        zeigeAvatar(); // Avatar anzeigen (nachdem das Questbuch geladen wurde)
+        zeigeAvatar(); // Avatar anzeigen
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
 
-// Questbuch anzeigen
+// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
-    document.body.innerHTML = `
-        <div id="questbook">
-            <h1>Questbook für ${currentUser ? currentUser : "Admin"}</h1>
-            <ul id="quests">
-                <!-- Quests werden hier dynamisch eingefügt -->
-            </ul>
-            <p>Level: <span id="level">${level}</span></p>
-            <p>XP: <span id="xp">${xp}</span></p>
-            <button onclick="ausloggen()">Ausloggen</button>
-            
-            <!-- Avatar Container -->
-            <div id="avatar-container" style="position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); text-align: center;">
-                <video id="avatar" autoplay loop muted style="width: 100px; height: auto; border-radius: 50%;">
-                    <source src="${getAvatarForUser(currentUser)}" type="video/mp4">
-                    Dein Browser unterstützt keine Videos.
-                </video>
-            </div>
-            
-            <!-- Canvas für Level-Up Animation -->
-            <canvas id="level-up-canvas" style="display: none; position: absolute; top: 0; left: 0;"></canvas>
-        </div>
-    `;
+    const questContainer = document.getElementById("quests");
+    if (questContainer) {
+        questContainer.innerHTML = ''; // Vorhandene Quests löschen
 
-    // Quests laden
-    ladeQuests();
+        // Beispielquests erstellen
+        ladeQuests();
+    }
+
+    const xpElement = document.getElementById("xp");
+    const levelElement = document.getElementById("level");
+
+    if (xpElement && levelElement) {
+        xpElement.textContent = xp;
+        levelElement.textContent = level;
+    }
+
+    // Zeige Admin Funktionen falls nötig
+    if (isAdmin) {
+        zeigeAdminFunktionen();
+    }
 }
 
 // Avatar für Benutzer festlegen
@@ -238,7 +226,7 @@ function zeigeAdminFunktionen() {
     }
 }
 
-// Admin-Login
+// Admin-Login (ohne die HTML-Struktur zu überschreiben)
 function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
@@ -247,7 +235,7 @@ function adminLogin() {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         zeigeQuestbook();
-        zeigeAdminFunktionen();  // Ensure admin functions are shown after login
+        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -447,7 +435,7 @@ function speichereFortschritte() {
     localStorage.setItem(`${currentUser}_level`, level);
 }
 
-// Fortschritte laden
+// Fortschritte laden (überarbeitet)
 function ladeFortschritte() {
     const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
     const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
@@ -459,6 +447,8 @@ function ladeFortschritte() {
     if (gespeichertesLevel !== null) {
         level = parseInt(gespeichertesLevel, 10);
     }
+
+    aktualisiereXPAnzeige();
 }
 
 // Ausloggen
