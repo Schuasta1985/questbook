@@ -24,12 +24,14 @@ h1 {
 /* XP-Zähler und Level */
 #xp-counter {
     margin-top: 20px;
+    text-align: center;
 }
 
 #xp-bar-container {
-    width: 100%;
+    width: 80%;
+    max-width: 600px;
     background: #8B4513; /* Holzbraun */
-    margin-top: 10px;
+    margin: 20px auto; /* Zentrierung */
     border-radius: 5px;
 }
 
