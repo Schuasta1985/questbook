@@ -4,18 +4,6 @@ let level = 1;
 let currentUser = null;
 let isAdmin = false; // Admin Login Status
 
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    if (!avatarElement) {
-        console.error("Avatar-Element wurde nicht gefunden.");
-        return;
-    }
-    const avatarUrl = getAvatarForUser(currentUser);
-    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
-    avatarElement.src = avatarUrl;
-    avatarElement.style.display = "block";  // Avatar sichtbar machen
-}
-
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
     zeigeStartseite(); // Zeigt nur die Login-Seite
@@ -40,6 +28,66 @@ function zeigeStartseite() {
         `;
     }
 }
+
+// Benutzeranmeldung
+function benutzerAnmeldung() {
+    const benutzername = document.getElementById("benutzerDropdown").value;
+    const passwort = document.getElementById("benutzerPasswort").value;
+
+    const benutzerPasswoerter = {
+        Thomas: "passwort1",
+        Elke: "passwort2",
+        Jamie: "passwort3",
+        Massel: "1234",
+    };
+
+    if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
+        currentUser = benutzername;
+        localStorage.setItem("currentUser", currentUser);
+        ladeFortschritte();
+        aktualisiereXPAnzeige();
+        ladeQuestStatus(); // Lade den Status der Quests des aktuellen Benutzers
+        zeigeQuestbook();
+        zeigeAvatar(); // Avatar anzeigen
+
+        // Sichtbarkeit der Abschnitte aktualisieren
+        document.getElementById("xp-counter").style.display = "block";
+        document.getElementById("quests-section").style.display = "block";
+        document.getElementById("logout-button").style.display = "block";
+
+        // Login-Bereich ausblenden
+        document.getElementById("login-section").style.display = "none";
+    } else {
+        alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
+    }
+}
+
+// Fortschritte speichern
+function speichereFortschritte() {
+    if (currentUser) {
+        localStorage.setItem(`${currentUser}_xp`, xp);
+        localStorage.setItem(`${currentUser}_level`, level);
+    }
+}
+
+// Fortschritte laden (überarbeitet)
+function ladeFortschritte() {
+    if (currentUser) {
+        const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
+        const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
+
+        if (gespeicherteXP !== null) {
+            xp = parseInt(gespeicherteXP, 10);
+        }
+
+        if (gespeichertesLevel !== null) {
+            level = parseInt(gespeichertesLevel, 10);
+        }
+
+        aktualisiereXPAnzeige();
+    }
+}
+
 // Quest-Status laden
 function ladeQuestStatus() {
     if (currentUser) {
@@ -60,44 +108,6 @@ function ladeQuestStatus() {
         }
     }
 }
-
-function benutzerAnmeldung() {
-    console.log("Anmeldefunktion wurde aufgerufen");
-    const benutzername = document.getElementById("benutzerDropdown").value;
-    console.log("Benutzername ausgewählt: ", benutzername);
-    const passwort = document.getElementById("benutzerPasswort").value;
-    console.log("Passwort eingegeben: ", passwort);
-
-    const benutzerPasswoerter = {
-        Thomas: "passwort1",
-        Elke: "passwort2",
-        Jamie: "passwort3",
-        Massel: "1234",
-    };
-
-    if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
-        console.log("Anmeldung erfolgreich");
-        currentUser = benutzername;
-        localStorage.setItem("currentUser", currentUser);
-        ladeFortschritte();
-        aktualisiereXPAnzeige();
-        ladeQuestStatus();
-        zeigeQuestbook();
-        zeigeAvatar(); // Avatar anzeigen
-
-        // Sichtbarkeit der Abschnitte aktualisieren
-        document.getElementById("xp-counter").style.display = "block";
-        document.getElementById("quests-section").style.display = "block";
-        document.getElementById("logout-button").style.display = "block";
-
-        // Login-Bereich ausblenden
-        document.getElementById("login-section").style.display = "none";
-    } else {
-        console.log("Anmeldung fehlgeschlagen");
-        alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
-    }
-}
-
 
 // Ausloggen
 function ausloggen() {
