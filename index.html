@@ -24,33 +24,10 @@
             <img id="avatar" src="avatars/landkarte.png" alt="Benutzer Avatar">
         </section>
 
-        <section id="login-section">
-            <label for="benutzerDropdown">Benutzer auswählen:</label>
-            <select id="benutzerDropdown">
-                <option value="">-- Bitte wählen --</option>
-                <option value="Thomas">Thomas</option>
-                <option value="Elke">Elke</option>
-                <option value="Jamie">Jamie</option>
-            </select>
-            <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
-            <button onclick="benutzerAnmeldung()">Anmelden</button>
-        </section>
-
-        <section>
+        <section id="quest-section">
             <h2>Deine Quests für heute</h2>
             <ul id="quests">
-                <li>
-                    <strong>Quest 1:</strong> Gehe für 30 Minuten spazieren.
-                    <button onclick="questErledigt(1)">Erledigt</button>
-                </li>
-                <li>
-                    <strong>Quest 2:</strong> 10 Minuten meditieren.
-                    <button onclick="questErledigt(2)">Erledigt</button>
-                </li>
-                <li>
-                    <strong>Quest 3:</strong> Schreibe eine kurze Dankbarkeitsliste.
-                    <button onclick="questErledigt(3)">Erledigt</button>
-                </li>
+                <!-- Quests werden hier dynamisch eingefügt -->
             </ul>
         </section>
     </main>
