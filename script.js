@@ -223,6 +223,18 @@ function zeigeAdminFunktionen() {
                 questItem.appendChild(editButton);
             }
         });
+
+        // Button zum Erstellen neuer Quests
+        const createButton = document.createElement("button");
+        createButton.textContent = "Neue Quest erstellen";
+        createButton.onclick = neueQuestErstellen;
+        document.body.appendChild(createButton);
+
+        // Button zum Löschen aller Quests
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Alle Quests löschen";
+        deleteButton.onclick = questsLöschen;
+        document.body.appendChild(deleteButton);
     }
 }
 
