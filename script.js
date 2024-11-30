@@ -313,7 +313,7 @@ function questErledigt(questNummer) {
         if (erledigtButton) {
             erledigtButton.disabled = true;
         }
-        speichereGlobalenQuestStatus();
+        speichereGlobalenQuestStatus(); // Speichern, damit die Quest auch beim erneuten Einloggen als erledigt markiert bleibt
     }
 }
 
@@ -445,4 +445,3 @@ function questsZuruecksetzen() {
         ladeQuests(); // Quests neu laden
     }
 }
-
