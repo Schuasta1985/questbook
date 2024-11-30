@@ -20,8 +20,20 @@
             <div id="xp-bar-container">
                 <div id="xp-progress"></div>
             </div>
-             <!-- Füge das Avatar-Bild hier ein -->
+            <!-- Füge das Avatar-Bild hier ein -->
             <img id="avatar" src="avatars/landkarte.png" alt="Benutzer Avatar">
+        </section>
+
+        <section id="login-section">
+            <label for="benutzerDropdown">Benutzer auswählen:</label>
+            <select id="benutzerDropdown">
+                <option value="">-- Bitte wählen --</option>
+                <option value="Thomas">Thomas</option>
+                <option value="Elke">Elke</option>
+                <option value="Jamie">Jamie</option>
+            </select>
+            <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
+            <button onclick="benutzerAnmeldung()">Anmelden</button>
         </section>
 
         <section>
