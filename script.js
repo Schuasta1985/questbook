@@ -46,6 +46,7 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
+        ladeGlobalenQuestStatus();
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
@@ -358,6 +359,28 @@ function ladeQuests() {
 
         localStorage.setItem("quests", JSON.stringify(defaultQuests));
         ladeQuests();
+    }
+}
+
+// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
+function zeigeQuestbook() {
+    const questContainer = document.getElementById("quests");
+    if (questContainer) {
+        questContainer.innerHTML = ''; // Vorhandene Quests löschen
+        ladeQuests(); // Quests laden
+    }
+
+    const xpElement = document.getElementById("xp");
+    const levelElement = document.getElementById("level");
+
+    if (xpElement && levelElement) {
+        xpElement.textContent = xp;
+        levelElement.textContent = level;
+    }
+
+    // Zeige Admin Funktionen falls nötig
+    if (isAdmin) {
+        zeigeAdminFunktionen();
     }
 }
 
