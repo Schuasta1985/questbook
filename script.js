@@ -259,14 +259,69 @@ function zeigeLevelUpAnimation() {
     animate();
 }
 
+// Quests laden
+function ladeQuests() {
+    const gespeicherteQuests = localStorage.getItem("quests");
+
+    if (gespeicherteQuests) {
+        const quests = JSON.parse(gespeicherteQuests);
+        const questList = document.getElementById("quests");
+        questList.innerHTML = "";  // Quests vorher löschen
+
+        quests.forEach((quest, index) => {
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `
+                <span class="quest-text"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                <button onclick="questErledigt(${index + 1})">Erledigt</button>
+            `;
+            listItem.setAttribute("data-xp", quest.xp);
+            questList.appendChild(listItem);
+        });
+
+        // Admin-Funktionen anzeigen, falls der Admin eingeloggt ist
+        if (isAdmin) {
+            zeigeAdminFunktionen();
+        }
+    } else {
+        // Wenn keine Quests gespeichert sind, initialisiere sie
+        const defaultQuests = [
+            { beschreibung: "Hausarbeit machen", xp: 10 },
+            { beschreibung: "Einkaufen gehen", xp: 20 },
+            { beschreibung: "Joggen", xp: 15 }
+        ];
+
+        // Speichere die Standardquests, wenn sie nicht existieren
+        localStorage.setItem("quests", JSON.stringify(defaultQuests));
+        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
+    }
+}
+
+// Quest erledigt markieren
+function questErledigt(questNummer) {
+    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
+
+    if (quest) {
+        const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
+        xp += xpWert;
+        aktualisiereXPAnzeige();
+        überprüfeLevelAufstieg();
+
+        quest.style.textDecoration = "line-through";
+        quest.style.opacity = "0.6";
+        const erledigtButton = quest.querySelector("button:not(.edit-button)");
+        if (erledigtButton) {
+            erledigtButton.disabled = true;
+        }
+        speichereGlobalenQuestStatus();
+    }
+}
+
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
     if (questContainer) {
         questContainer.innerHTML = ''; // Vorhandene Quests löschen
-
-        // Beispielquests erstellen
-        ladeQuests();
+        ladeQuests(); // Quests laden
     }
 
     const xpElement = document.getElementById("xp");
@@ -352,26 +407,6 @@ function adminLogin() {
     }
 }
 
-// Quest erledigt markieren
-function questErledigt(questNummer) {
-    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
-
-    if (quest) {
-        const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
-        xp += xpWert;
-        aktualisiereXPAnzeige();
-        überprüfeLevelAufstieg();
-
-        quest.style.textDecoration = "line-through";
-        quest.style.opacity = "0.6";
-        const erledigtButton = quest.querySelector("button:not(.edit-button)");
-        if (erledigtButton) {
-            erledigtButton.disabled = true;
-        }
-        speichereGlobalenQuestStatus();
-    }
-}
-
 // Quests zurücksetzen
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
@@ -384,3 +419,4 @@ function questsZuruecksetzen() {
         ladeQuests(); // Quests neu laden
     }
 }
+
