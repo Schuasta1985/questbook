@@ -205,7 +205,13 @@ function zeigeAvatar() {
     if (avatarElement) {
         const avatarUrl = getAvatarForUser(currentUser);
         avatarElement.src = avatarUrl;
+        avatarElement.style.display = "block";
     }
+}
+
+// Level-Up Animation anzeigen
+function zeigeLevelUpAnimation() {
+    alert(`Glückwunsch! Du hast Level ${level} erreicht!`);
 }
 
 // Admin-Funktionen anzeigen
@@ -348,5 +354,3 @@ function speichereQuestStatus() {
         localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
     }
 }
-
-
