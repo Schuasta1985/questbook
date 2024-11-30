@@ -46,7 +46,7 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
-        ladeGlobalenQuestStatus(); // Lade den globalen Status der Quests
+        ladeGlobalenQuestStatus();
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
@@ -90,7 +90,7 @@ function ladeFortschritte() {
 
 // Quest-Status laden
 function ladeGlobalenQuestStatus() {
-    const gespeicherterQuestStatus = localStorage.getItem("global_questStatus");
+    const gespeicherterQuestStatus = localStorage.getItem("globalQuestStatus");
     if (gespeicherterQuestStatus) {
         const questStatus = JSON.parse(gespeicherterQuestStatus);
         const questItems = document.querySelectorAll("#quests li");
@@ -105,6 +105,19 @@ function ladeGlobalenQuestStatus() {
             }
         });
     }
+}
+
+// Speichern des globalen Quest-Status
+function speichereGlobalenQuestStatus() {
+    const questItems = document.querySelectorAll("#quests li");
+    const questStatus = [];
+
+    questItems.forEach(questItem => {
+        const istErledigt = questItem.style.textDecoration === "line-through";
+        questStatus.push(istErledigt);
+    });
+
+    localStorage.setItem("globalQuestStatus", JSON.stringify(questStatus));
 }
 
 // Ausloggen
@@ -161,6 +174,91 @@ function überprüfeLevelAufstieg() {
     }
 }
 
+// Level-Up Animation
+function zeigeLevelUpAnimation() {
+    const canvas = document.getElementById('level-up-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let progress = 0;
+    const maxProgress = 100;
+    let fireworks = [];
+
+    function createFirework(x, y) {
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: x,
+                y: y,
+                radius: Math.random() * 5 + 2,
+                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                angle: Math.random() * 2 * Math.PI,
+                speed: Math.random() * 5 + 2,
+                life: Math.random() * 50 + 50
+            });
+        }
+        return particles;
+    }
+
+    function drawFireworks() {
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            const p = fireworks[i];
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.x += Math.cos(p.angle) * p.speed;
+            p.y += Math.sin(p.angle) * p.speed;
+            p.life--;
+            if (p.life <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'red');
+        gradient.addColorStop(0.5, 'yellow');
+        gradient.addColorStop(1, 'green');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
+
+        if (progress < maxProgress) {
+            progress += 1;
+            requestAnimationFrame(animate);
+        } else {
+            if (fireworks.length === 0) {
+                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
+            }
+            drawFireworks();
+            if (fireworks.length === 0) {
+                showLevelUp();
+            } else {
+                requestAnimationFrame(animate);
+            }
+        }
+    }
+
+    function showLevelUp() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
+        setTimeout(() => {
+            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
+        }, 2000);
+    }
+
+    canvas.style.display = 'block';
+    animate();
+}
+
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
 function zeigeQuestbook() {
     const questContainer = document.getElementById("quests");
@@ -195,17 +293,6 @@ function getAvatarForUser(user) {
         return "avatars/jamie.mp4";
     }
     return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
-}
-
-function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-    if (!avatarElement) {
-        console.error("Avatar-Element wurde nicht gefunden.");
-        return;
-    }
-    const avatarUrl = getAvatarForUser(currentUser);
-    avatarElement.src = avatarUrl;
-    avatarElement.style.display = "block";  // Avatar sichtbar machen
 }
 
 // Admin-Funktionen anzeigen
@@ -250,60 +337,18 @@ function zeigeAdminFunktionen() {
     }
 }
 
-// Neue Funktion: Alle Quests zurücksetzen (Admin)
-function questsZuruecksetzen() {
-    if (confirm("Möchtest du wirklich alle Quests zurücksetzen, sodass sie wieder verfügbar sind?")) {
-        const questList = document.getElementById("quests").children;
+// Admin-Login (ohne die HTML-Struktur zu überschreiben)
+function adminLogin() {
+    const username = document.getElementById("adminBenutzername").value;
+    const password = document.getElementById("adminPasswort").value;
 
-        for (let quest of questList) {
-            quest.style.textDecoration = "none";
-            quest.style.opacity = "1";
-            const erledigtButton = quest.querySelector("button:not(.edit-button)");
-            if (erledigtButton) {
-                erledigtButton.disabled = false;
-            }
-        }
-
-        // Globalen Status im Speicher löschen
-        localStorage.removeItem("global_questStatus");
-        console.log("Alle Quests wurden zurückgesetzt.");
-    }
-}
-
-// Quests laden
-function ladeQuests() {
-    const gespeicherteQuests = localStorage.getItem("quests");
-
-    if (gespeicherteQuests) {
-        const quests = JSON.parse(gespeicherteQuests);
-        const questList = document.getElementById("quests");
-        questList.innerHTML = "";  // Quests vorher löschen
-
-        quests.forEach((quest, index) => {
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `
-                <span class="quest-text"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-                <button onclick="questErledigt(${index + 1})">Erledigt</button>
-            `;
-            listItem.setAttribute("data-xp", quest.xp);
-            questList.appendChild(listItem);
-        });
-
-        // Admin-Funktionen anzeigen, falls der Admin eingeloggt ist
-        if (isAdmin) {
-            zeigeAdminFunktionen();
-        }
+    if (username === "admin" && password === "1234") {
+        alert("Admin erfolgreich eingeloggt!");
+        isAdmin = true;
+        zeigeQuestbook();
+        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
     } else {
-        // Wenn keine Quests gespeichert sind, initialisiere sie
-        const defaultQuests = [
-            { beschreibung: "Hausarbeit machen", xp: 10 },
-            { beschreibung: "Einkaufen gehen", xp: 20 },
-            { beschreibung: "Joggen", xp: 15 }
-        ];
-
-        // Speichere die Standardquests, wenn sie nicht existieren
-        localStorage.setItem("quests", JSON.stringify(defaultQuests));
-        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
+        alert("Falsche Anmeldedaten!");
     }
 }
 
@@ -323,8 +368,19 @@ function questErledigt(questNummer) {
         if (erledigtButton) {
             erledigtButton.disabled = true;
         }
-
-        // Globalen Queststatus speichern
         speichereGlobalenQuestStatus();
+    }
+}
+
+// Quests zurücksetzen
+function questsZuruecksetzen() {
+    if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
+        const questList = document.getElementById("quests");
+        questList.innerHTML = ""; // Alle Quests aus der UI löschen
+
+        // Speicher löschen
+        localStorage.removeItem("globalQuestStatus");
+        console.log("Alle Quests wurden zurückgesetzt.");
+        ladeQuests(); // Quests neu laden
     }
 }
