@@ -47,9 +47,33 @@ function benutzerAnmeldung() {
         ladeQuestStatus();
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
+
+        // Sichtbarkeit der Abschnitte aktualisieren
+        document.getElementById("xp-counter").style.display = "block";
+        document.getElementById("quests-section").style.display = "block";
+        document.getElementById("logout-button").style.display = "block";
+
+        // Login-Bereich ausblenden
+        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
+}
+
+// Ausloggen
+function ausloggen() {
+    currentUser = null;
+    isAdmin = false;
+    localStorage.removeItem("currentUser");
+
+    // Abschnitte wieder verstecken
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+
+    // Login-Bereich wieder anzeigen
+    document.getElementById("login-section").style.display = "block";
+    zeigeStartseite();
 }
 
 // Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
