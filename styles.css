@@ -132,15 +132,20 @@ button:hover {
 }
 
 #quests li {
-    background: rgba(255, 255, 255, 0.8);  /* Leichter Hintergrund für bessere Lesbarkeit */
+    background: rgba(255, 255, 255, 0.7);  /* Leichter Hintergrund für bessere Lesbarkeit */
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 10px;
     width: 90%;  /* Damit die Quests gleichmäßig wirken */
     max-width: 600px;  /* Maximalbreite, um die Darstellung zu verbessern */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #4E3629;  /* Dunkelbrauner Text für bessere Lesbarkeit */
+    display: flex;
+    justify-content: space-between; /* Platzierung von Text und Button */
+    align-items: center;
 }
 
+/* Button für "Erledigt" am rechten Rand positionieren */
 button.erledigt-button {
     background-color: #4CAF50; /* Grün */
     color: white;
@@ -148,6 +153,7 @@ button.erledigt-button {
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
+    align-self: flex-end;  /* Button am rechten Rand ausrichten */
 }
 
 button.erledigt-button:hover {
