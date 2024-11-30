@@ -1,14 +1,22 @@
 /* Globale Einstellungen */
 body {
-    background: url('avatars/landkarte.png') no-repeat center center fixed;
+    background: url('avatars/deinHintergrundbild.png') no-repeat center center fixed;
     background-size: cover;
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif; /* Moderne und gut lesbare Schriftart */
     color: #ece2b6; /* Sandiges Beige für normalen Text */
+    text-align: center; /* Zentriert den gesamten Text */
 }
 
-/* Überschriften */
-h1, h2, h3 {
-    color: #f8f4e3; /* Elfenbein Weiß für Überschriften */
+/* Überschrift */
+h1 {
+    color: #f8f4e3; /* Elfenbein Weiß */
+    font-size: 3em; /* Größer für bessere Lesbarkeit */
+    margin-top: 50px;
+}
+
+/* Überschriften der Abschnitte */
+h2, h3 {
+    color: #f8f4e3; /* Elfenbein Weiß */
 }
 
 /* Buttons */
@@ -20,6 +28,7 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 1em;
 }
 
 button:hover {
@@ -46,8 +55,32 @@ button:hover {
     border-radius: 10px;
 }
 
-/* Admin-Schaltflächen (z.B. für das Erstellen und Löschen von Quests) */
-#quests button {
+/* Admin-Login */
+#admin-login-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #556b2f;
+    color: #ffd700;
+    padding: 5px 10px;
+    font-size: 0.9em; /* Kleinere Schriftgröße */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#admin-login-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    text-align: left;
+    font-size: 0.9em;
+}
+
+#adminBenutzername, #adminPasswort {
+    width: 100%;
+    padding: 5px;
     margin-top: 5px;
 }
 
@@ -56,4 +89,20 @@ button:hover {
     margin-top: 10px;
     border-radius: 50%;
     border: 3px solid #f8f4e3; /* Elfenbein Weiß als Rahmen um das Avatar-Bild */
+}
+
+/* Anmeldeabschnitt */
+#startseite {
+    margin-top: 20px;
+}
+
+label, input, select {
+    display: block;
+    margin: 10px auto;
+    font-size: 1.2em; /* Schriftgröße anpassen für bessere Lesbarkeit */
+}
+
+/* Buttons im Questbuch-Adminbereich */
+#quests button {
+    margin-top: 5px;
 }
