@@ -187,39 +187,35 @@ function zeigeQuestbook() {
     }
 }
 
-// Avatar anzeigen
 function zeigeAvatar() {
-    const avatarElement = document.getElementById("avatar");
-
-    if (!avatarElement) {
-        console.error("Avatar-Element wurde nicht gefunden.");
+    const avatarContainer = document.getElementById("avatar-container");
+    if (!avatarContainer) {
+        console.error("Avatar-Container wurde nicht gefunden.");
         return;
     }
 
+    // Vorhandenes Video-Element löschen, falls es existiert
+    avatarContainer.innerHTML = "";
+
     const avatarUrl = getAvatarForUser(currentUser);
-
-    if (avatarUrl) {
-        console.log("Avatar URL: ", avatarUrl); // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
-        avatarElement.src = avatarUrl;          // Avatar URL setzen
-        avatarElement.style.display = "block";  // Avatar sichtbar machen
-    } else {
-        console.error("Kein Avatar gefunden für Benutzer: ", currentUser);
+    if (!avatarUrl) {
+        console.error("Kein Avatar für den Benutzer verfügbar.");
+        return;
     }
+
+    // Neues Video-Element erstellen und einfügen
+    const videoElement = document.createElement("video");
+    videoElement.src = avatarUrl;
+    videoElement.autoplay = true;
+    videoElement.loop = true;
+    videoElement.muted = true; // Damit es ohne Sound abgespielt wird
+    videoElement.width = 100; // Passe die Größe nach Bedarf an
+    videoElement.height = 100; // Passe die Größe nach Bedarf an
+    videoElement.style.borderRadius = "50%";
+
+    avatarContainer.appendChild(videoElement);
 }
 
-// Avatar für Benutzer festlegen
-function getAvatarForUser(user) {
-    if (user === "Thomas") {
-        return "avatars/thomas.mp4";
-    } else if (user === "Elke") {
-        return "avatars/elke.mp4";
-    } else if (user === "Jamie") {
-        return "avatars/jamie.mp4";
-    } else if (user === "Massel") {
-        return "avatars/massel.mp4";
-    }
-    return null; // Kein Avatar gefunden
-}
 
 
 // Level-Up-Animation mit Explosion
