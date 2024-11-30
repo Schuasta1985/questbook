@@ -40,6 +40,26 @@ function zeigeStartseite() {
         `;
     }
 }
+// Quest-Status laden
+function ladeQuestStatus() {
+    if (currentUser) {
+        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+        if (gespeicherterQuestStatus) {
+            const questStatus = JSON.parse(gespeicherterQuestStatus);
+            const questItems = document.querySelectorAll("#quests li");
+            questItems.forEach((questItem, index) => {
+                if (questStatus[index]) {
+                    questItem.style.textDecoration = "line-through";
+                    questItem.style.opacity = "0.6";
+                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                    if (erledigtButton) {
+                        erledigtButton.disabled = true;
+                    }
+                }
+            });
+        }
+    }
+}
 
 function benutzerAnmeldung() {
     console.log("Anmeldefunktion wurde aufgerufen");
