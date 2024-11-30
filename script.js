@@ -41,10 +41,12 @@ function zeigeStartseite() {
     }
 }
 
-// Benutzeranmeldung
 function benutzerAnmeldung() {
+    console.log("Anmeldefunktion wurde aufgerufen");
     const benutzername = document.getElementById("benutzerDropdown").value;
+    console.log("Benutzername ausgewählt: ", benutzername);
     const passwort = document.getElementById("benutzerPasswort").value;
+    console.log("Passwort eingegeben: ", passwort);
 
     const benutzerPasswoerter = {
         Thomas: "passwort1",
@@ -54,6 +56,7 @@ function benutzerAnmeldung() {
     };
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
+        console.log("Anmeldung erfolgreich");
         currentUser = benutzername;
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
@@ -70,9 +73,11 @@ function benutzerAnmeldung() {
         // Login-Bereich ausblenden
         document.getElementById("login-section").style.display = "none";
     } else {
+        console.log("Anmeldung fehlgeschlagen");
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
+
 
 // Ausloggen
 function ausloggen() {
