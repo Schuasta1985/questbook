@@ -55,7 +55,6 @@ function zeigeLevelUpAnimation() {
     canvas.height = window.innerHeight;
 
     let progress = 0;
-    let explosionRadius = 0;
     const maxProgress = 100;
     let fireworks = [];
 
@@ -101,28 +100,18 @@ function zeigeLevelUpAnimation() {
         ctx.fillStyle = gradient;
         ctx.fillRect(100, canvas.height / 2 - 20, (progress / maxProgress) * (canvas.width - 200), 40);
 
-        if (progress === maxProgress) {
-            drawFireworks();
+        if (progress >= maxProgress) {
             if (fireworks.length === 0) {
                 fireworks = createFirework(canvas.width / 2, canvas.height / 2);
             }
-            explosionRadius += 5;
+            drawFireworks();
             if (fireworks.length === 0) {
                 showLevelUp();
                 return;
             }
-        }
-
-        progress += 1;
-        if (progress < maxProgress) {
-            requestAnimationFrame(animate);
         } else {
-            requestAnimationFrame(() => {
-                drawFireworks();
-                if (fireworks.length > 0) {
-                    requestAnimationFrame(animate);
-                }
-            });
+            progress += 1;
+            requestAnimationFrame(animate);
         }
     }
 
@@ -133,7 +122,7 @@ function zeigeLevelUpAnimation() {
         ctx.textAlign = "center";
         ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
         setTimeout(() => {
-            canvas.style.display = 'none';
+            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
         }, 2000);
     }
 
