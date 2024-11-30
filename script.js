@@ -62,23 +62,33 @@ function benutzerAnmeldung() {
     }
 }
 
-// Ausloggen
-function ausloggen() {
-    currentUser = null;
-    isAdmin = false;
-    localStorage.removeItem("currentUser");
-
-    // Abschnitte wieder verstecken
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
-
-    // Login-Bereich wieder anzeigen
-    document.getElementById("login-section").style.display = "block";
-    zeigeStartseite();
+// Avatar für Benutzer festlegen
+function getAvatarForUser(user) {
+    if (user === "Thomas") {
+        return "avatars/thomas.mp4";
+    } else if (user === "Elke") {
+        return "avatars/elke.mp4";
+    } else if (user === "Jamie") {
+        return "avatars/jamie.mp4";
+    }
+    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
 }
 
-// Fortschritte speichern (nur eine Version dieser Funktion behalten)
+// Avatar anzeigen
+function zeigeAvatar() {
+    const avatarContainer = document.getElementById("avatar-container");
+    if (!avatarContainer) {
+        console.error("Avatar-Container wurde nicht gefunden.");
+        return;
+    }
+
+    const avatarUrl = getAvatarForUser(currentUser);
+    console.log("Avatar URL: ", avatarUrl);  // Debug: Überprüfen, ob der richtige Pfad ausgegeben wird
+
+    avatarContainer.innerHTML = `<video src="${avatarUrl}" autoplay loop muted width="150"></video>`;
+}
+
+// Fortschritte speichern
 function speichereFortschritte() {
     if (currentUser) {
         localStorage.setItem(`${currentUser}_xp`, xp);
@@ -102,6 +112,43 @@ function ladeFortschritte() {
 
         aktualisiereXPAnzeige();
     }
+}
+
+// Quest-Status laden
+function ladeQuestStatus() {
+    if (currentUser) {
+        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+        if (gespeicherterQuestStatus) {
+            const questStatus = JSON.parse(gespeicherterQuestStatus);
+            const questItems = document.querySelectorAll("#quests li");
+            questItems.forEach((questItem, index) => {
+                if (questStatus[index]) {
+                    questItem.style.textDecoration = "line-through";
+                    questItem.style.opacity = "0.6";
+                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                    if (erledigtButton) {
+                        erledigtButton.disabled = true;
+                    }
+                }
+            });
+        }
+    }
+}
+
+// Ausloggen
+function ausloggen() {
+    currentUser = null;
+    isAdmin = false;
+    localStorage.removeItem("currentUser");
+
+    // Abschnitte wieder verstecken
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+
+    // Login-Bereich wieder anzeigen
+    document.getElementById("login-section").style.display = "block";
+    zeigeStartseite();
 }
 
 // XP-Anzeige und Level-Up überprüfen
@@ -142,24 +189,17 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Quest-Status laden
-function ladeQuestStatus() {
-    if (currentUser) {
-        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-        if (gespeicherterQuestStatus) {
-            const questStatus = JSON.parse(gespeicherterQuestStatus);
-            const questItems = document.querySelectorAll("#quests li");
-            questItems.forEach((questItem, index) => {
-                if (questStatus[index]) {
-                    questItem.style.textDecoration = "line-through";
-                    questItem.style.opacity = "0.6";
-                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                    if (erledigtButton) {
-                        erledigtButton.disabled = true;
-                    }
-                }
-            });
-        }
+// Animation bei Level-Up anzeigen
+function zeigeLevelUpAnimation() {
+    const avatarContainer = document.getElementById('avatar-container');
+    if (avatarContainer) {
+        avatarContainer.innerHTML += '<div class="level-up-animation">Level Up!</div>';
+        setTimeout(() => {
+            const animationElement = avatarContainer.querySelector('.level-up-animation');
+            if (animationElement) {
+                animationElement.remove();
+            }
+        }, 2000);
     }
 }
 
@@ -186,114 +226,6 @@ function zeigeQuestbook() {
         zeigeAdminFunktionen();
     }
 }
-
-function zeigeAvatar() {
-    const avatarContainer = document.getElementById("avatar-container");
-    if (!avatarContainer) {
-        console.error("Avatar-Container wurde nicht gefunden.");
-        return;
-    }
-
-    // Vorhandenes Video-Element löschen, falls es existiert
-    avatarContainer.innerHTML = "";
-
-    const avatarUrl = getAvatarForUser(currentUser);
-    if (!avatarUrl) {
-        console.error("Kein Avatar für den Benutzer verfügbar.");
-        return;
-    }
-
-    // Neues Video-Element erstellen und einfügen
-    const videoElement = document.createElement("video");
-    videoElement.src = avatarUrl;
-    videoElement.autoplay = true;
-    videoElement.loop = true;
-    videoElement.muted = true; // Damit es ohne Sound abgespielt wird
-    videoElement.width = 100; // Passe die Größe nach Bedarf an
-    videoElement.height = 100; // Passe die Größe nach Bedarf an
-    videoElement.style.borderRadius = "50%";
-
-    avatarContainer.appendChild(videoElement);
-}
-
-
-
-// Level-Up-Animation mit Explosion
-function zeigeLevelUpAnimation() {
-    const canvas = document.getElementById('level-up-canvas');
-    const ctx = canvas.getContext('2d');
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let fireworks = [];
-
-    // Erstelle ein Feuerwerk
-    function createFirework(x, y) {
-        const particles = [];
-        for (let i = 0; i < 100; i++) {
-            particles.push({
-                x: x,
-                y: y,
-                radius: Math.random() * 5 + 2,
-                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                angle: Math.random() * 2 * Math.PI,
-                speed: Math.random() * 5 + 2,
-                life: Math.random() * 50 + 50
-            });
-        }
-        return particles;
-    }
-
-    // Zeichne das Feuerwerk
-    function drawFireworks() {
-        for (let i = fireworks.length - 1; i >= 0; i--) {
-            const p = fireworks[i];
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
-            ctx.fill();
-            p.x += Math.cos(p.angle) * p.speed;
-            p.y += Math.sin(p.angle) * p.speed;
-            p.life--;
-            if (p.life <= 0) {
-                fireworks.splice(i, 1);
-            }
-        }
-    }
-
-    // Animation des Feuerwerks
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (fireworks.length === 0) {
-            fireworks = createFirework(canvas.width / 2, canvas.height / 2);
-        }
-        drawFireworks();
-
-        if (fireworks.length > 0) {
-            requestAnimationFrame(animate);
-        } else {
-            showLevelUpText();
-        }
-    }
-
-    // Zeige den Level-Up-Text an
-    function showLevelUpText() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "100px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
-        setTimeout(() => {
-            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
-        }, 2000);
-    }
-
-    canvas.style.display = 'block';
-    animate();
-}
-
 
 // Admin-Funktionen anzeigen
 function zeigeAdminFunktionen() {
