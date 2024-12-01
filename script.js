@@ -178,20 +178,24 @@ function aktualisiereXPAnzeige() {
         levelElement.textContent = level;
     }
 
-    // Fortschrittsbalken zum nächsten Level
+   // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
+    const xpLabelElement = document.getElementById("xp-label");
 
     if (xpProgressElement) {
         const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
-        document.getElementById("xp-label").textContent = `Noch ${xpFürLevelUp - xp} XP bis zum nächsten Level`;
+    }
+
+    // Sicherheitsüberprüfung, bevor der Text des XP-Labels gesetzt wird
+    if (xpLabelElement) {
+        xpLabelElement.textContent = `Noch ${xpFürLevelUp - xp} XP bis zum nächsten Level`;
     }
 
     überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
     speichereFortschritte();
 }
-
 // Level-Aufstieg überprüfen
 function überprüfeLevelAufstieg() {
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
@@ -203,7 +207,6 @@ function überprüfeLevelAufstieg() {
         zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
     }
 }
-
 // Level-Up Animation mit schwarzem Hintergrund
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
@@ -300,6 +303,7 @@ function zeigeLevelUpAnimation() {
 
     animate();
 }
+
 
 // Quests erledigen
 function questErledigt(questNummer) {
