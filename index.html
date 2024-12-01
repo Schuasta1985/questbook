@@ -16,10 +16,15 @@
     <!-- Login Section -->
     <section id="login-section"></section>
 
-    <!-- XP Counter (angepasst für bessere Sichtbarkeit) -->
-    <div id="xp-bar-container" style="display: none;">
-        <div id="xp-progress"></div>
-        <div id="xp-text">Noch 100 XP bis zum nächsten Level-Up</div>
+    <!-- XP und Level Anzeige -->
+    <div id="xp-counter" style="display: none;">
+        <div id="xp-level-container">
+            <p id="level-display">Level: <span id="level"></span></p>
+        </div>
+        <div id="xp-bar-container">
+            <div id="xp-progress"></div>
+            <div id="xp-label">Noch 100 XP bis zum nächsten Level-Up</div>
+        </div>
     </div>
 
     <!-- Quests-Abschnitt -->
@@ -28,7 +33,7 @@
         <ul id="quests"></ul>
     </div>
 
-    <!-- Avatar-Container (nach den Quests platzieren) -->
+    <!-- Avatar-Container -->
     <div id="avatar-container"></div>
 
     <!-- Canvas für Level-Up Animation -->
