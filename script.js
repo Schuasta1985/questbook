@@ -1,15 +1,15 @@
 // Globale Variablen für XP, Level und Benutzerstatus
-let xp = 0; // Nur EINMAL deklarieren
+let xp = 0;
 let level = 1;
 let currentUser = null;
-let isAdmin = false; // Admin Login Status
+let isAdmin = false;
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
-    zeigeStartseite(); // Zeigt nur die Login-Seite
+    zeigeStartseite();
 };
 
-// Startseite anzeigen, ohne das gesamte HTML zu überschreiben
+// Startseite anzeigen
 function zeigeStartseite() {
     const loginSection = document.getElementById("login-section");
 
@@ -48,46 +48,26 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         ladeGlobalenQuestStatus();
         zeigeQuestbook();
-        zeigeAvatar(); // Avatar anzeigen
+        zeigeAvatar();
 
-        // Sichtbarkeit der Abschnitte aktualisieren, wenn sie vorhanden sind
-        const xpCounter = document.getElementById("xp-counter");
-        const questsSection = document.getElementById("quests-section");
-        const logoutButton = document.getElementById("logout-button");
-        
-        if (xpCounter) {
-            xpCounter.style.display = "block";
-        }
-        
-        if (questsSection) {
-            questsSection.style.display = "block";
-        }
-
-        if (logoutButton) {
-            logoutButton.style.display = "block";
-        }
-
-        // Login-Bereich ausblenden
-        const loginSection = document.getElementById("login-section");
-        if (loginSection) {
-            loginSection.style.display = "none";
-        }
+        document.getElementById("xp-counter").style.display = "block";
+        document.getElementById("quests-section").style.display = "block";
+        document.getElementById("logout-button").style.display = "block";
+        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
     isAdmin = false;
     localStorage.removeItem("currentUser");
 
-    // Abschnitte wieder verstecken
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
-
-    // Login-Bereich wieder anzeigen
     document.getElementById("login-section").style.display = "block";
     zeigeStartseite();
 }
@@ -118,7 +98,7 @@ function getAvatarForUser(user) {
     } else if (user === "Jamie") {
         return "avatars/jamie.mp4";
     }
-    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter-Avatar
+    return "https://via.placeholder.com/100?text=Avatar";
 }
 
 // Fortschritte speichern
@@ -181,33 +161,26 @@ function speichereGlobalenQuestStatus() {
 
 // XP-Anzeige und Level-Up überprüfen
 function aktualisiereXPAnzeige() {
-    const xpElement = document.getElementById('xp');
     const levelElement = document.getElementById('level');
-
-    if (xpElement) {
-        xpElement.textContent = xp;
-    }
+    const xpProgressElement = document.getElementById('xp-progress');
+    const xpLabelElement = document.getElementById("xp-label");
 
     if (levelElement) {
         levelElement.textContent = level;
     }
 
-    // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
-    const xpProgressElement = document.getElementById('xp-progress');
-    const xpLabelElement = document.getElementById("xp-label");
 
     if (xpProgressElement) {
-        const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
+        const progress = Math.min((xp / xpFürLevelUp) * 100, 100);
         xpProgressElement.style.width = `${progress}%`;
     }
 
-    // Sicherheitsüberprüfung, bevor der Text des XP-Labels gesetzt wird
     if (xpLabelElement) {
         xpLabelElement.textContent = `Noch ${xpFürLevelUp - xp} XP bis zum nächsten Level`;
     }
 
-    überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
+    überprüfeLevelAufstieg();
     speichereFortschritte();
 }
 
@@ -219,7 +192,7 @@ function überprüfeLevelAufstieg() {
         xp -= xpFürLevelUp;
         level++;
         aktualisiereXPAnzeige();
-        zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
+        zeigeLevelUpAnimation();
     }
 }
 
@@ -240,7 +213,6 @@ function zeigeLevelUpAnimation() {
         return;
     }
 
-    // Schwarzer Hintergrund
     canvas.style.display = 'block';
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -283,8 +255,6 @@ function zeigeLevelUpAnimation() {
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Zeichne schwarzen Hintergrund erneut
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -313,7 +283,7 @@ function zeigeLevelUpAnimation() {
         ctx.textAlign = "center";
         ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
         setTimeout(() => {
-            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
+            canvas.style.display = 'none';
         }, 2000);
     }
 
@@ -336,7 +306,7 @@ function questErledigt(questNummer) {
         if (erledigtButton) {
             erledigtButton.disabled = true;
         }
-        speichereGlobalenQuestStatus(); // Speichern, damit die Quest auch beim erneuten Einloggen als erledigt markiert bleibt
+        speichereGlobalenQuestStatus();
     }
 }
 
@@ -347,7 +317,7 @@ function ladeQuests() {
     if (gespeicherteQuests) {
         const quests = JSON.parse(gespeicherteQuests);
         const questList = document.getElementById("quests");
-        questList.innerHTML = "";  // Quests vorher löschen
+        questList.innerHTML = "";
 
         quests.forEach((quest, index) => {
             const listItem = document.createElement("li");
@@ -359,41 +329,25 @@ function ladeQuests() {
             questList.appendChild(listItem);
         });
 
-        // Admin-Funktionen anzeigen, falls der Admin eingeloggt ist
         if (isAdmin) {
             zeigeAdminFunktionen();
         }
     } else {
-        // Wenn keine Quests gespeichert sind, initialisiere sie
         const defaultQuests = [
             { beschreibung: "Hausarbeit machen", xp: 10 },
             { beschreibung: "Einkaufen gehen", xp: 20 },
             { beschreibung: "Joggen", xp: 15 }
         ];
 
-        // Speichere die Standardquests, wenn sie nicht existieren
         localStorage.setItem("quests", JSON.stringify(defaultQuests));
-        ladeQuests();  // Jetzt laden wir die gespeicherten Quests
+        ladeQuests();
     }
 }
 
-// Questbuch anzeigen ohne Überschreiben des gesamten Body-Inhalts
+// Questbuch anzeigen
 function zeigeQuestbook() {
-    const questContainer = document.getElementById("quests");
-    if (questContainer) {
-        questContainer.innerHTML = ''; // Vorhandene Quests löschen
-        ladeQuests(); // Quests laden
-    }
-
-    const xpElement = document.getElementById("xp");
-    const levelElement = document.getElementById("level");
-
-    if (xpElement && levelElement) {
-        xpElement.textContent = xp;
-        levelElement.textContent = level;
-    }
-
-    // Zeige Admin Funktionen falls nötig
+    ladeQuests();
+    aktualisiereXPAnzeige();
     if (isAdmin) {
         zeigeAdminFunktionen();
     }
@@ -408,7 +362,7 @@ function adminLogin() {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         zeigeQuestbook();
-        zeigeAdminFunktionen();  // Zeige die Admin-Funktionen an
+        zeigeAdminFunktionen();
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -428,11 +382,8 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        // Überprüfe, ob der Container bereits Schaltflächen enthält, bevor neue hinzugefügt werden
         if (!document.getElementById("admin-buttons-container")) {
             const questbookContainer = document.getElementById("quests");
-
-            // Erstelle einen Container für die Admin-Schaltflächen
             const adminButtonsContainer = document.createElement("div");
             adminButtonsContainer.id = "admin-buttons-container";
 
@@ -446,11 +397,8 @@ function zeigeAdminFunktionen() {
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
-            // Füge die Schaltflächen zum Container hinzu
             adminButtonsContainer.appendChild(createButton);
             adminButtonsContainer.appendChild(deleteButton);
-
-            // Füge den Container zum Quests-Bereich hinzu
             questbookContainer.appendChild(adminButtonsContainer);
         }
     }
@@ -475,11 +423,10 @@ function neueQuestErstellen() {
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
         const questList = document.getElementById("quests");
-        questList.innerHTML = ""; // Alle Quests aus der UI löschen
+        questList.innerHTML = "";
 
-        // Speicher löschen
         localStorage.removeItem("globalQuestStatus");
         console.log("Alle Quests wurden zurückgesetzt.");
-        ladeQuests(); // Quests neu laden
+        ladeQuests();
     }
 }
