@@ -178,7 +178,7 @@ function aktualisiereXPAnzeige() {
         levelElement.textContent = level;
     }
 
-   // Fortschrittsbalken zum nächsten Level
+    // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
     const xpLabelElement = document.getElementById("xp-label");
@@ -196,6 +196,7 @@ function aktualisiereXPAnzeige() {
     überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
     speichereFortschritte();
 }
+
 // Level-Aufstieg überprüfen
 function überprüfeLevelAufstieg() {
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
@@ -207,6 +208,7 @@ function überprüfeLevelAufstieg() {
         zeigeLevelUpAnimation();  // Level-Up Animation aufrufen
     }
 }
+// Level-Up Animation mit schwarzem Hintergrund
 // Level-Up Animation mit schwarzem Hintergrund
 function zeigeLevelUpAnimation() {
     const canvas = document.getElementById('level-up-canvas');
@@ -304,6 +306,22 @@ function zeigeLevelUpAnimation() {
     animate();
 }
 
+    function showLevelUp() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = "100px Arial";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
+        setTimeout(() => {
+            canvas.style.display = 'none';  // Das Canvas wird ausgeblendet, nachdem die Level-Up-Anzeige angezeigt wurde
+        }, 2000);
+    }
+
+    animate();
+}
+
 
 // Quests erledigen
 function questErledigt(questNummer) {
@@ -373,8 +391,11 @@ function zeigeQuestbook() {
     const xpElement = document.getElementById("xp");
     const levelElement = document.getElementById("level");
 
-    if (xpElement && levelElement) {
+    if (xpElement) {
         xpElement.textContent = xp;
+    }
+
+    if (levelElement) {
         levelElement.textContent = level;
     }
 
@@ -383,7 +404,6 @@ function zeigeQuestbook() {
         zeigeAdminFunktionen();
     }
 }
-
 // Admin Login
 function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
