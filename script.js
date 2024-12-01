@@ -1,5 +1,5 @@
 // Globale Variablen für XP, Level und Benutzerstatus
-let xp = 0;  // Nur EINMAL deklarieren
+let xp = 0; // Nur EINMAL deklarieren
 let level = 1;
 let currentUser = null;
 let isAdmin = false; // Admin Login Status
@@ -50,28 +50,13 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar(); // Avatar anzeigen
 
-        // Überprüfe, ob die Elemente existieren, bevor wir darauf zugreifen
-        const xpCounter = document.getElementById("xp-counter");
-        const questsSection = document.getElementById("quests-section");
-        const logoutButton = document.getElementById("logout-button");
-
-        if (xpCounter) {
-            xpCounter.style.display = "block";
-        }
-
-        if (questsSection) {
-            questsSection.style.display = "block";
-        }
-
-        if (logoutButton) {
-            logoutButton.style.display = "block";
-        }
+        // Sichtbarkeit der Abschnitte aktualisieren
+        document.getElementById("xp-counter").style.display = "block";
+        document.getElementById("quests-section").style.display = "block";
+        document.getElementById("logout-button").style.display = "block";
 
         // Login-Bereich ausblenden
-        const loginSection = document.getElementById("login-section");
-        if (loginSection) {
-            loginSection.style.display = "none";
-        }
+        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -196,16 +181,11 @@ function aktualisiereXPAnzeige() {
     // Fortschrittsbalken zum nächsten Level
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
     const xpProgressElement = document.getElementById('xp-progress');
-    const xpLabel = document.getElementById('xp-label');
 
     if (xpProgressElement) {
         const progress = Math.min((xp / xpFürLevelUp) * 100, 100); // Sicherstellen, dass der Fortschritt nicht über 100% geht
         xpProgressElement.style.width = `${progress}%`;
-
-        if (xpLabel) {
-            const xpRemaining = xpFürLevelUp - xp;
-            xpLabel.textContent = `Noch ${xpRemaining} XP bis zum nächsten Level-Up`;
-        }
+        document.getElementById("xp-label").textContent = `Noch ${xpFürLevelUp - xp} XP bis zum nächsten Level`;
     }
 
     überprüfeLevelAufstieg(); // Überprüfen, ob Level-Up erforderlich ist
