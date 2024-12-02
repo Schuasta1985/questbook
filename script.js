@@ -236,6 +236,7 @@ function questErledigt(questNummer) {
         xp += xpWert;
         aktualisiereXPAnzeige();
         überprüfeLevelAufstieg();
+        speichereFortschritte(); // Verschiebe dies hierhin
 
         quest.style.display = "none"; // Quest ausblenden, wenn erledigt
         speichereGlobalenQuestStatus();
@@ -341,6 +342,7 @@ function zeigeAdminFunktionen() {
     }
 }
 
+
 // Neue Quest erstellen
 function neueQuestErstellen() {
     const questBeschreibung = prompt("Gib die Beschreibung der neuen Quest ein:");
@@ -353,15 +355,6 @@ function neueQuestErstellen() {
         ladeQuests();
     } else {
         alert("Ungültige Eingabe. Bitte versuche es erneut.");
-    }
-}
-
-// Quests zurücksetzen
-function questsZuruecksetzen() {
-    if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        localStorage.removeItem("quests");
-        console.log("Alle Quests wurden zurückgesetzt.");
-        ladeQuests();
     }
 }
 
