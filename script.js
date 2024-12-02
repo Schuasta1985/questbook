@@ -196,82 +196,33 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Level-Up Animation mit schwarzem Hintergrund
+// Level-Up Animation mit Video im Vollbildmodus
 function zeigeLevelUpAnimation() {
-    const canvas = document.getElementById('level-up-canvas');
-    if (!canvas) {
-        console.error("Canvas für Level-Up-Animation nicht gefunden.");
-        return;
-    }
+    const videoContainer = document.createElement('div');
+    videoContainer.id = 'level-up-video-container';
+    videoContainer.style.position = 'fixed';
+    videoContainer.style.top = '0';
+    videoContainer.style.left = '0';
+    videoContainer.style.width = '100%';
+    videoContainer.style.height = '100%';
+    videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Schwarzer, leicht transparenter Hintergrund
+    videoContainer.style.zIndex = '1000'; // Sicherstellen, dass es über allem anderen angezeigt wird
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const video = document.createElement('video');
+    video.src = 'avatars/lvlup.mp4';
+    video.autoplay = true;
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.objectFit = 'cover';
+    video.style.opacity = '0.9'; // Leicht transparent
+    video.onended = () => {
+        document.body.removeChild(videoContainer); // Entfernen des Videos nach Ende der Wiedergabe
+    };
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.error("Canvas-Kontext nicht verfügbar.");
-        return;
-    }
+    videoContainer.appendChild(video);
+    document.body.appendChild(videoContainer);
+}
 
-    canvas.style.display = 'block';
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    let progress = 0;
-    const maxProgress = 100;
-    let fireworks = [];
-
-    function createFirework(x, y) {
-        const particles = [];
-        for (let i = 0; i < 100; i++) {
-            particles.push({
-                x: x,
-                y: y,
-                radius: Math.random() * 5 + 2,
-                color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                angle: Math.random() * 2 * Math.PI,
-                speed: Math.random() * 5 + 2,
-                life: Math.random() * 50 + 50
-            });
-        }
-        return particles;
-    }
-
-    function drawFireworks() {
-        for (let i = fireworks.length - 1; i >= 0; i--) {
-            const p = fireworks[i];
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
-            ctx.fill();
-            p.x += Math.cos(p.angle) * p.speed;
-            p.y += Math.sin(p.angle) * p.speed;
-            p.life--;
-            if (p.life <= 0) {
-                fireworks.splice(i, 1);
-            }
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        if (progress < maxProgress) {
-            progress += 1;
-            requestAnimationFrame(animate);
-        } else {
-            if (fireworks.length === 0) {
-                fireworks = createFirework(canvas.width / 2, canvas.height / 2);
-            }
-            drawFireworks();
-            if (fireworks.length === 0) {
-                showLevelUp();
-            } else {
-                requestAnimationFrame(animate);
-            }
-        }
     }
 
     function showLevelUp() {
