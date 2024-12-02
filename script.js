@@ -223,24 +223,6 @@ function zeigeLevelUpAnimation() {
     document.body.appendChild(videoContainer);
 }
 
-    }
-
-    function showLevelUp() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "100px Arial";
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.fillText(`Level ${level}`, canvas.width / 2, canvas.height / 2);
-        setTimeout(() => {
-            canvas.style.display = 'none';
-        }, 2000);
-    }
-
-    animate();
-}
-
 // Quests erledigen
 function questErledigt(questNummer) {
     const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
