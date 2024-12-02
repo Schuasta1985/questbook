@@ -8,7 +8,6 @@ let isAdmin = false;
 window.onload = function () {
     zeigeStartseite();
     ladeQuests(); // Quests beim Laden der Seite anzeigen
-    zeigeAdminLogin(); // Admin Login anzeigen
 };
 
 // Startseite anzeigen
@@ -60,25 +59,10 @@ function benutzerAnmeldung() {
     }
 }
 
-// Admin Login anzeigen
-function zeigeAdminLogin() {
-    const adminLoginSection = document.createElement('div');
-    adminLoginSection.id = 'admin-login-section';
-    adminLoginSection.style.position = 'fixed';
-    adminLoginSection.style.bottom = '10px';
-    adminLoginSection.style.right = '10px';
-    adminLoginSection.innerHTML = `
-        <input type="text" id="adminUsername" placeholder="Admin Benutzername">
-        <input type="password" id="adminPassword" placeholder="Passwort">
-        <button onclick="adminLogin()">Admin Anmelden</button>
-    `;
-    document.body.appendChild(adminLoginSection);
-}
-
 // Admin Login
 function adminLogin() {
-    const username = document.getElementById("adminUsername").value;
-    const password = document.getElementById("adminPassword").value;
+    const username = document.getElementById("adminBenutzername").value;
+    const password = document.getElementById("adminPasswort").value;
 
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
