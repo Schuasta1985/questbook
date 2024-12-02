@@ -215,12 +215,14 @@ function zeigeLevelUpAnimation() {
     video.style.height = '100%';
     video.style.objectFit = 'cover';
     video.style.opacity = '0.9'; // Leicht transparent
-    video.onended = () => {
-        document.body.removeChild(videoContainer); // Entfernen des Videos nach Ende der Wiedergabe
-    };
 
     videoContainer.appendChild(video);
     document.body.appendChild(videoContainer);
+
+    // Das Video nach 10 Sekunden automatisch entfernen
+    setTimeout(() => {
+        document.body.removeChild(videoContainer);
+    }, 10000); // 10 Sekunden in Millisekunden
 }
 
 // Quests erledigen
