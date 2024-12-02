@@ -26,6 +26,12 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
+            <br>
+            <label for="adminBenutzername">Admin Benutzername:</label>
+            <input type="text" id="adminBenutzername" placeholder="Admin Benutzername eingeben">
+            <label for="adminPasswort">Admin Passwort:</label>
+            <input type="password" id="adminPasswort" placeholder="Admin Passwort eingeben">
+            <button onclick="adminLogin()">Admin Anmelden</button>
         `;
     }
 }
@@ -293,14 +299,12 @@ function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
 
-    console.log("Admin Benutzername:", username);
-    console.log("Admin Passwort:", password);
-
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
+        currentUser = username; // Setze currentUser auf den Admin-Benutzernamen
         isAdmin = true;
+        localStorage.setItem("currentUser", currentUser);
         zeigeQuestbook();
-        zeigeAdminFunktionen();
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -341,7 +345,6 @@ function zeigeAdminFunktionen() {
         }
     }
 }
-
 
 // Neue Quest erstellen
 function neueQuestErstellen() {
