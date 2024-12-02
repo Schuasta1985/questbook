@@ -89,7 +89,6 @@ function adminLogin() {
         alert("Falsche Anmeldedaten!");
     }
 }
-
 // Ausloggen
 function ausloggen() {
     currentUser = null;
