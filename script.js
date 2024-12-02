@@ -222,7 +222,7 @@ function zeigeLevelUpAnimation() {
     // Das Video nach 10 Sekunden automatisch entfernen
     setTimeout(() => {
         document.body.removeChild(videoContainer);
-    }, 10000); // 10 Sekunden in Millisekunden
+    }, 5000); // 10 Sekunden in Millisekunden
 }
 
 // Quests erledigen
