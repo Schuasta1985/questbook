@@ -292,6 +292,9 @@ function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
 
+    console.log("Admin Benutzername:", username);
+    console.log("Admin Passwort:", password);
+
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
