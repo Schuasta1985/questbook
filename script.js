@@ -201,6 +201,7 @@ function überprüfeLevelAufstieg() {
 }
 
 // Level-Up Animation mit Video im Vollbildmodus
+// Level-Up Animation mit Video im Vollbildmodus und zeitgesteuerter Entfernung
 function zeigeLevelUpAnimation() {
     const videoContainer = document.createElement('div');
     videoContainer.id = 'level-up-video-container';
@@ -223,11 +224,16 @@ function zeigeLevelUpAnimation() {
     videoContainer.appendChild(video);
     document.body.appendChild(videoContainer);
 
-    // Das Video nach 10 Sekunden automatisch entfernen
+    // Das Video nach der angegebenen Zeit automatisch entfernen (z.B. nach 10 Sekunden)
+    const videoEndeZeit = 10000; // Zeit in Millisekunden (10 Sekunden)
     setTimeout(() => {
-        document.body.removeChild(videoContainer);
-    }, 5000); // 10 Sekunden in Millisekunden
+        if (videoContainer && document.body.contains(videoContainer)) {
+            video.pause(); // Das Video anhalten
+            document.body.removeChild(videoContainer);
+        }
+    }, videoEndeZeit);
 }
+
 
 // Quests erledigen
 function questErledigt(questNummer) {
