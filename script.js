@@ -135,12 +135,7 @@ function ladeGlobalenQuestStatus() {
             const questItems = document.querySelectorAll("#quests li");
             questItems.forEach((questItem, index) => {
                 if (questStatus[index] && questStatus[index].erledigt) {
-                    questItem.style.textDecoration = "line-through";
-                    questItem.style.opacity = "0.6";
-                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                    if (erledigtButton) {
-                        erledigtButton.disabled = true;
-                    }
+                    questItem.style.display = "none"; // Quest ausblenden, wenn erledigt
                 }
             });
         }
@@ -154,7 +149,7 @@ function speichereGlobalenQuestStatus() {
         const questStatus = [];
 
         questItems.forEach((questItem) => {
-            const istErledigt = questItem.style.textDecoration === "line-through";
+            const istErledigt = questItem.style.display === "none";
             questStatus.push({ erledigt: istErledigt });
         });
 
@@ -242,12 +237,7 @@ function questErledigt(questNummer) {
         aktualisiereXPAnzeige();
         überprüfeLevelAufstieg();
 
-        quest.style.textDecoration = "line-through";
-        quest.style.opacity = "0.6";
-        const erledigtButton = quest.querySelector("button:not(.edit-button)");
-        if (erledigtButton) {
-            erledigtButton.disabled = true;
-        }
+        quest.style.display = "none"; // Quest ausblenden, wenn erledigt
         speichereGlobalenQuestStatus();
     }
 }
@@ -373,4 +363,10 @@ function questsZuruecksetzen() {
         console.log("Alle Quests wurden zurückgesetzt.");
         ladeQuests();
     }
+}
+
+// Funktion zum Bearbeiten von Quests (Platzhalter)
+function questBearbeiten(questNummer) {
+    // Hier kommt der Code zum Bearbeiten einer Quest
+    console.log('Bearbeiten der Quest', questNummer);
 }
