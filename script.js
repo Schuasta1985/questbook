@@ -129,34 +129,39 @@ function ladeFortschritte() {
 
 // Quest-Status laden
 function ladeGlobalenQuestStatus() {
-    const gespeicherterQuestStatus = localStorage.getItem("globalQuestStatus");
-    if (gespeicherterQuestStatus) {
-        const questStatus = JSON.parse(gespeicherterQuestStatus);
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (questStatus[index]) {
-                questItem.style.textDecoration = "line-through";
-                questItem.style.opacity = "0.6";
-                const erledigtButton = questItem.querySelector("button:not(.edit-button)");
-                if (erledigtButton) {
-                    erledigtButton.disabled = true;
+    if (currentUser) {
+        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
+        if (gespeicherterQuestStatus) {
+            const questStatus = JSON.parse(gespeicherterQuestStatus);
+            const questItems = document.querySelectorAll("#quests li");
+            questItems.forEach((questItem, index) => {
+                if (questStatus[index]) {
+                    questItem.style.textDecoration = "line-through";
+                    questItem.style.opacity = "0.6";
+                    const erledigtButton = questItem.querySelector("button:not(.edit-button)");
+                    if (erledigtButton) {
+                        erledigtButton.disabled = true;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
 
+
 // Speichern des globalen Quest-Status
 function speichereGlobalenQuestStatus() {
-    const questItems = document.querySelectorAll("#quests li");
-    const questStatus = [];
+    if (currentUser) {
+        const questItems = document.querySelectorAll("#quests li");
+        const questStatus = [];
 
-    questItems.forEach(questItem => {
-        const istErledigt = questItem.style.textDecoration === "line-through";
-        questStatus.push(istErledigt);
-    });
+        questItems.forEach(questItem => {
+            const istErledigt = questItem.style.textDecoration === "line-through";
+            questStatus.push(istErledigt);
+        });
 
-    localStorage.setItem("globalQuestStatus", JSON.stringify(questStatus));
+        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
+    }
 }
 
 // XP-Anzeige und Level-Up überprüfen
