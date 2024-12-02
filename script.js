@@ -127,7 +127,7 @@ function ladeFortschritte() {
     }
 }
 
-// Quest-Status laden
+// Quest-Status laden (benutzerspezifisch)
 function ladeGlobalenQuestStatus() {
     if (currentUser) {
         const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
@@ -135,7 +135,7 @@ function ladeGlobalenQuestStatus() {
             const questStatus = JSON.parse(gespeicherterQuestStatus);
             const questItems = document.querySelectorAll("#quests li");
             questItems.forEach((questItem, index) => {
-                if (questStatus[index]) {
+                if (questStatus[index] && questStatus[index].erledigt) {
                     questItem.style.textDecoration = "line-through";
                     questItem.style.opacity = "0.6";
                     const erledigtButton = questItem.querySelector("button:not(.edit-button)");
@@ -148,16 +148,15 @@ function ladeGlobalenQuestStatus() {
     }
 }
 
-
-// Speichern des globalen Quest-Status
+// Speichern des globalen Quest-Status (benutzerspezifisch)
 function speichereGlobalenQuestStatus() {
     if (currentUser) {
         const questItems = document.querySelectorAll("#quests li");
         const questStatus = [];
 
-        questItems.forEach(questItem => {
+        questItems.forEach((questItem) => {
             const istErledigt = questItem.style.textDecoration === "line-through";
-            questStatus.push(istErledigt);
+            questStatus.push({ erledigt: istErledigt });
         });
 
         localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
