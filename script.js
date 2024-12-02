@@ -348,7 +348,7 @@ function neueQuestErstellen() {
 
     if (questBeschreibung && !isNaN(questXP)) {
         const quests = JSON.parse(localStorage.getItem("quests")) || [];
-        quests.push({ beschreibung: questBeschreibung, xp: questXP });
+        quests.push({ beschreibung: questBeschreibung, xp: questXP, erledigt: false });
         localStorage.setItem("quests", JSON.stringify(quests));
         ladeQuests();
     } else {
@@ -359,17 +359,67 @@ function neueQuestErstellen() {
 // Quests zurücksetzen
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        const questList = document.getElementById("quests");
-        questList.innerHTML = "";
-
-        localStorage.removeItem("globalQuestStatus");
+        localStorage.removeItem("quests");
         console.log("Alle Quests wurden zurückgesetzt.");
         ladeQuests();
     }
 }
 
-// Funktion zum Bearbeiten von Quests (Platzhalter)
-function questBearbeiten(questNummer) {
-    // Hier kommt der Code zum Bearbeiten einer Quest
-    console.log('Bearbeiten der Quest', questNummer);
+// Quests laden und anzeigen
+function ladeQuests() {
+    const gespeicherteQuests = JSON.parse(localStorage.getItem("quests")) || [
+        { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
+        { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
+        { beschreibung: "Joggen", xp: 15, erledigt: false }
+    ];
+
+    const questList = document.getElementById("quests");
+    questList.innerHTML = "";
+
+    gespeicherteQuests.forEach((quest, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <span class="quest-text" style="text-decoration: ${quest.erledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+            <button onclick="questErledigt(${index + 1})">Erledigt</button>
+        `;
+        listItem.setAttribute("data-xp", quest.xp);
+        questList.appendChild(listItem);
+    });
+
+    if (isAdmin) {
+        zeigeAdminFunktionen();
+    }
 }
+
+// Quest erledigt markieren
+function questErledigt(questNummer) {
+    const quests = JSON.parse(localStorage.getItem("quests")) || [];
+    if (quests[questNummer - 1]) {
+        quests[questNummer - 1].erledigt = true;
+        localStorage.setItem("quests", JSON.stringify(quests));
+        ladeQuests();
+    }
+}
+
+// Funktion zum Bearbeiten von Quests
+function questBearbeiten(questNummer) {
+    const quests = JSON.parse(localStorage.getItem("quests")) || [];
+    if (quests[questNummer - 1]) {
+        const neueBeschreibung = prompt("Neue Beschreibung der Quest:", quests[questNummer - 1].beschreibung);
+        const neueXP = parseInt(prompt("Neue XP für diese Quest:", quests[questNummer - 1].xp), 10);
+
+        if (neueBeschreibung && !isNaN(neueXP)) {
+            quests[questNummer - 1].beschreibung = neueBeschreibung;
+            quests[questNummer - 1].xp = neueXP;
+            localStorage.setItem("quests", JSON.stringify(quests));
+            ladeQuests();
+        } else {
+            alert("Ungültige Eingabe. Bitte versuche es erneut.");
+        }
+    }
+}
+
+// Aufruf der ursprünglichen Funktionen
+window.onload = function () {
+    zeigeStartseite();
+    ladeQuests(); // Quests beim Laden der Seite anzeigen
