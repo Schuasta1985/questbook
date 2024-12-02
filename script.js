@@ -7,6 +7,7 @@ let isAdmin = false;
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
     zeigeStartseite();
+    ladeQuests(); // Quests beim Laden der Seite anzeigen
 };
 
 // Startseite anzeigen
@@ -204,7 +205,7 @@ function zeigeLevelUpAnimation() {
     videoContainer.style.width = '100%';
     videoContainer.style.height = '100%';
     videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Schwarzer, leicht transparenter Hintergrund
-    videoContainer.style.zIndex = '1000'; // Sicherstellen, dass es über allem anderen angezeigt wird
+    videoContainer.style.zIndex = '500'; // Sicherstellen, dass es über allem anderen angezeigt wird
 
     const video = document.createElement('video');
     video.src = 'avatars/lvlup.mp4';
@@ -212,8 +213,7 @@ function zeigeLevelUpAnimation() {
     video.style.width = '100%';
     video.style.height = '100%';
     video.style.objectFit = 'contain'; // Anpassung von 'cover' zu 'contain'
-    video.style.opacity = '0.9'; // Leicht transparent
-
+    
     videoContainer.appendChild(video);
     document.body.appendChild(videoContainer);
 
@@ -418,8 +418,3 @@ function questBearbeiten(questNummer) {
         }
     }
 }
-
-// Aufruf der ursprünglichen Funktionen
-window.onload = function () {
-    zeigeStartseite();
-    ladeQuests(); // Quests beim Laden der Seite anzeigen
