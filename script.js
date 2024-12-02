@@ -211,7 +211,7 @@ function zeigeLevelUpAnimation() {
     video.autoplay = true;
     video.style.width = '100%';
     video.style.height = '100%';
-    video.style.objectFit = 'cover';
+    video.style.objectFit = 'contain'; // Anpassung von 'cover' zu 'contain'
     video.style.opacity = '0.9'; // Leicht transparent
 
     videoContainer.appendChild(video);
