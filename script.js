@@ -46,10 +46,9 @@ function benutzerAnmeldung() {
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
-        ladeGlobalenQuestStatus();
         zeigeQuestbook();
         zeigeAvatar();
-
+        
         document.getElementById("xp-counter").style.display = "block";
         document.getElementById("quests-section").style.display = "block";
         document.getElementById("logout-button").style.display = "block";
@@ -200,41 +199,6 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Level-Up Animation mit Video im Vollbildmodus
-// Level-Up Animation mit Video im Vollbildmodus und zeitgesteuerter Entfernung
-function zeigeLevelUpAnimation() {
-    const videoContainer = document.createElement('div');
-    videoContainer.id = 'level-up-video-container';
-    videoContainer.style.position = 'fixed';
-    videoContainer.style.top = '0';
-    videoContainer.style.left = '0';
-    videoContainer.style.width = '100%';
-    videoContainer.style.height = '100%';
-    videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Schwarzer, leicht transparenter Hintergrund
-    videoContainer.style.zIndex = '1000'; // Sicherstellen, dass es über allem anderen angezeigt wird
-
-    const video = document.createElement('video');
-    video.src = 'avatars/lvlup.mp4';
-    video.autoplay = true;
-    video.style.width = '100%';
-    video.style.height = '100%';
-    video.style.objectFit = 'cover';
-    video.style.opacity = '0.9'; // Leicht transparent
-
-    videoContainer.appendChild(video);
-    document.body.appendChild(videoContainer);
-
-    // Das Video nach der angegebenen Zeit automatisch entfernen (z.B. nach 10 Sekunden)
-    const videoEndeZeit = 10000; // Zeit in Millisekunden (10 Sekunden)
-    setTimeout(() => {
-        if (videoContainer && document.body.contains(videoContainer)) {
-            video.pause(); // Das Video anhalten
-            document.body.removeChild(videoContainer);
-        }
-    }, videoEndeZeit);
-}
-
-
 // Quests erledigen
 function questErledigt(questNummer) {
     const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
@@ -273,6 +237,8 @@ function ladeQuests() {
             listItem.setAttribute("data-xp", quest.xp);
             questList.appendChild(listItem);
         });
+
+        ladeGlobalenQuestStatus(); // Quest-Status nach dem Laden der Quests anwenden
 
         if (isAdmin) {
             zeigeAdminFunktionen();
@@ -375,3 +341,4 @@ function questsZuruecksetzen() {
         ladeQuests();
     }
 }
+
