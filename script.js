@@ -8,6 +8,7 @@ let isAdmin = false;
 window.onload = function () {
     zeigeStartseite();
     ladeQuests(); // Quests beim Laden der Seite anzeigen
+    zeigeAdminLogin(); // Admin Login anzeigen
 };
 
 // Startseite anzeigen
@@ -56,6 +57,36 @@ function benutzerAnmeldung() {
         document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
+    }
+}
+
+// Admin Login anzeigen
+function zeigeAdminLogin() {
+    const adminLoginSection = document.createElement('div');
+    adminLoginSection.id = 'admin-login-section';
+    adminLoginSection.style.position = 'fixed';
+    adminLoginSection.style.bottom = '10px';
+    adminLoginSection.style.right = '10px';
+    adminLoginSection.innerHTML = `
+        <input type="text" id="adminUsername" placeholder="Admin Benutzername">
+        <input type="password" id="adminPassword" placeholder="Passwort">
+        <button onclick="adminLogin()">Admin Anmelden</button>
+    `;
+    document.body.appendChild(adminLoginSection);
+}
+
+// Admin Login
+function adminLogin() {
+    const username = document.getElementById("adminUsername").value;
+    const password = document.getElementById("adminPassword").value;
+
+    if (username === "admin" && password === "1234") {
+        alert("Admin erfolgreich eingeloggt!");
+        isAdmin = true;
+        localStorage.setItem("isAdmin", isAdmin);
+        zeigeQuestbook();
+    } else {
+        alert("Falsche Anmeldedaten!");
     }
 }
 
@@ -285,22 +316,6 @@ function zeigeQuestbook() {
     aktualisiereXPAnzeige();
     if (isAdmin) {
         zeigeAdminFunktionen();
-    }
-}
-
-// Admin Login
-function adminLogin() {
-    const username = document.getElementById("benutzerDropdown").value;
-    const password = document.getElementById("benutzerPasswort").value;
-
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
-        currentUser = username; // Setze currentUser auf den Admin-Benutzernamen
-        isAdmin = true;
-        localStorage.setItem("currentUser", currentUser);
-        zeigeQuestbook();
-    } else {
-        alert("Falsche Anmeldedaten!");
     }
 }
 
