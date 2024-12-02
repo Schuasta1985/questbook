@@ -394,6 +394,15 @@ function questErledigt(questNummer) {
     }
 }
 
+// Quests zurücksetzen
+function questsZuruecksetzen() {
+    if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
+        localStorage.removeItem("quests");
+        console.log("Alle Quests wurden zurückgesetzt.");
+        ladeQuests();
+    }
+}
+
 // Funktion zum Bearbeiten von Quests
 function questBearbeiten(questNummer) {
     const quests = JSON.parse(localStorage.getItem("quests")) || [];
