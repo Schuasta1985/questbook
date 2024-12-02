@@ -26,12 +26,6 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-            <br>
-            <label for="adminBenutzername">Admin Benutzername:</label>
-            <input type="text" id="adminBenutzername" placeholder="Admin Benutzername eingeben">
-            <label for="adminPasswort">Admin Passwort:</label>
-            <input type="password" id="adminPasswort" placeholder="Admin Passwort eingeben">
-            <button onclick="adminLogin()">Admin Anmelden</button>
         `;
     }
 }
@@ -296,8 +290,8 @@ function zeigeQuestbook() {
 
 // Admin Login
 function adminLogin() {
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
+    const username = document.getElementById("benutzerDropdown").value;
+    const password = document.getElementById("benutzerPasswort").value;
 
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
