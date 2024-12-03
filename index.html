@@ -51,6 +51,20 @@
         <button onclick="adminLogin()">Admin Anmelden</button>
     </div>
 
+    <div id="level-set-container" style="margin-top: 20px; display: none;">
+    <h3>Level eines Benutzers setzen</h3>
+    <label for="benutzerDropdownLevel">Benutzer auswählen:</label>
+    <select id="benutzerDropdownLevel">
+        <option value="">-- Bitte wählen --</option>
+        <option value="Thomas">Thomas</option>
+        <option value="Elke">Elke</option>
+        <option value="Jamie">Jamie</option>
+        <option value="Massel">Massel</option>
+    </select>
+    <input type="number" id="levelInput" placeholder="Level eingeben">
+    <button id="setLevelButton">Level setzen</button>
+</div>
+    
     <script src="script.js"></script>
 </body>
 </html>
