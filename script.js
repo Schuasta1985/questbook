@@ -67,12 +67,12 @@ function adminLogin() {
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
-        localStorage.setItem("isAdmin", isAdmin);
-        zeigeQuestbook();
+        zeigeQuestbook(); // Admin sieht das Questbook ohne dass ein Benutzer eingeloggt sein muss
     } else {
         alert("Falsche Anmeldedaten!");
     }
 }
+
 // Ausloggen
 function ausloggen() {
     currentUser = null;
@@ -257,42 +257,6 @@ function questErledigt(questNummer) {
     }
 }
 
-// Quests laden
-function ladeQuests() {
-    const gespeicherteQuests = localStorage.getItem("quests");
-
-    if (gespeicherteQuests) {
-        const quests = JSON.parse(gespeicherteQuests);
-        const questList = document.getElementById("quests");
-        questList.innerHTML = "";
-
-        quests.forEach((quest, index) => {
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `
-                <span class="quest-text"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-                <button onclick="questErledigt(${index + 1})">Erledigt</button>
-            `;
-            listItem.setAttribute("data-xp", quest.xp);
-            questList.appendChild(listItem);
-        });
-
-        ladeGlobalenQuestStatus(); // Quest-Status nach dem Laden der Quests anwenden
-
-        if (isAdmin) {
-            zeigeAdminFunktionen();
-        }
-    } else {
-        const defaultQuests = [
-            { beschreibung: "Hausarbeit machen", xp: 10 },
-            { beschreibung: "Einkaufen gehen", xp: 20 },
-            { beschreibung: "Joggen", xp: 15 }
-        ];
-
-        localStorage.setItem("quests", JSON.stringify(defaultQuests));
-        ladeQuests();
-    }
-}
-
 // Questbuch anzeigen
 function zeigeQuestbook() {
     ladeQuests();
@@ -353,22 +317,22 @@ function neueQuestErstellen() {
     }
 }
 
-// Quests laden und anzeigen
 function ladeQuests() {
-    const gespeicherteQuests = JSON.parse(localStorage.getItem("quests")) || [
+    // Zuerst die gespeicherten Quests aus localStorage holen, ansonsten Standardquests setzen
+    const gespeicherteQuests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [
         { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
         { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
         { beschreibung: "Joggen", xp: 15, erledigt: false }
     ];
 
     const questList = document.getElementById("quests");
-    questList.innerHTML = "";
+    questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
     gespeicherteQuests.forEach((quest, index) => {
         const listItem = document.createElement("li");
         listItem.innerHTML = `
             <span class="quest-text" style="text-decoration: ${quest.erledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            <button onclick="questErledigt(${index + 1})">Erledigt</button>
+            <button onclick="questErledigt(${index + 1})" ${quest.erledigt ? 'disabled' : ''}>Erledigt</button>
         `;
         listItem.setAttribute("data-xp", quest.xp);
         questList.appendChild(listItem);
@@ -381,14 +345,16 @@ function ladeQuests() {
 
 // Quest erledigt markieren
 function questErledigt(questNummer) {
-    const quests = JSON.parse(localStorage.getItem("quests")) || [];
+    const quests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [];
     if (quests[questNummer - 1]) {
-        quests[questNummer - 1].erledigt = true;
-        localStorage.setItem("quests", JSON.stringify(quests));
-        ladeQuests();
+        quests[questNummer - 1].erledigt = true; // Markiere als erledigt
+        xp += parseInt(quests[questNummer - 1].xp, 10); // XP hinzufügen
+        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+        überprüfeLevelAufstieg(); // Levelaufstieg überprüfen
+        localStorage.setItem(`${currentUser}_quests`, JSON.stringify(quests)); // Speichern in localStorage
+        ladeQuests(); // Quests neu laden, damit der Status aktualisiert wird
     }
 }
-
 // Quests zurücksetzen
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
