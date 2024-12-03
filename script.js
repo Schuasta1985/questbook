@@ -54,21 +54,21 @@ function benutzerAnmeldung() {
         Massel: "1234",
     };
 
-    if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
-        if (isAdmin) {
-            alert("Admin ist bereits angemeldet. Bitte zuerst als Admin abmelden.");
-            return;
-        }
+    if (isAdmin) {
+        alert("Admin ist bereits angemeldet. Bitte zuerst als Admin abmelden.");
+        return;
+    }
 
+    if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
-        isAdmin = false; // Sicherstellen, dass kein Admin-Status aktiv ist
+        isAdmin = false;
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
         zeigeQuestbook();
         zeigeAvatar();
-        ladeQuests(); // Lade die Quests jetzt, nachdem sich der Benutzer erfolgreich angemeldet hat
-        ladeGlobalenQuestStatus(); // Lade den Quest-Status nach der Anmeldung
+        ladeQuests();
+        ladeGlobalenQuestStatus();
 
         console.log("Benutzer erfolgreich angemeldet: ", currentUser);
 
@@ -89,17 +89,17 @@ function adminLogin() {
 
     console.log(`Admin Benutzername: ${username}, Passwort: ${password}`);
 
-    if (username === "admin" && password === "1234") {
-        if (currentUser) {
-            alert("Ein Benutzer ist bereits angemeldet. Bitte zuerst abmelden.");
-            return;
-        }
+    if (currentUser) {
+        alert("Ein Benutzer ist bereits angemeldet. Bitte zuerst abmelden.");
+        return;
+    }
 
+    if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         localStorage.setItem("isAdmin", isAdmin);
-        zeigeQuestbook(); // Admin sieht das Questbook, ohne dass ein Benutzer eingeloggt sein muss
-        ladeQuests(); // Quests laden, wenn der Admin eingeloggt ist
+        zeigeQuestbook();
+        ladeQuests();
 
         console.log("Admin erfolgreich eingeloggt");
         document.getElementById("xp-counter").style.display = "none";
