@@ -103,37 +103,24 @@ function adminLogin() {
     }
 }
 
-// Quests laden
+// Quests laden (angepasst)
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
-    const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [
-        { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
-        { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
-        { beschreibung: "Joggen", xp: 15, erledigt: false }
-    ];
+    const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [];
 
-    // Lade den Queststatus des Benutzers oder initialisiere ihn mit allen Quests als nicht erledigt
-    let benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`));
-
-    // Wenn kein Status vorhanden ist, initialisiere ihn basierend auf der globalen Questliste
-    if (!benutzerQuestStatus || benutzerQuestStatus.length !== gespeicherteQuests.length) {
-        benutzerQuestStatus = gespeicherteQuests.map(() => ({ erledigt: false }));
-        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(benutzerQuestStatus));
-    }
+    const benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || gespeicherteQuests.map(() => ({ erledigt: false }));
 
     console.log("Gespeicherte Quests: ", gespeicherteQuests);
-    console.log("Benutzer Quest Status: ", benutzerQuestStatus);
 
     const questList = document.getElementById("quests");
     questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
     gespeicherteQuests.forEach((quest, index) => {
-        const listItem = document.createElement("li");
         const istErledigt = benutzerQuestStatus[index]?.erledigt || false;
 
         listItem.innerHTML = `
             <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            ${!isAdmin ? `<button onclick="questErledigt(${index})" ${istErledigt ? 'disabled' : ''}>Erledigt</button>` : ""}
+            ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})" ${istErledigt ? 'disabled' : ''}>Erledigt</button>` : ""}
         `;
         listItem.setAttribute("data-xp", quest.xp);
         questList.appendChild(listItem);
@@ -145,25 +132,22 @@ function ladeQuests() {
 }
 
 
-// Quests erledigen
+// Quests erledigen (angepasst)
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen mit QuestNummer: ", questNummer);
     const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    let benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || quests.map(() => ({ erledigt: false }));
-
-    if (benutzerQuestStatus[questNummer]) {
-        benutzerQuestStatus[questNummer].erledigt = true; // Markiere als erledigt
-        xp += parseInt(quests[questNummer].xp, 10); // XP hinzufügen
-        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-        überprüfeLevelAufstieg(); // Levelaufstieg überprüfen
-        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(benutzerQuestStatus)); // Speichern in localStorage
-        ladeQuests(); // Quests neu laden, damit der Status aktualisiert wird
+    if (!quests[questNummer].erledigt) {
+        quests[questNummer].erledigt = true;
+        xp += parseInt(quests[questNummer].xp, 10);
+        aktualisiereXPAnzeige();
+        überprüfeLevelAufstieg();
+        localStorage.setItem("global_quests", JSON.stringify(quests));
+        ladeQuests();
         console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
-    } else {
-        console.log(`Quest ${questNummer} konnte nicht gefunden werden.`);
     }
 }
-// Neue Quest erstellen
+
+// Neue Quest erstellen (angepasst)
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const questBeschreibung = prompt("Gib die Beschreibung der neuen Quest ein:");
