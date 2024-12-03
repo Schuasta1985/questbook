@@ -41,8 +41,8 @@ function benutzerAnmeldung() {
 
     const benutzerPasswoerter = {
         Thomas: "passwort1",
-        Elke: "passwort2",
-        Jamie: "passwort3",
+        Elke: "julian0703",
+        Jamie: "602060",
         Massel: "1234",
     };
 
