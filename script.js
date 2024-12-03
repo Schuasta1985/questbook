@@ -67,7 +67,8 @@ function adminLogin() {
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
-        zeigeQuestbook(); // Admin sieht das Questbook ohne dass ein Benutzer eingeloggt sein muss
+        localStorage.setItem("isAdmin", isAdmin);
+        zeigeQuestbook(); // Admin sieht das Questbook, ohne dass ein Benutzer eingeloggt sein muss
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -318,7 +319,6 @@ function neueQuestErstellen() {
 }
 
 function ladeQuests() {
-    // Zuerst die gespeicherten Quests aus localStorage holen, ansonsten Standardquests setzen
     const gespeicherteQuests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [
         { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
         { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
@@ -332,7 +332,7 @@ function ladeQuests() {
         const listItem = document.createElement("li");
         listItem.innerHTML = `
             <span class="quest-text" style="text-decoration: ${quest.erledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            <button onclick="questErledigt(${index + 1})" ${quest.erledigt ? 'disabled' : ''}>Erledigt</button>
+            <button onclick="questErledigt(${index})" ${quest.erledigt ? 'disabled' : ''}>Erledigt</button>
         `;
         listItem.setAttribute("data-xp", quest.xp);
         questList.appendChild(listItem);
@@ -346,15 +346,16 @@ function ladeQuests() {
 // Quest erledigt markieren
 function questErledigt(questNummer) {
     const quests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [];
-    if (quests[questNummer - 1]) {
-        quests[questNummer - 1].erledigt = true; // Markiere als erledigt
-        xp += parseInt(quests[questNummer - 1].xp, 10); // XP hinzufügen
+    if (quests[questNummer]) {
+        quests[questNummer].erledigt = true; // Markiere als erledigt
+        xp += parseInt(quests[questNummer].xp, 10); // XP hinzufügen
         aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
         überprüfeLevelAufstieg(); // Levelaufstieg überprüfen
         localStorage.setItem(`${currentUser}_quests`, JSON.stringify(quests)); // Speichern in localStorage
         ladeQuests(); // Quests neu laden, damit der Status aktualisiert wird
     }
 }
+
 // Quests zurücksetzen
 function questsZuruecksetzen() {
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
