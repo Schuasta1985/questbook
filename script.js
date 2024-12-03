@@ -161,6 +161,7 @@ function neueQuestErstellen() {
 
     if (questBeschreibung && !isNaN(questXP)) {
         const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
+        // Beim Hinzufügen sicherstellen, dass der Status 'erledigt' auf false gesetzt ist
         quests.push({ beschreibung: questBeschreibung, xp: questXP, erledigt: false });
         localStorage.setItem("global_quests", JSON.stringify(quests));
         ladeQuests();
@@ -169,9 +170,7 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte versuche es erneut.");
     }
 }
-
-
-// Ausloggen
+// Ausloggen angepasst, damit das Level-Setz-Formular ausgeblendet wird
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
@@ -183,8 +182,16 @@ function ausloggen() {
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("login-section").style.display = "block";
+
+    // Verberge das Level-Setz-Formular nach dem Ausloggen
+    const levelSetContainer = document.getElementById("level-set-container");
+    if (levelSetContainer) {
+        levelSetContainer.style.display = "none";
+    }
+
     zeigeStartseite();
 }
+
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -399,7 +406,7 @@ function zeigeAdminFunktionen() {
         // Zeige das Level-Setz-Formular an und füge Event-Listener hinzu
         const levelSetContainer = document.getElementById("level-set-container");
         if (levelSetContainer) {
-            levelSetContainer.style.display = "block";
+            levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
 
             // Füge Event Listener für den Button hinzu
             const setLevelButton = document.getElementById("setLevelButton");
@@ -407,6 +414,7 @@ function zeigeAdminFunktionen() {
         }
     }
 }
+
 
 // Level eines Benutzers setzen
 function levelSetzen() {
