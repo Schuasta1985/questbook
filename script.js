@@ -112,9 +112,17 @@ function ladeQuests() {
         { beschreibung: "Joggen", xp: 15, erledigt: false }
     ];
 
-    const benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || gespeicherteQuests.map(() => ({ erledigt: false }));
+    // Lade den Queststatus des Benutzers oder initialisiere ihn mit allen Quests als nicht erledigt
+    let benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`));
+
+    // Wenn kein Status vorhanden ist, initialisiere ihn basierend auf der globalen Questliste
+    if (!benutzerQuestStatus || benutzerQuestStatus.length !== gespeicherteQuests.length) {
+        benutzerQuestStatus = gespeicherteQuests.map(() => ({ erledigt: false }));
+        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(benutzerQuestStatus));
+    }
 
     console.log("Gespeicherte Quests: ", gespeicherteQuests);
+    console.log("Benutzer Quest Status: ", benutzerQuestStatus);
 
     const questList = document.getElementById("quests");
     questList.innerHTML = ""; // Liste der Quests zurücksetzen
@@ -136,11 +144,12 @@ function ladeQuests() {
     }
 }
 
+
 // Quests erledigen
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen mit QuestNummer: ", questNummer);
     const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    const benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || quests.map(() => ({ erledigt: false }));
+    let benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || quests.map(() => ({ erledigt: false }));
 
     if (benutzerQuestStatus[questNummer]) {
         benutzerQuestStatus[questNummer].erledigt = true; // Markiere als erledigt
@@ -154,7 +163,6 @@ function questErledigt(questNummer) {
         console.log(`Quest ${questNummer} konnte nicht gefunden werden.`);
     }
 }
-
 // Neue Quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
