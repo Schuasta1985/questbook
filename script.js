@@ -350,16 +350,16 @@ function questErledigt(questNummer) {
     }
 }
 
-// Neue Quest erstellen
+// Neue Quest erstellen (angepasst)
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const questBeschreibung = prompt("Gib die Beschreibung der neuen Quest ein:");
     const questXP = parseInt(prompt("Gib die XP für diese Quest ein:"), 10);
 
     if (questBeschreibung && !isNaN(questXP)) {
-        const quests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [];
+        const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
         quests.push({ beschreibung: questBeschreibung, xp: questXP, erledigt: false });
-        localStorage.setItem(`${currentUser}_quests`, JSON.stringify(quests));
+        localStorage.setItem("global_quests", JSON.stringify(quests));
         ladeQuests();
         console.log("Neue Quest hinzugefügt:", questBeschreibung);
     } else {
@@ -367,10 +367,10 @@ function neueQuestErstellen() {
     }
 }
 
-// Quests laden
+// Quests laden (angepasst)
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
-    const gespeicherteQuests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [
+    const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [
         { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
         { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
         { beschreibung: "Joggen", xp: 15, erledigt: false }
@@ -385,7 +385,7 @@ function ladeQuests() {
         const listItem = document.createElement("li");
         listItem.innerHTML = `
             <span class="quest-text" style="text-decoration: ${quest.erledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            <button onclick="questErledigt(${index})" ${quest.erledigt ? 'disabled' : ''}>Erledigt</button>
+            ${!isAdmin ? `<button onclick="questErledigt(${index})" ${quest.erledigt ? 'disabled' : ''}>Erledigt</button>` : ""}
         `;
         listItem.setAttribute("data-xp", quest.xp);
         questList.appendChild(listItem);
@@ -433,11 +433,11 @@ function zeigeAdminFunktionen() {
     }
 }
 
-// Quests zurücksetzen
+// Quests zurücksetzen (angepasst)
 function questsZuruecksetzen() {
     console.log("questsZuruecksetzen() aufgerufen");
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        localStorage.removeItem(`${currentUser}_quests`);
+        localStorage.removeItem("global_quests");
         console.log("Alle Quests wurden zurückgesetzt.");
         ladeQuests();
     }
