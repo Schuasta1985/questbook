@@ -7,7 +7,6 @@ let isAdmin = false;
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
     zeigeStartseite();
-    ladeQuests(); // Quests beim Laden der Seite anzeigen
 };
 
 // Startseite anzeigen
@@ -49,6 +48,7 @@ function benutzerAnmeldung() {
         aktualisiereXPAnzeige();
         zeigeQuestbook();
         zeigeAvatar();
+        ladeQuests(); // Lade die Quests jetzt, nachdem sich der Benutzer erfolgreich angemeldet hat
         
         document.getElementById("xp-counter").style.display = "block";
         document.getElementById("quests-section").style.display = "block";
@@ -69,6 +69,7 @@ function adminLogin() {
         isAdmin = true;
         localStorage.setItem("isAdmin", isAdmin);
         zeigeQuestbook(); // Admin sieht das Questbook, ohne dass ein Benutzer eingeloggt sein muss
+         ladeQuests(); // Quests laden, wenn der Admin eingeloggt ist
     } else {
         alert("Falsche Anmeldedaten!");
     }
