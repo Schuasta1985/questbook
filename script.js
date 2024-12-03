@@ -116,6 +116,7 @@ function ladeQuests() {
     questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
     gespeicherteQuests.forEach((quest, index) => {
+        const listItem = document.createElement("li"); // listItem korrekt initialisieren
         const istErledigt = benutzerQuestStatus[index]?.erledigt || false;
 
         listItem.innerHTML = `
@@ -130,7 +131,6 @@ function ladeQuests() {
         zeigeAdminFunktionen();
     }
 }
-
 
 // Quests erledigen (angepasst)
 function questErledigt(questNummer) {
