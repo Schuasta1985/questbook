@@ -199,46 +199,6 @@ function zeigeQuestbook() {
     }
 }
 
-// Admin-spezifische Funktionen anzeigen
-function zeigeAdminFunktionen() {
-    console.log("zeigeAdminFunktionen() aufgerufen");
-    if (isAdmin) {
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (!questItem.querySelector(".edit-button")) {
-                const editButton = document.createElement("button");
-                editButton.textContent = "Bearbeiten";
-                editButton.className = "edit-button";
-                editButton.onclick = () => questBearbeiten(index + 1);
-                questItem.appendChild(editButton);
-            }
-        });
-
-        if (!document.getElementById("admin-buttons-container")) {
-            const questbookContainer = document.getElementById("quests");
-            const adminButtonsContainer = document.createElement("div");
-            adminButtonsContainer.id = "admin-buttons-container";
-
-            const createButton = document.createElement("button");
-            createButton.textContent = "Neue Quest erstellen";
-            createButton.id = "createQuestButton";
-            createButton.onclick = neueQuestErstellen;
-
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Alle Quests zurücksetzen";
-            deleteButton.id = "deleteQuestsButton";
-            deleteButton.onclick = questsZuruecksetzen;
-
-            adminButtonsContainer.appendChild(createButton);
-            adminButtonsContainer.appendChild(deleteButton);
-            questbookContainer.appendChild(adminButtonsContainer);
-        }
-    }
-}
-
-// ... Die restlichen Funktionen bleiben unverändert.
-
-
 // Avatar anzeigen, je nach Benutzer
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer: ", currentUser);
@@ -401,7 +361,7 @@ function zeigeLevelUpAnimation() {
 }
 
 
-// Admin-Funktionen anzeigen
+// Admin-spezifische Funktionen anzeigen
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
     if (isAdmin) {
@@ -435,6 +395,38 @@ function zeigeAdminFunktionen() {
             adminButtonsContainer.appendChild(deleteButton);
             questbookContainer.appendChild(adminButtonsContainer);
         }
+
+        // Zeige das Level-Setz-Formular an und füge Event-Listener hinzu
+        const levelSetContainer = document.getElementById("level-set-container");
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "block";
+
+            // Füge Event Listener für den Button hinzu
+            const setLevelButton = document.getElementById("setLevelButton");
+            setLevelButton.onclick = levelSetzen;
+        }
+    }
+}
+
+// Level eines Benutzers setzen
+function levelSetzen() {
+    console.log("levelSetzen() aufgerufen");
+    const benutzername = document.getElementById("benutzerDropdownLevel").value;
+    const neuesLevel = parseInt(document.getElementById("levelInput").value, 10);
+
+    if (benutzername && !isNaN(neuesLevel) && neuesLevel > 0) {
+        localStorage.setItem(`${benutzername}_level`, neuesLevel);
+        console.log(`Level für ${benutzername} auf ${neuesLevel} gesetzt.`);
+        
+        // Wenn der aktuell angemeldete Benutzer geändert wird, aktualisiere die Anzeige
+        if (currentUser === benutzername) {
+            level = neuesLevel;
+            aktualisiereXPAnzeige();
+        }
+
+        alert(`Das Level von ${benutzername} wurde erfolgreich auf ${neuesLevel} gesetzt.`);
+    } else {
+        alert("Bitte wähle einen Benutzer aus und gib ein gültiges Level ein.");
     }
 }
 
