@@ -1,3 +1,5 @@
+// script.js
+
 // Globale Variablen für XP, Level und Benutzerstatus
 let xp = 0;
 let level = 1;
@@ -48,7 +50,7 @@ function benutzerAnmeldung() {
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
-        isAdmin = false; // Sichere, dass kein Admin-Status aktiv ist
+        isAdmin = false; // Sicherstellen, dass kein Admin-Status aktiv ist
         localStorage.setItem("currentUser", currentUser);
         ladeFortschritte();
         aktualisiereXPAnzeige();
@@ -106,6 +108,18 @@ function ausloggen() {
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("login-section").style.display = "block";
     zeigeStartseite();
+}
+
+// Questbuch anzeigen
+function zeigeQuestbook() {
+    console.log("zeigeQuestbook() aufgerufen");
+    ladeQuests();
+    if (currentUser) {
+        aktualisiereXPAnzeige();
+    }
+    if (isAdmin) {
+        zeigeAdminFunktionen();
+    }
 }
 
 // Avatar anzeigen, je nach Benutzer
