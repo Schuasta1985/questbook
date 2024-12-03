@@ -11,6 +11,7 @@ window.onload = function () {
 };
 
 // Startseite anzeigen
+// Entferne diese Admin Login Section aus zeigeStartseite():
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
@@ -27,14 +28,6 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-
-            <!-- Admin Login Section -->
-            <div style="margin-top: 20px;">
-                <h3>Admin Login</h3>
-                <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
-                <input type="password" id="adminPasswort" placeholder="Admin Passwort">
-                <button onclick="adminLogin()">Admin Anmelden</button>
-            </div>
         `;
     }
 }
