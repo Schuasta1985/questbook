@@ -108,7 +108,7 @@ function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
     const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [];
 
-    const benutzerQuestStatus = JSON.parse(localStorage.getItem(`${currentUser}_questStatus`)) || gespeicherteQuests.map(() => ({ erledigt: false }));
+    const benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || gespeicherteQuests.map(() => ({ erledigt: false }));
 
     console.log("Gespeicherte Quests: ", gespeicherteQuests);
 
@@ -116,12 +116,12 @@ function ladeQuests() {
     questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
     gespeicherteQuests.forEach((quest, index) => {
-        const listItem = document.createElement("li"); // listItem korrekt initialisieren
+        const listItem = document.createElement("li");
         const istErledigt = benutzerQuestStatus[index]?.erledigt || false;
 
         listItem.innerHTML = `
             <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})" ${istErledigt ? 'disabled' : ''}>Erledigt</button>` : ""}
+            ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
         `;
         listItem.setAttribute("data-xp", quest.xp);
         questList.appendChild(listItem);
@@ -136,14 +136,20 @@ function ladeQuests() {
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen mit QuestNummer: ", questNummer);
     const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    if (!quests[questNummer].erledigt) {
-        quests[questNummer].erledigt = true;
-        xp += parseInt(quests[questNummer].xp, 10);
-        aktualisiereXPAnzeige();
-        überprüfeLevelAufstieg();
-        localStorage.setItem("global_quests", JSON.stringify(quests));
-        ladeQuests();
+    const benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || quests.map(() => ({ erledigt: false }));
+
+    if (!benutzerQuestStatus[questNummer].erledigt) {
+        benutzerQuestStatus[questNummer].erledigt = true; // Markiere als erledigt
+        xp += parseInt(quests[questNummer].xp, 10); // XP hinzufügen
+        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+        überprüfeLevelAufstieg(); // Levelaufstieg überprüfen
+
+        // Speichern des neuen Queststatus
+        localStorage.setItem("global_questStatus", JSON.stringify(benutzerQuestStatus));
+        ladeQuests(); // Quests neu laden, damit der Status aktualisiert wird
         console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+    } else {
+        console.log(`Quest ${questNummer} konnte nicht gefunden oder war bereits erledigt.`);
     }
 }
 
