@@ -103,18 +103,18 @@ function adminLogin() {
     }
 }
 
-// Quests laden (angepasst)
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
     const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    let benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || [];
-if (benutzerQuestStatus.length < gespeicherteQuests.length) {
-    // Füge neue Quests als "nicht erledigt" hinzu, wenn der Status kürzer als die Anzahl der Quests ist
-    for (let i = benutzerQuestStatus.length; i < gespeicherteQuests.length; i++) {
-        benutzerQuestStatus.push({ erledigt: false });
-    }
-}
+    let benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || gespeicherteQuests.map(() => ({ erledigt: false }));
 
+    // Stelle sicher, dass benutzerQuestStatus mit gespeicherteQuests übereinstimmt
+    if (benutzerQuestStatus.length < gespeicherteQuests.length) {
+        for (let i = benutzerQuestStatus.length; i < gespeicherteQuests.length; i++) {
+            benutzerQuestStatus.push({ erledigt: false });
+        }
+        localStorage.setItem("global_questStatus", JSON.stringify(benutzerQuestStatus));
+    }
 
     console.log("Gespeicherte Quests: ", gespeicherteQuests);
 
@@ -170,10 +170,11 @@ function neueQuestErstellen() {
         const globalQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || [];
 
         // Beim Hinzufügen sicherstellen, dass der Status 'erledigt' auf false gesetzt ist
-        const neueQuest = { beschreibung: questBeschreibung, xp: questXP, erledigt: false };
-        quests.push(neueQuest);
+        const newQuest = { beschreibung: questBeschreibung, xp: questXP, erledigt: false };
+        quests.push(newQuest);
         globalQuestStatus.push({ erledigt: false });
 
+        // Speichere die aktualisierten Quests und deren Status
         localStorage.setItem("global_quests", JSON.stringify(quests));
         localStorage.setItem("global_questStatus", JSON.stringify(globalQuestStatus));
 
@@ -183,7 +184,6 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte versuche es erneut.");
     }
 }
-
 // Ausloggen angepasst, damit das Level-Setz-Formular ausgeblendet wird
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
