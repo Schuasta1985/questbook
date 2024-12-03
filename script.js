@@ -1,5 +1,3 @@
-// script.js
-
 // Globale Variablen für XP, Level und Benutzerstatus
 let xp = 0;
 let level = 1;
@@ -29,6 +27,14 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
+
+            <!-- Admin Login Section -->
+            <div style="margin-top: 20px;">
+                <h3>Admin Login</h3>
+                <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
+                <input type="password" id="adminPasswort" placeholder="Admin Passwort">
+                <button onclick="adminLogin()">Admin Anmelden</button>
+            </div>
         `;
     }
 }
@@ -49,6 +55,11 @@ function benutzerAnmeldung() {
     };
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
+        if (isAdmin) {
+            alert("Admin ist bereits angemeldet. Bitte zuerst als Admin abmelden.");
+            return;
+        }
+
         currentUser = benutzername;
         isAdmin = false; // Sicherstellen, dass kein Admin-Status aktiv ist
         localStorage.setItem("currentUser", currentUser);
@@ -79,9 +90,13 @@ function adminLogin() {
     console.log(`Admin Benutzername: ${username}, Passwort: ${password}`);
 
     if (username === "admin" && password === "1234") {
+        if (currentUser) {
+            alert("Ein Benutzer ist bereits angemeldet. Bitte zuerst abmelden.");
+            return;
+        }
+
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
-        currentUser = null; // Sicherstellen, dass kein Benutzer aktiv ist
         localStorage.setItem("isAdmin", isAdmin);
         zeigeQuestbook(); // Admin sieht das Questbook, ohne dass ein Benutzer eingeloggt sein muss
         ladeQuests(); // Quests laden, wenn der Admin eingeloggt ist
@@ -119,6 +134,43 @@ function zeigeQuestbook() {
     }
     if (isAdmin) {
         zeigeAdminFunktionen();
+    }
+}
+
+// Admin-spezifische Funktionen anzeigen
+function zeigeAdminFunktionen() {
+    console.log("zeigeAdminFunktionen() aufgerufen");
+    if (isAdmin) {
+        const questItems = document.querySelectorAll("#quests li");
+        questItems.forEach((questItem, index) => {
+            if (!questItem.querySelector(".edit-button")) {
+                const editButton = document.createElement("button");
+                editButton.textContent = "Bearbeiten";
+                editButton.className = "edit-button";
+                editButton.onclick = () => questBearbeiten(index + 1);
+                questItem.appendChild(editButton);
+            }
+        });
+
+        if (!document.getElementById("admin-buttons-container")) {
+            const questbookContainer = document.getElementById("quests");
+            const adminButtonsContainer = document.createElement("div");
+            adminButtonsContainer.id = "admin-buttons-container";
+
+            const createButton = document.createElement("button");
+            createButton.textContent = "Neue Quest erstellen";
+            createButton.id = "createQuestButton";
+            createButton.onclick = neueQuestErstellen;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Alle Quests zurücksetzen";
+            deleteButton.id = "deleteQuestsButton";
+            deleteButton.onclick = questsZuruecksetzen;
+
+            adminButtonsContainer.appendChild(createButton);
+            adminButtonsContainer.appendChild(deleteButton);
+            questbookContainer.appendChild(adminButtonsContainer);
+        }
     }
 }
 
