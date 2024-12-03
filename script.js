@@ -261,11 +261,14 @@ function questErledigt(questNummer) {
 // Questbuch anzeigen
 function zeigeQuestbook() {
     ladeQuests();
-    aktualisiereXPAnzeige();
+    if (currentUser) {
+        aktualisiereXPAnzeige();
+    }
     if (isAdmin) {
         zeigeAdminFunktionen();
     }
 }
+
 
 // Admin-Funktionen anzeigen
 function zeigeAdminFunktionen() {
