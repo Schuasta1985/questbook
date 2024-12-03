@@ -6,11 +6,13 @@ let isAdmin = false;
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
+    console.log("window.onload aufgerufen");
     zeigeStartseite();
 };
 
 // Startseite anzeigen
 function zeigeStartseite() {
+    console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
     if (loginSection) {
@@ -31,8 +33,11 @@ function zeigeStartseite() {
 
 // Benutzeranmeldung
 function benutzerAnmeldung() {
+    console.log("benutzerAnmeldung() aufgerufen");
     const benutzername = document.getElementById("benutzerDropdown").value;
     const passwort = document.getElementById("benutzerPasswort").value;
+
+    console.log(`Benutzername: ${benutzername}, Passwort: ${passwort}`);
 
     const benutzerPasswoerter = {
         Thomas: "passwort1",
@@ -49,7 +54,9 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar();
         ladeQuests(); // Lade die Quests jetzt, nachdem sich der Benutzer erfolgreich angemeldet hat
-        
+
+        console.log("Benutzer erfolgreich angemeldet: ", currentUser);
+
         document.getElementById("xp-counter").style.display = "block";
         document.getElementById("quests-section").style.display = "block";
         document.getElementById("logout-button").style.display = "block";
@@ -61,15 +68,18 @@ function benutzerAnmeldung() {
 
 // Admin Login
 function adminLogin() {
+    console.log("adminLogin() aufgerufen");
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
+
+    console.log(`Admin Benutzername: ${username}, Passwort: ${password}`);
 
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
         localStorage.setItem("isAdmin", isAdmin);
         zeigeQuestbook(); // Admin sieht das Questbook, ohne dass ein Benutzer eingeloggt sein muss
-         ladeQuests(); // Quests laden, wenn der Admin eingeloggt ist
+        ladeQuests(); // Quests laden, wenn der Admin eingeloggt ist
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -245,22 +255,27 @@ function zeigeLevelUpAnimation() {
 
 // Quests erledigen
 function questErledigt(questNummer) {
-    const quest = document.querySelector(`#quests li:nth-child(${questNummer})`);
+    console.log("questErledigt() aufgerufen mit QuestNummer: ", questNummer);
+    const quest = document.querySelector(`#quests li:nth-child(${questNummer + 1})`);
 
     if (quest) {
         const xpWert = parseInt(quest.getAttribute("data-xp"), 10) || 10;
         xp += xpWert;
         aktualisiereXPAnzeige();
         überprüfeLevelAufstieg();
-        speichereFortschritte(); // Verschiebe dies hierhin
+        speichereFortschritte(); // Fortschritte speichern
 
+        console.log("Quest wurde erledigt: ", quest);
         quest.style.display = "none"; // Quest ausblenden, wenn erledigt
         speichereGlobalenQuestStatus();
+    } else {
+        console.log("Quest wurde nicht gefunden!");
     }
 }
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
+    console.log("zeigeQuestbook() aufgerufen");
     ladeQuests();
     if (currentUser) {
         aktualisiereXPAnzeige();
@@ -322,12 +337,16 @@ function neueQuestErstellen() {
     }
 }
 
+// Quests laden
 function ladeQuests() {
+    console.log("ladeQuests() aufgerufen");
     const gespeicherteQuests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [
         { beschreibung: "Hausarbeit machen", xp: 10, erledigt: false },
         { beschreibung: "Einkaufen gehen", xp: 20, erledigt: false },
         { beschreibung: "Joggen", xp: 15, erledigt: false }
     ];
+
+    console.log("Gespeicherte Quests: ", gespeicherteQuests);
 
     const questList = document.getElementById("quests");
     questList.innerHTML = ""; // Liste der Quests zurücksetzen
@@ -346,6 +365,7 @@ function ladeQuests() {
         zeigeAdminFunktionen();
     }
 }
+
 
 // Quest erledigt markieren
 function questErledigt(questNummer) {
