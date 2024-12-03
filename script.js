@@ -11,7 +11,6 @@ window.onload = function () {
 };
 
 // Startseite anzeigen
-// Entferne diese Admin Login Section aus zeigeStartseite():
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
@@ -96,6 +95,7 @@ function adminLogin() {
 
         console.log("Admin erfolgreich eingeloggt");
         document.getElementById("xp-counter").style.display = "none";
+        document.getElementById("quests-section").style.display = "block"; // Admin muss das Questbuch sehen
         document.getElementById("logout-button").style.display = "block";
         document.getElementById("login-section").style.display = "none";
     } else {
@@ -121,12 +121,13 @@ function ausloggen() {
 // Questbuch anzeigen
 function zeigeQuestbook() {
     console.log("zeigeQuestbook() aufgerufen");
-    ladeQuests();
-    if (currentUser) {
-        aktualisiereXPAnzeige();
-    }
     if (isAdmin) {
         zeigeAdminFunktionen();
+    } else if (currentUser) {
+        aktualisiereXPAnzeige();
+        ladeQuests();
+    } else {
+        console.log("Weder Benutzer noch Admin angemeldet.");
     }
 }
 
@@ -166,6 +167,9 @@ function zeigeAdminFunktionen() {
         }
     }
 }
+
+// ... Die restlichen Funktionen bleiben unverändert.
+
 
 // Avatar anzeigen, je nach Benutzer
 function zeigeAvatar() {
