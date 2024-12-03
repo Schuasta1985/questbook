@@ -107,7 +107,14 @@ function adminLogin() {
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
     const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    const benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || gespeicherteQuests.map(() => ({ erledigt: false }));
+    let benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || [];
+if (benutzerQuestStatus.length < gespeicherteQuests.length) {
+    // Füge neue Quests als "nicht erledigt" hinzu, wenn der Status kürzer als die Anzahl der Quests ist
+    for (let i = benutzerQuestStatus.length; i < gespeicherteQuests.length; i++) {
+        benutzerQuestStatus.push({ erledigt: false });
+    }
+}
+
 
     console.log("Gespeicherte Quests: ", gespeicherteQuests);
 
@@ -159,16 +166,14 @@ function neueQuestErstellen() {
     const questXP = parseInt(prompt("Gib die XP für diese Quest ein:"), 10);
 
     if (questBeschreibung && !isNaN(questXP)) {
-        // Lade bestehende Quests oder initialisiere mit leeren Quests
         const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
         const globalQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || [];
 
-        // Füge die neue Quest mit dem Status "nicht erledigt" hinzu
-        const newQuest = { beschreibung: questBeschreibung, xp: questXP, erledigt: false };
-        quests.push(newQuest);
+        // Beim Hinzufügen sicherstellen, dass der Status 'erledigt' auf false gesetzt ist
+        const neueQuest = { beschreibung: questBeschreibung, xp: questXP, erledigt: false };
+        quests.push(neueQuest);
         globalQuestStatus.push({ erledigt: false });
 
-        // Speichere die aktualisierten Quests und deren Status
         localStorage.setItem("global_quests", JSON.stringify(quests));
         localStorage.setItem("global_questStatus", JSON.stringify(globalQuestStatus));
 
@@ -178,6 +183,7 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte versuche es erneut.");
     }
 }
+
 // Ausloggen angepasst, damit das Level-Setz-Formular ausgeblendet wird
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
