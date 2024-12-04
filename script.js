@@ -78,12 +78,15 @@ function adminLogin() {
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
+
         zeigeQuestbook();
         ladeQuests();
+        zeigeAdminFunktionen(); // Admin-spezifische Funktionen anzeigen
     } else {
         alert("Falsche Anmeldedaten!");
     }
 }
+
 
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
@@ -370,6 +373,23 @@ function zeigeAvatar() {
             `;
         }
     }
+}
+
+// Ausloggen-Funktion
+function ausloggen() {
+    console.log("ausloggen() aufgerufen");
+    currentUser = null;
+    isAdmin = false;
+
+    // Elemente zurücksetzen
+    document.getElementById('quests-section').style.display = 'none';
+    document.getElementById('xp-counter').style.display = 'none';
+    document.getElementById('logout-button').style.display = 'none';
+    document.getElementById('login-section').style.display = 'block';
+    
+    // Login-Felder zurücksetzen
+    document.getElementById("benutzerDropdown").value = "";
+    document.getElementById("benutzerPasswort").value = "";
 }
 
 // Avatar für Benutzer festlegen
