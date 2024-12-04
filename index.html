@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <script type="module">
-  // Importiere die Funktionen aus Firebase, die benötigt werden
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-  import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    <!-- Firebase App (bietet alle Firebase-Dienste) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js"></script>
 
-  // Firebase-Konfiguration
-  const firebaseConfig = {
-  apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
-  authDomain: "questbook-3e600.firebaseapp.com",
-  databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "questbook-3e600",
-  storageBucket: "questbook-3e600.firebasestorage.app",
-  messagingSenderId: "915094173482",
-  appId: "1:915094173482:web:50c21383be0c5e45c5d053",
-  measurementId: "G-P738GMV24T"
-};
+<script>
+    // Hier Firebase konfigurieren
+    const firebaseConfig = {
+        apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
+        authDomain: "questbook-3e600.firebaseapp.com",
+        databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "questbook-3e600",
+        storageBucket: "questbook-3e600.firebasestorage.app",
+        messagingSenderId: "915094173482",
+        appId: "1:915094173482:web:50c21383be0c5e45c5d053",
+        measurementId: "G-P738GMV24T"
+    };
 
-  // Initialisiere Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 </script>
+
+
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
