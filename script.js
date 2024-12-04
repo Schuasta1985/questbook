@@ -251,7 +251,7 @@ function questErledigt(questNummer) {
     firebase.database().ref('quests').get()
     .then((snapshot) => {
         if (snapshot.exists()) {
-            let quests = snapshot.val();
+            let quests = snapshot.val() || [];
             if (quests[questNummer]) {
                 quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
                 xp += quests[questNummer].xp; // XP hinzufügen
@@ -289,13 +289,20 @@ function neueQuestErstellen() {
             .then((snapshot) => {
                 let quests = [];
                 if (snapshot.exists()) {
-                    quests = snapshot.val();
+                    const gespeicherteQuests = snapshot.val();
+                    if (Array.isArray(gespeicherteQuests)) {
+                        quests = gespeicherteQuests;
+                    } else {
+                        console.error("Fehler: Erwartete eine Array-Struktur für die Quests.");
+                    }
                 }
-                quests.push(neueQuest);
+
+                quests.push(neueQuest); // Füge die neue Quest zur Liste hinzu
+                
                 firebase.database().ref('quests').set(quests)
                     .then(() => {
                         console.log("Neue Quest erfolgreich erstellt.");
-                        ladeGlobaleQuests();
+                        ladeGlobaleQuests(); // Lade die aktualisierten Quests neu
                     })
                     .catch((error) => {
                         console.error("Fehler beim Speichern der neuen Quest:", error);
@@ -308,6 +315,7 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
     }
 }
+
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
     firebase.database().ref('quests').get()
