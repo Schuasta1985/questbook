@@ -1,14 +1,3 @@
-// Firebase-Initialisierung
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
-
 // Firebase initialisieren
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
@@ -42,6 +31,9 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
+            <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
+            <input type="password" id="adminPasswort" placeholder="Admin Passwort">
+            <button onclick="adminLogin()">Admin Anmelden</button>
         `;
     }
 }
@@ -175,6 +167,7 @@ function ladeQuests() {
     }
 }
 
+// Restliche Funktionen bleiben unverändert wie im letzten Beitrag
 
 // XP-Anzeige und Level-Up überprüfen
 function aktualisiereXPAnzeige() {
