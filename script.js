@@ -1,5 +1,4 @@
 // Firebase initialisieren
-firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 // Globale Variablen für XP, Level und Benutzerstatus
