@@ -1,6 +1,3 @@
-// Firebase initialisieren
-const database = firebase.database();
-
 // Globale Variablen für XP, Level und Benutzerstatus
 let xp = 0;
 let level = 1;
@@ -30,11 +27,20 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-            <input type="text" id="adminBenutzername" placeholder="Admin Benutzername">
-            <input type="password" id="adminPasswort" placeholder="Admin Passwort">
-            <button onclick="adminLogin()">Admin Anmelden</button>
-        `;
+            `;
     }
+}
+
+// Questbuch anzeigen
+function zeigeQuestbook() {
+    console.log("zeigeQuestbook() aufgerufen");
+    // Sichtbarkeit der relevanten Elemente aktivieren
+    document.getElementById('quests-section').style.display = 'block';
+    document.getElementById('xp-counter').style.display = 'block';
+    document.getElementById('logout-button').style.display = 'block';
+    
+    // Die Login-Sektion ausblenden, sobald der Benutzer angemeldet ist
+    document.getElementById('login-section').style.display = 'none';
 }
 
 // Benutzeranmeldung
