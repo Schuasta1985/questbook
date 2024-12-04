@@ -344,10 +344,11 @@ function ladeGlobaleQuests() {
     });
 }
 
-// Admin-spezifische Funktionen anzeigen
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
+
     if (isAdmin) {
+        // Quest-Items durchgehen und Bearbeiten-Button hinzufügen
         const questItems = document.querySelectorAll("#quests li");
         questItems.forEach((questItem, index) => {
             if (!questItem.querySelector(".edit-button")) {
@@ -356,11 +357,15 @@ function zeigeAdminFunktionen() {
                 editButton.className = "edit-button";
                 editButton.onclick = () => questBearbeiten(index);
                 questItem.appendChild(editButton);
+                console.log(`Bearbeiten-Button für Quest ${index + 1} hinzugefügt.`);
             }
         });
 
+        // Admin-Buttons erstellen, falls noch nicht vorhanden
         if (!document.getElementById("admin-buttons-container")) {
-            const questbookContainer = document.getElementById("quests");
+            console.log("Admin-Buttons werden erstellt.");
+
+            const questbookContainer = document.getElementById("quests-section");
             const adminButtonsContainer = document.createElement("div");
             adminButtonsContainer.id = "admin-buttons-container";
 
@@ -377,8 +382,11 @@ function zeigeAdminFunktionen() {
             adminButtonsContainer.appendChild(createButton);
             adminButtonsContainer.appendChild(deleteButton);
             questbookContainer.appendChild(adminButtonsContainer);
+        } else {
+            console.log("Admin-Buttons sind bereits vorhanden.");
         }
 
+        // Level-Set-Container anzeigen
         const levelSetContainer = document.getElementById("level-set-container");
         if (levelSetContainer) {
             levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
@@ -387,6 +395,7 @@ function zeigeAdminFunktionen() {
         }
     }
 }
+
 
 // Level eines Benutzers setzen
 function levelSetzen() {
