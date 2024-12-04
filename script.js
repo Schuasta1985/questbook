@@ -1,3 +1,6 @@
+// Firebase-Datenbankreferenz
+const database = window.firebaseDatabase;
+
 // Globale Variablen für XP, Level und Benutzerstatus
 let xp = 0;
 let level = 1;
@@ -37,8 +40,6 @@ function benutzerAnmeldung() {
     const benutzername = document.getElementById("benutzerDropdown").value;
     const passwort = document.getElementById("benutzerPasswort").value;
 
-    console.log(`Benutzername: ${benutzername}, Passwort: ${passwort}`);
-
     const benutzerPasswoerter = {
         Thomas: "passwort1",
         Elke: "julian0703",
@@ -46,28 +47,14 @@ function benutzerAnmeldung() {
         Massel: "1234",
     };
 
-    if (isAdmin) {
-        alert("Admin ist bereits angemeldet. Bitte zuerst als Admin abmelden.");
-        return;
-    }
-
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
         isAdmin = false;
-        localStorage.setItem("currentUser", currentUser);
+
         ladeFortschritte();
-        aktualisiereXPAnzeige();
         zeigeQuestbook();
         zeigeAvatar();
         ladeQuests();
-        ladeGlobalenQuestStatus();
-
-        console.log("Benutzer erfolgreich angemeldet: ", currentUser);
-
-        document.getElementById("xp-counter").style.display = "block";
-        document.getElementById("quests-section").style.display = "block";
-        document.getElementById("logout-button").style.display = "block";
-        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -79,235 +66,100 @@ function adminLogin() {
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
 
-    console.log(`Admin Benutzername: ${username}, Passwort: ${password}`);
-
-    if (currentUser) {
-        alert("Ein Benutzer ist bereits angemeldet. Bitte zuerst abmelden.");
-        return;
-    }
-
     if (username === "admin" && password === "1234") {
         alert("Admin erfolgreich eingeloggt!");
         isAdmin = true;
-        localStorage.setItem("isAdmin", isAdmin);
         zeigeQuestbook();
         ladeQuests();
-
-        console.log("Admin erfolgreich eingeloggt");
-        document.getElementById("xp-counter").style.display = "none";
-        document.getElementById("quests-section").style.display = "block"; // Admin muss das Questbuch sehen
-        document.getElementById("logout-button").style.display = "block";
-        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Falsche Anmeldedaten!");
     }
 }
 
+// Benutzerfortschritte speichern in Firebase
+function speichereFortschritte() {
+    if (currentUser) {
+        set(ref(database, `benutzer/${currentUser}/fortschritte`), {
+            xp: xp,
+            level: level
+        })
+        .then(() => {
+            console.log("Fortschritte erfolgreich gespeichert.");
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Fortschritte:", error);
+        });
+    }
+}
+
+// Benutzerfortschritte aus Firebase laden
+function ladeFortschritte() {
+    if (currentUser) {
+        get(ref(database, `benutzer/${currentUser}/fortschritte`))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                xp = data.xp || 0;
+                level = data.level || 1;
+                aktualisiereXPAnzeige();
+            } else {
+                console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Fortschritte:", error);
+        });
+    }
+}
+
+// Quests speichern in Firebase
+function speichereQuestsInFirebase(quests) {
+    if (currentUser) {
+        set(ref(database, `benutzer/${currentUser}/quests`), quests)
+        .then(() => {
+            console.log("Quests erfolgreich gespeichert.");
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Quests:", error);
+        });
+    }
+}
+
+// Quests aus Firebase laden
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
-    const gespeicherteQuests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    let benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || gespeicherteQuests.map(() => ({ erledigt: false }));
-
-    // Stelle sicher, dass benutzerQuestStatus mit gespeicherteQuests übereinstimmt
-    if (benutzerQuestStatus.length < gespeicherteQuests.length) {
-        for (let i = benutzerQuestStatus.length; i < gespeicherteQuests.length; i++) {
-            benutzerQuestStatus.push({ erledigt: false });
-        }
-        localStorage.setItem("global_questStatus", JSON.stringify(benutzerQuestStatus));
-    }
-
-    console.log("Gespeicherte Quests: ", gespeicherteQuests);
-
-    const questList = document.getElementById("quests");
-    questList.innerHTML = ""; // Liste der Quests zurücksetzen
-
-    gespeicherteQuests.forEach((quest, index) => {
-        const listItem = document.createElement("li");
-        const istErledigt = benutzerQuestStatus[index]?.erledigt || false;
-
-        listItem.innerHTML = `
-            <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-            ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-        `;
-        listItem.setAttribute("data-xp", quest.xp);
-        questList.appendChild(listItem);
-    });
-
-    if (isAdmin) {
-        zeigeAdminFunktionen();
-    }
-}
-
-// Quests erledigen (angepasst)
-function questErledigt(questNummer) {
-    console.log("questErledigt() aufgerufen mit QuestNummer: ", questNummer);
-    const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
-    const benutzerQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || quests.map(() => ({ erledigt: false }));
-
-    if (!benutzerQuestStatus[questNummer].erledigt) {
-        benutzerQuestStatus[questNummer].erledigt = true; // Markiere als erledigt
-        xp += parseInt(quests[questNummer].xp, 10); // XP hinzufügen
-        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-        überprüfeLevelAufstieg(); // Levelaufstieg überprüfen
-
-        // Speichern des neuen Queststatus
-        localStorage.setItem("global_questStatus", JSON.stringify(benutzerQuestStatus));
-        ladeQuests(); // Quests neu laden, damit der Status aktualisiert wird
-        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
-    } else {
-        console.log(`Quest ${questNummer} konnte nicht gefunden oder war bereits erledigt.`);
-    }
-}
-
-// Neue Quest erstellen (angepasst)
-function neueQuestErstellen() {
-    console.log("neueQuestErstellen() aufgerufen");
-    const questBeschreibung = prompt("Gib die Beschreibung der neuen Quest ein:");
-    const questXP = parseInt(prompt("Gib die XP für diese Quest ein:"), 10);
-
-    if (questBeschreibung && !isNaN(questXP)) {
-        const quests = JSON.parse(localStorage.getItem("global_quests")) || [];
-        const globalQuestStatus = JSON.parse(localStorage.getItem("global_questStatus")) || [];
-
-        // Beim Hinzufügen sicherstellen, dass der Status 'erledigt' auf false gesetzt ist
-        const newQuest = { beschreibung: questBeschreibung, xp: questXP, erledigt: false };
-        quests.push(newQuest);
-        globalQuestStatus.push({ erledigt: false });
-
-        // Speichere die aktualisierten Quests und deren Status
-        localStorage.setItem("global_quests", JSON.stringify(quests));
-        localStorage.setItem("global_questStatus", JSON.stringify(globalQuestStatus));
-
-        ladeQuests();
-        console.log("Neue Quest hinzugefügt:", questBeschreibung);
-    } else {
-        alert("Ungültige Eingabe. Bitte versuche es erneut.");
-    }
-}
-// Ausloggen angepasst, damit das Level-Setz-Formular ausgeblendet wird
-function ausloggen() {
-    console.log("ausloggen() aufgerufen");
-    currentUser = null;
-    isAdmin = false;
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("isAdmin");
-
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
-    document.getElementById("login-section").style.display = "block";
-
-    // Verberge das Level-Setz-Formular nach dem Ausloggen
-    const levelSetContainer = document.getElementById("level-set-container");
-    if (levelSetContainer) {
-        levelSetContainer.style.display = "none";
-    }
-
-    zeigeStartseite();
-}
-
-
-// Questbuch anzeigen
-function zeigeQuestbook() {
-    console.log("zeigeQuestbook() aufgerufen");
-    if (isAdmin) {
-        zeigeAdminFunktionen();
-    } else if (currentUser) {
-        aktualisiereXPAnzeige();
-        ladeQuests();
-    } else {
-        console.log("Weder Benutzer noch Admin angemeldet.");
-    }
-}
-
-// Avatar anzeigen, je nach Benutzer
-function zeigeAvatar() {
-    console.log("zeigeAvatar() aufgerufen für Benutzer: ", currentUser);
     if (currentUser) {
-        const avatarElement = document.getElementById("avatar-container");
-        const avatarPath = getAvatarForUser(currentUser);
+        get(ref(database, `benutzer/${currentUser}/quests`))
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const gespeicherteQuests = snapshot.val();
+                console.log("Gespeicherte Quests:", gespeicherteQuests);
 
-        if (avatarElement) {
-            avatarElement.innerHTML = `
-                <video autoplay loop muted>
-                    <source src="${avatarPath}" type="video/mp4">
-                    Dein Browser unterstützt das Video-Tag nicht.
-                </video>
-            `;
-        }
-    }
-}
+                const questList = document.getElementById("quests");
+                questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
-// Avatar für Benutzer festlegen
-function getAvatarForUser(user) {
-    if (user === "Thomas") {
-        return "avatars/thomas.mp4";
-    } else if (user === "Elke") {
-        return "avatars/elke.mp4";
-    } else if (user === "Jamie") {
-        return "avatars/jamie.mp4";
-    }
-    return "https://via.placeholder.com/100?text=Avatar";
-}
+                gespeicherteQuests.forEach((quest, index) => {
+                    const listItem = document.createElement("li");
+                    const istErledigt = quest.erledigt || false;
 
-// Fortschritte speichern
-function speichereFortschritte() {
-    console.log("speichereFortschritte() aufgerufen");
-    if (currentUser) {
-        localStorage.setItem(`${currentUser}_xp`, xp);
-        localStorage.setItem(`${currentUser}_level`, level);
-    }
-}
+                    listItem.innerHTML = `
+                        <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                    `;
+                    listItem.setAttribute("data-xp", quest.xp);
+                    questList.appendChild(listItem);
+                });
 
-// Fortschritte laden
-function ladeFortschritte() {
-    console.log("ladeFortschritte() aufgerufen für Benutzer: ", currentUser);
-    if (currentUser) {
-        const gespeicherteXP = localStorage.getItem(`${currentUser}_xp`);
-        const gespeichertesLevel = localStorage.getItem(`${currentUser}_level`);
-
-        if (gespeicherteXP !== null) {
-            xp = parseInt(gespeicherteXP, 10);
-        }
-
-        if (gespeichertesLevel !== null) {
-            level = parseInt(gespeichertesLevel, 10);
-        }
-
-        aktualisiereXPAnzeige();
-    }
-}
-
-// Quest-Status laden (benutzerspezifisch)
-function ladeGlobalenQuestStatus() {
-    console.log("ladeGlobalenQuestStatus() aufgerufen");
-    if (currentUser) {
-        const gespeicherterQuestStatus = localStorage.getItem(`${currentUser}_questStatus`);
-        if (gespeicherterQuestStatus) {
-            const questStatus = JSON.parse(gespeicherterQuestStatus);
-            const questItems = document.querySelectorAll("#quests li");
-            questItems.forEach((questItem, index) => {
-                if (questStatus[index] && questStatus[index].erledigt) {
-                    questItem.style.display = "none"; // Quest ausblenden, wenn erledigt
+                if (isAdmin) {
+                    zeigeAdminFunktionen();
                 }
-            });
-        }
-    }
-}
-
-// Speichern des globalen Quest-Status (benutzerspezifisch)
-function speichereGlobalenQuestStatus() {
-    console.log("speichereGlobalenQuestStatus() aufgerufen");
-    if (currentUser) {
-        const questItems = document.querySelectorAll("#quests li");
-        const questStatus = [];
-
-        questItems.forEach((questItem) => {
-            const istErledigt = questItem.style.display === "none";
-            questStatus.push({ erledigt: istErledigt });
+            } else {
+                console.log("Keine Quests gefunden für den Benutzer.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Quests:", error);
         });
-
-        localStorage.setItem(`${currentUser}_questStatus`, JSON.stringify(questStatus));
     }
 }
 
@@ -350,7 +202,7 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Level-Up Animation mit Video im Vollbildmodus und zeitgesteuerter Entfernung
+// Level-Up Animation
 function zeigeLevelUpAnimation() {
     console.log("zeigeLevelUpAnimation() aufgerufen");
     const videoContainer = document.createElement('div');
@@ -361,7 +213,7 @@ function zeigeLevelUpAnimation() {
     videoContainer.style.width = '100%';
     videoContainer.style.height = '100%';
     videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Schwarzer, leicht transparenter Hintergrund
-    videoContainer.style.zIndex = '500'; // Sicherstellen, dass es über allem anderen angezeigt wird
+    videoContainer.style.zIndex = '500';
 
     const video = document.createElement('video');
     video.src = 'avatars/lvlup.mp4';
@@ -381,7 +233,6 @@ function zeigeLevelUpAnimation() {
     }, 10000); // Video nach 10 Sekunden entfernen
 }
 
-
 // Admin-spezifische Funktionen anzeigen
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
@@ -392,7 +243,7 @@ function zeigeAdminFunktionen() {
                 const editButton = document.createElement("button");
                 editButton.textContent = "Bearbeiten";
                 editButton.className = "edit-button";
-                editButton.onclick = () => questBearbeiten(index + 1);
+                editButton.onclick = () => questBearbeiten(index);
                 questItem.appendChild(editButton);
             }
         });
@@ -417,18 +268,14 @@ function zeigeAdminFunktionen() {
             questbookContainer.appendChild(adminButtonsContainer);
         }
 
-        // Zeige das Level-Setz-Formular an und füge Event-Listener hinzu
         const levelSetContainer = document.getElementById("level-set-container");
         if (levelSetContainer) {
             levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
-
-            // Füge Event Listener für den Button hinzu
             const setLevelButton = document.getElementById("setLevelButton");
             setLevelButton.onclick = levelSetzen;
         }
     }
 }
-
 
 // Level eines Benutzers setzen
 function levelSetzen() {
@@ -437,46 +284,92 @@ function levelSetzen() {
     const neuesLevel = parseInt(document.getElementById("levelInput").value, 10);
 
     if (benutzername && !isNaN(neuesLevel) && neuesLevel > 0) {
-        localStorage.setItem(`${benutzername}_level`, neuesLevel);
-        console.log(`Level für ${benutzername} auf ${neuesLevel} gesetzt.`);
-        
-        // Wenn der aktuell angemeldete Benutzer geändert wird, aktualisiere die Anzeige
-        if (currentUser === benutzername) {
-            level = neuesLevel;
-            aktualisiereXPAnzeige();
-        }
-
-        alert(`Das Level von ${benutzername} wurde erfolgreich auf ${neuesLevel} gesetzt.`);
+        set(ref(database, `benutzer/${benutzername}/fortschritte/level`), neuesLevel)
+        .then(() => {
+            console.log(`Level für ${benutzername} auf ${neuesLevel} gesetzt.`);
+            if (currentUser === benutzername) {
+                level = neuesLevel;
+                aktualisiereXPAnzeige();
+            }
+            alert(`Das Level von ${benutzername} wurde erfolgreich auf ${neuesLevel} gesetzt.`);
+        })
+        .catch((error) => {
+            console.error("Fehler beim Setzen des Levels:", error);
+        });
     } else {
         alert("Bitte wähle einen Benutzer aus und gib ein gültiges Level ein.");
     }
 }
 
-// Quests zurücksetzen (angepasst)
+// Quests zurücksetzen
 function questsZuruecksetzen() {
     console.log("questsZuruecksetzen() aufgerufen");
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        localStorage.removeItem("global_quests");
-        console.log("Alle Quests wurden zurückgesetzt.");
-        ladeQuests();
+        set(ref(database, `benutzer/${currentUser}/quests`), [])
+        .then(() => {
+            console.log("Alle Quests wurden zurückgesetzt.");
+            ladeQuests();
+        })
+        .catch((error) => {
+            console.error("Fehler beim Zurücksetzen der Quests:", error);
+        });
     }
 }
 
 // Funktion zum Bearbeiten von Quests
 function questBearbeiten(questNummer) {
-    console.log("questBearbeiten() aufgerufen für QuestNummer: ", questNummer);
-    const quests = JSON.parse(localStorage.getItem(`${currentUser}_quests`)) || [];
-    if (quests[questNummer - 1]) {
-        const neueBeschreibung = prompt("Neue Beschreibung der Quest:", quests[questNummer - 1].beschreibung);
-        const neueXP = parseInt(prompt("Neue XP für diese Quest:", quests[questNummer - 1].xp), 10);
+    console.log("questBearbeiten() aufgerufen für QuestNummer:", questNummer);
+    get(ref(database, `benutzer/${currentUser}/quests`))
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const quests = snapshot.val();
+            if (quests[questNummer]) {
+                const neueBeschreibung = prompt("Neue Beschreibung der Quest:", quests[questNummer].beschreibung);
+                const neueXP = parseInt(prompt("Neue XP für diese Quest:", quests[questNummer].xp), 10);
 
-        if (neueBeschreibung && !isNaN(neueXP)) {
-            quests[questNummer - 1].beschreibung = neueBeschreibung;
-            quests[questNummer - 1].xp = neueXP;
-            localStorage.setItem(`${currentUser}_quests`, JSON.stringify(quests));
-            ladeQuests();
-        } else {
-            alert("Ungültige Eingabe. Bitte versuche es erneut.");
+                if (neueBeschreibung && !isNaN(neueXP)) {
+                    quests[questNummer].beschreibung = neueBeschreibung;
+                    quests[questNummer].xp = neueXP;
+                    speichereQuestsInFirebase(quests);
+                    ladeQuests();
+                } else {
+                    alert("Ungültige Eingabe. Bitte versuche es erneut.");
+                }
+            }
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Bearbeiten der Quest:", error);
+    });
+}
+
+// Avatar anzeigen
+function zeigeAvatar() {
+    console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
+    if (currentUser) {
+        const avatarElement = document.getElementById("avatar-container");
+        const avatarPath = getAvatarForUser(currentUser);
+
+        if (avatarElement) {
+            avatarElement.innerHTML = `
+                <video autoplay loop muted>
+                    <source src="${avatarPath}" type="video/mp4">
+                    Dein Browser unterstützt das Video-Tag nicht.
+                </video>
+            `;
         }
     }
 }
+
+// Avatar für Benutzer festlegen
+function getAvatarForUser(user) {
+    if (user === "Thomas") {
+        return "avatars/thomas.mp4";
+    } else if (user === "Elke") {
+        return "avatars/elke.mp4";
+    } else if (user === "Jamie") {
+        return "avatars/jamie.mp4";
+    }
+    return "https://via.placeholder.com/100?text=Avatar";
+}
+
