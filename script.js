@@ -246,6 +246,36 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
+function neueQuestErstellen() {
+    console.log("neueQuestErstellen() aufgerufen");
+    const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
+    const neueQuestXP = parseInt(prompt("Wie viele XP soll diese Quest geben?"), 10);
+
+    if (neueQuestBeschreibung && !isNaN(neueQuestXP)) {
+        const neueQuest = {
+            beschreibung: neueQuestBeschreibung,
+            xp: neueQuestXP,
+            erledigt: false
+        };
+
+        firebase.database().ref(`benutzer/${currentUser}/quests`).get()
+            .then((snapshot) => {
+                let quests = [];
+                if (snapshot.exists()) {
+                    quests = snapshot.val();
+                }
+                quests.push(neueQuest);
+                speichereQuestsInFirebase(quests);
+                ladeQuests();
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der vorhandenen Quests:", error);
+            });
+    } else {
+        alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
+    }
+}
+
 
 // Admin-spezifische Funktionen anzeigen
 function zeigeAdminFunktionen() {
