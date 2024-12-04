@@ -1,8 +1,4 @@
-// Firebase-Initialisierung: Importiere die Firebase-Funktionen
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
-
-// Firebase-Konfiguration
+// Firebase-Initialisierung
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_AUTH_DOMAIN",
@@ -14,8 +10,8 @@ const firebaseConfig = {
 };
 
 // Firebase initialisieren
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
 // Globale Variablen für XP, Level und Benutzerstatus
 let xp = 0;
@@ -95,7 +91,7 @@ function adminLogin() {
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
     if (currentUser) {
-        set(ref(database, `benutzer/${currentUser}/fortschritte`), {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
             level: level
         })
@@ -111,7 +107,7 @@ function speichereFortschritte() {
 // Benutzerfortschritte aus Firebase laden
 function ladeFortschritte() {
     if (currentUser) {
-        get(ref(database, `benutzer/${currentUser}/fortschritte`))
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
@@ -131,7 +127,7 @@ function ladeFortschritte() {
 // Quests speichern in Firebase
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
-        set(ref(database, `benutzer/${currentUser}/quests`), quests)
+        firebase.database().ref(`benutzer/${currentUser}/quests`).set(quests)
         .then(() => {
             console.log("Quests erfolgreich gespeichert.");
         })
@@ -145,7 +141,7 @@ function speichereQuestsInFirebase(quests) {
 function ladeQuests() {
     console.log("ladeQuests() aufgerufen");
     if (currentUser) {
-        get(ref(database, `benutzer/${currentUser}/quests`))
+        firebase.database().ref(`benutzer/${currentUser}/quests`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const gespeicherteQuests = snapshot.val();
@@ -178,8 +174,6 @@ function ladeQuests() {
         });
     }
 }
-
-// ... Restlicher Code bleibt unverändert
 
 
 // XP-Anzeige und Level-Up überprüfen
