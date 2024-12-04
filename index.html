@@ -1,33 +1,34 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <!-- Firebase App (bietet alle Firebase-Dienste) -->
-<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js"></script>
-
-<script>
-    // Hier Firebase konfigurieren
-    const firebaseConfig = {
-        apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
-        authDomain: "questbook-3e600.firebaseapp.com",
-        databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "questbook-3e600",
-        storageBucket: "questbook-3e600.firebasestorage.app",
-        messagingSenderId: "915094173482",
-        appId: "1:915094173482:web:50c21383be0c5e45c5d053",
-        measurementId: "G-P738GMV24T"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
-</script>
-
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quest-Buch</title>
+        <!-- Firebase App (liefert alle Firebase-Dienste) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script>
+        // Firebase-Initialisierung
+        <script>
+        // Firebase-Initialisierung
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Firebase initialisieren
+        firebase.initializeApp(firebaseConfig);
+    </script>
+        // Firebase initialisieren
+        firebase.initializeApp(firebaseConfig);
+    </script>
+   
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
