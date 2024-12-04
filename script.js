@@ -284,37 +284,34 @@ function neueQuestErstellen() {
             erledigt: false
         };
 
-        // Globale Quests speichern, damit alle Benutzer Zugriff haben
-        firebase.database().ref('quests').get()
+        // Speichern der neuen Quest in der globalen Quests-Liste
+        firebase.database().ref('quests').once('value')
             .then((snapshot) => {
-                let quests = [];
-                if (snapshot.exists()) {
-                    const gespeicherteQuests = snapshot.val();
-                    if (Array.isArray(gespeicherteQuests)) {
-                        quests = gespeicherteQuests;
-                    } else {
-                        console.error("Fehler: Erwartete eine Array-Struktur für die Quests.");
-                    }
+                let quests = snapshot.exists() ? snapshot.val() : [];
+
+                // Sicherstellen, dass wir ein Array haben
+                if (!Array.isArray(quests)) {
+                    console.error("Fehler: Erwartete eine Array-Struktur für die Quests.");
+                    quests = [];
                 }
 
-                quests.push(neueQuest); // Füge die neue Quest zur Liste hinzu
-                
-                firebase.database().ref('quests').set(quests)
-                    .then(() => {
-                        console.log("Neue Quest erfolgreich erstellt.");
-                        ladeGlobaleQuests(); // Lade die aktualisierten Quests neu
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der neuen Quest:", error);
-                    });
+                quests.push(neueQuest); // Füge die neue Quest hinzu
+
+                return firebase.database().ref('quests').set(quests);
+            })
+            .then(() => {
+                console.log("Neue Quest erfolgreich erstellt.");
+                ladeGlobaleQuests(); // Lade die aktualisierten Quests neu
             })
             .catch((error) => {
-                console.error("Fehler beim Laden der vorhandenen Quests:", error);
+                console.error("Fehler beim Speichern der neuen Quest:", error);
             });
     } else {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
     }
 }
+
+
 
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
