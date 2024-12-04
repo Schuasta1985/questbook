@@ -63,7 +63,7 @@ function benutzerAnmeldung() {
         ladeFortschritte();
         zeigeQuestbook();
         zeigeAvatar();
-        ladeQuests();
+        ladeGlobaleQuests();
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -80,7 +80,7 @@ function adminLogin() {
         isAdmin = true;
 
         zeigeQuestbook();
-        ladeQuests();
+        ladeGlobaleQuests();
         zeigeAdminFunktionen(); // Admin-spezifische Funktionen anzeigen
     } else {
         alert("Falsche Anmeldedaten!");
@@ -138,8 +138,8 @@ function speichereQuestsInFirebase(quests) {
 }
 
 // Quests aus Firebase laden
-function ladeQuests() {
-    console.log("ladeQuests() aufgerufen");
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/quests`).get()
         .then((snapshot) => {
@@ -248,18 +248,23 @@ function zeigeLevelUpAnimation() {
 }
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
-    firebase.database().ref(`benutzer/${currentUser}/quests`).get()
+    firebase.database().ref('quests').get()
     .then((snapshot) => {
         if (snapshot.exists()) {
             let quests = snapshot.val();
             if (quests[questNummer]) {
-                quests[questNummer].erledigt = true;
+                quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
                 xp += quests[questNummer].xp; // XP hinzufügen
                 speichereFortschritte(); // Fortschritte speichern
-                speichereQuestsInFirebase(quests); // Quests speichern
-                aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                ladeQuests(); // Quests neu laden
-                console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+                firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
+                    .then(() => {
+                        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                        ladeGlobaleQuests(); // Quests neu laden
+                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der Quest als erledigt:", error);
+                    });
             }
         }
     })
@@ -267,7 +272,6 @@ function questErledigt(questNummer) {
         console.error("Fehler beim Markieren der Quest als erledigt:", error);
     });
 }
-
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -291,7 +295,7 @@ function neueQuestErstellen() {
                 firebase.database().ref('quests').set(quests)
                     .then(() => {
                         console.log("Neue Quest erfolgreich erstellt.");
-                        ladeQuests();
+                        ladeGlobaleQuests();
                     })
                     .catch((error) => {
                         console.error("Fehler beim Speichern der neuen Quest:", error);
@@ -411,7 +415,7 @@ function questsZuruecksetzen() {
         firebase.database().ref('quests').set([])
         .then(() => {
             console.log("Alle Quests wurden zurückgesetzt.");
-            ladeQuests();
+            ladeGlobaleQuests();
         })
         .catch((error) => {
             console.error("Fehler beim Zurücksetzen der Quests:", error);
@@ -437,7 +441,7 @@ function questBearbeiten(questNummer) {
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
                             console.log("Quest erfolgreich bearbeitet.");
-                            ladeQuests();
+                            ladeGlobaleQuests();
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der bearbeiteten Quest:", error);
