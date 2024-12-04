@@ -501,11 +501,29 @@ function ausloggen() {
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
-    
+
+    // Admin-spezifische Elemente entfernen
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (adminButtonsContainer) {
+        adminButtonsContainer.remove();
+    }
+
+    const levelSetContainer = document.getElementById("level-set-container");
+    if (levelSetContainer) {
+        levelSetContainer.style.display = "none";
+    }
+
     // Login-Felder zurücksetzen
     document.getElementById("benutzerDropdown").value = "";
     document.getElementById("benutzerPasswort").value = "";
+
+    // Avatar entfernen
+    const avatarElement = document.getElementById("avatar-container");
+    if (avatarElement) {
+        avatarElement.innerHTML = "";
+    }
 }
+
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
