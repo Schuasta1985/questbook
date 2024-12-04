@@ -246,6 +246,28 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
+function questErledigt(questNummer) {
+    console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
+    firebase.database().ref(`benutzer/${currentUser}/quests`).get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            let quests = snapshot.val();
+            if (quests[questNummer]) {
+                quests[questNummer].erledigt = true;
+                xp += quests[questNummer].xp; // XP hinzufügen
+                speichereFortschritte(); // Fortschritte speichern
+                speichereQuestsInFirebase(quests); // Quests speichern
+                aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                ladeQuests(); // Quests neu laden
+                console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+            }
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Markieren der Quest als erledigt:", error);
+    });
+}
+
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -258,15 +280,22 @@ function neueQuestErstellen() {
             erledigt: false
         };
 
-        firebase.database().ref(`benutzer/${currentUser}/quests`).get()
+        // Globale Quests speichern, damit alle Benutzer Zugriff haben
+        firebase.database().ref('quests').get()
             .then((snapshot) => {
                 let quests = [];
                 if (snapshot.exists()) {
                     quests = snapshot.val();
                 }
                 quests.push(neueQuest);
-                speichereQuestsInFirebase(quests);
-                ladeQuests();
+                firebase.database().ref('quests').set(quests)
+                    .then(() => {
+                        console.log("Neue Quest erfolgreich erstellt.");
+                        ladeQuests();
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der neuen Quest:", error);
+                    });
             })
             .catch((error) => {
                 console.error("Fehler beim Laden der vorhandenen Quests:", error);
@@ -275,7 +304,36 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
     }
 }
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
+    firebase.database().ref('quests').get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const gespeicherteQuests = snapshot.val();
+            console.log("Globale Quests:", gespeicherteQuests);
 
+            const questList = document.getElementById("quests");
+            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+
+            gespeicherteQuests.forEach((quest, index) => {
+                const listItem = document.createElement("li");
+                const istErledigt = quest.erledigt || false;
+
+                listItem.innerHTML = `
+                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                `;
+                listItem.setAttribute("data-xp", quest.xp);
+                questList.appendChild(listItem);
+            });
+        } else {
+            console.log("Keine globalen Quests gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der globalen Quests:", error);
+    });
+}
 
 // Admin-spezifische Funktionen anzeigen
 function zeigeAdminFunktionen() {
@@ -328,7 +386,7 @@ function levelSetzen() {
     const neuesLevel = parseInt(document.getElementById("levelInput").value, 10);
 
     if (benutzername && !isNaN(neuesLevel) && neuesLevel > 0) {
-        set(ref(database, `benutzer/${benutzername}/fortschritte/level`), neuesLevel)
+        firebase.database().ref(`benutzer/${benutzername}/fortschritte/level`).set(neuesLevel)
         .then(() => {
             console.log(`Level für ${benutzername} auf ${neuesLevel} gesetzt.`);
             if (currentUser === benutzername) {
@@ -349,7 +407,8 @@ function levelSetzen() {
 function questsZuruecksetzen() {
     console.log("questsZuruecksetzen() aufgerufen");
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        set(ref(database, `benutzer/${currentUser}/quests`), [])
+        // Setze die globalen Quests zurück
+        firebase.database().ref('quests').set([])
         .then(() => {
             console.log("Alle Quests wurden zurückgesetzt.");
             ladeQuests();
@@ -360,10 +419,11 @@ function questsZuruecksetzen() {
     }
 }
 
+
 // Funktion zum Bearbeiten von Quests
 function questBearbeiten(questNummer) {
     console.log("questBearbeiten() aufgerufen für QuestNummer:", questNummer);
-    get(ref(database, `benutzer/${currentUser}/quests`))
+    firebase.database().ref('quests').get()
     .then((snapshot) => {
         if (snapshot.exists()) {
             const quests = snapshot.val();
@@ -374,8 +434,14 @@ function questBearbeiten(questNummer) {
                 if (neueBeschreibung && !isNaN(neueXP)) {
                     quests[questNummer].beschreibung = neueBeschreibung;
                     quests[questNummer].xp = neueXP;
-                    speichereQuestsInFirebase(quests);
-                    ladeQuests();
+                    firebase.database().ref('quests').set(quests)
+                        .then(() => {
+                            console.log("Quest erfolgreich bearbeitet.");
+                            ladeQuests();
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der bearbeiteten Quest:", error);
+                        });
                 } else {
                     alert("Ungültige Eingabe. Bitte versuche es erneut.");
                 }
@@ -386,6 +452,7 @@ function questBearbeiten(questNummer) {
         console.error("Fehler beim Bearbeiten der Quest:", error);
     });
 }
+
 
 // Avatar anzeigen
 function zeigeAvatar() {
