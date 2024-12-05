@@ -520,10 +520,10 @@ function ausloggen() {
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('login-section').style.display = 'block';
+    document.getElementById('login-section').style.display = 'flex'; // Flexbox für zentrierte Anzeige
 
     // Spieler-Level-Sektion und Logbuch-Button sichtbar machen
-    document.getElementById("spieler-level-section").style.display = "block";  // Spielerlevel soll sichtbar bleiben
+    document.getElementById("spieler-level-section").style.display = "flex";  // Flexbox für zentrierte Anzeige
     document.getElementById('logbuch-button').style.display = 'block';  // Logbuch-Button sichtbar machen
 
     // Admin-spezifische Elemente entfernen
@@ -550,7 +550,6 @@ function ausloggen() {
     // Quests verstecken
     document.getElementById('quests').innerHTML = ""; // Löscht die Quests nach dem Ausloggen
 }
-
 
 
 // Avatar für Benutzer festlegen
