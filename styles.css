@@ -116,12 +116,13 @@ header h1::after {
     border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
 }
 
-/* Benutzer Login */
 #login-section {
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100vh; /* Höhe anpassen, um alles zu zentrieren */
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
@@ -246,4 +247,13 @@ button.erledigt-button:hover {
     color: #ffd700; /* Ein etwas weniger auffälliges Gelb, du kannst auch eine andere Farbe wählen */
     font-weight: normal; /* Gewicht der Schrift auf normal setzen */
 }
+#spieler-level-section {
+    display: flex;
+    justify-content: center; /* Spieler- und Level-Info zentriert */
+    margin-top: 20px; /* Abstand */
+}
 
+#quests-section {
+    display: flex;
+    justify-content: center; /* Zentriert auch die Quests */
+}
