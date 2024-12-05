@@ -241,10 +241,9 @@ button.erledigt-button:hover {
 
 /* Stil für Spieler-Name und Level */
 .spieler-name, .spieler-level {
-    font-size: 1.5rem; /* Größere Schriftgröße für bessere Lesbarkeit */
+    font-size: 1.2em; /* Größere Schriftgröße */
     font-family: Arial, sans-serif; /* Gut lesbare serifenlose Schriftart */
-    font-weight: bold; /* Fett für mehr Kontrast */
-    color: #ffff00; /* Gelbe Farbe für den Text der Spieler-Name und Level */
+    color: #ffd700; /* Ein etwas weniger auffälliges Gelb, du kannst auch eine andere Farbe wählen */
+    font-weight: normal; /* Gewicht der Schrift auf normal setzen */
 }
-
 
