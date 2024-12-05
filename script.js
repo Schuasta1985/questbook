@@ -49,15 +49,16 @@ function zeigeSpielerUndLevel() {
 
             // Durch alle Benutzer iterieren und Daten anzeigen
             Object.keys(benutzerData).forEach((benutzername) => {
-                const level = benutzerData[benutzername].fortschritte?.level || 1;
+                const benutzerFortschritt = benutzerData[benutzername].fortschritte || {};
+                const benutzerLevel = benutzerFortschritt.level || 1;
 
                 // Erstelle einen Spieler-Container
                 const spielerItem = document.createElement("div");
                 spielerItem.className = "spieler-item";
 
                 spielerItem.innerHTML = `
-                    <div class="spieler-name">${benutzername}</div>
-                    <div class="spieler-level">Level: ${level}</div>
+                    <div class="spieler-name">${benutzername}:</div>
+                    <div class="spieler-level" style="color: gold; font-weight: bold;">Level ${benutzerLevel}</div>
                 `;
 
                 spielerListContainer.appendChild(spielerItem);
@@ -72,7 +73,6 @@ function zeigeSpielerUndLevel() {
         console.error("Fehler beim Abrufen der Benutzerdaten:", error);
     });
 }
-
 
 
 // Questbuch anzeigen
@@ -536,9 +536,8 @@ function ausloggen() {
     // Quests verstecken
     document.getElementById('quests').innerHTML = ""; // Löscht die Quests nach dem Ausloggen
 
-    // Spieler-Level-Anzeige ausblenden
-    document.getElementById("spieler-level-section").style.display = "none";
-}
+    // Spieler-Level-Anzeige neu laden (es bleibt auf der Startseite sichtbar)
+    zeigeSpielerUndLevel();
 
 
 // Avatar für Benutzer festlegen
