@@ -8,6 +8,7 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
+    zeigeSpielerUndLevel(); // Neu hinzugefügt
 };
 
 // Startseite anzeigen
@@ -35,33 +36,43 @@ function zeigeStartseite() {
 }
 
 // Spielerlevel auf der Startseite anzeigen
-function zeigeSpielerLevel() {
-    console.log("zeigeSpielerLevel() aufgerufen");
+function zeigeSpielerUndLevel() {
+    console.log("zeigeSpielerUndLevel() aufgerufen");
 
-    firebase.database().ref('benutzer').get()
-    .then((snapshot) => {
+    const spielerListContainer = document.getElementById("spieler-list-container");
+
+    // Spieler-Level-Daten abrufen
+    firebase.database().ref('benutzer').get().then((snapshot) => {
         if (snapshot.exists()) {
             const benutzerData = snapshot.val();
-            const spielerLevelSection = document.getElementById("spieler-level-section");
+            spielerListContainer.innerHTML = ""; // Vorherige Einträge entfernen
 
-            let levelListHtml = "<h3>Spieler und deren Level:</h3><ul>";
-            for (let benutzername in benutzerData) {
-                const benutzerFortschritte = benutzerData[benutzername].fortschritte;
-                if (benutzerFortschritte) {
-                    levelListHtml += `<li>${benutzername}: Level ${benutzerFortschritte.level || 1}</li>`;
-                }
-            }
-            levelListHtml += "</ul>";
+            // Durch alle Benutzer iterieren und Daten anzeigen
+            Object.keys(benutzerData).forEach((benutzername) => {
+                const level = benutzerData[benutzername].fortschritte?.level || 1;
 
-            spielerLevelSection.innerHTML = levelListHtml;
+                // Erstelle einen Spieler-Container
+                const spielerItem = document.createElement("div");
+                spielerItem.className = "spieler-item";
+
+                spielerItem.innerHTML = `
+                    <div class="spieler-name">${benutzername}</div>
+                    <div class="spieler-level">Level: ${level}</div>
+                `;
+
+                spielerListContainer.appendChild(spielerItem);
+            });
+
+            // Spieler-Level-Sektion anzeigen
+            document.getElementById("spieler-level-section").style.display = "block";
         } else {
-            console.log("Keine Benutzerdaten vorhanden.");
+            console.log("Keine Benutzerdaten gefunden.");
         }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der Spielerlevel:", error);
+    }).catch((error) => {
+        console.error("Fehler beim Abrufen der Benutzerdaten:", error);
     });
 }
+
 
 
 // Questbuch anzeigen
@@ -522,9 +533,13 @@ function ausloggen() {
         avatarElement.innerHTML = "";
     }
 
-    // Startseite neu anzeigen (mit Spielerlevel)
-    zeigeStartseite();
+    // Quests verstecken
+    document.getElementById('quests').innerHTML = ""; // Löscht die Quests nach dem Ausloggen
+
+    // Spieler-Level-Anzeige ausblenden
+    document.getElementById("spieler-level-section").style.display = "none";
 }
+
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
