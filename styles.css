@@ -225,6 +225,7 @@ button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
 }
 
+/* Spieler- und Levelbereich */
 .spieler-list-container {
     display: flex;
     justify-content: center;
@@ -251,6 +252,7 @@ button.erledigt-button:hover {
     color: #ffd700; /* Ein etwas weniger auffälliges Gelb, du kannst auch eine andere Farbe wählen */
     font-weight: normal; /* Gewicht der Schrift auf normal setzen */
 }
+
 /* Spieler-Level-Bereich nach dem Ausloggen */
 #spieler-level-section {
     display: block;
@@ -263,12 +265,23 @@ button.erledigt-button:hover {
     text-align: center; /* Zentriert den Quests-Bereich */
 }
 
-}
+/* Logbuch-Button */
 #logbuch-button {
     position: absolute;
-     display: block; /* Stellt sicher, dass der Logbuch-Button immer angezeigt wird */
+    display: block;
     top: 70%;  /* Damit er unter der goldenen Linie und dem Text erscheint */
     left: 50%;
     transform: translateX(-50%);
-     z-index: 10; /* Damit er über anderen Inhalten bleibt */
+    z-index: 10; /* Damit er über anderen Inhalten bleibt */
+    padding: 10px 20px; /* Größere Schaltfläche */
+    font-size: 1.2rem; /* Lesbare Schriftgröße */
+    background-color: #FFD700; /* Goldfarbe */
+    color: #4E3629; /* Dunkelbrauner Text */
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#logbuch-button:hover {
+    background-color: #B22222; /* Hover-Effekt */
 }
