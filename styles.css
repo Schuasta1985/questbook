@@ -21,16 +21,6 @@ h1 {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-/* Goldene Linie */
-#goldene-linie {
-    display: block;
-    width: 100%;
-    height: 3px;
-    background-color: #FFD700; /* Gold */
-    margin: 20px 0;
-}
-
-
 /* XP-Zähler und Level */
 #xp-counter {
     margin-top: 20px;
@@ -101,9 +91,10 @@ h1 {
 
 /* Benutzer Login */
 #login-section {
-    display: block;
-    text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
@@ -201,70 +192,3 @@ button.erledigt-button {
 button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
 }
-
-/* Logbuch Button */
-#logbuch-button {
-    position: relative;
-    top: 20px; /* Direkt unter der goldenen Linie */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #808000; /* Olivgrün */
-    color: #FFD700; /* Goldton */
-    border: none;
-    padding: 10px 15px;
-    font-weight: 600;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 10;
-}
-
-#logbuch-button:hover {
-    background-color: #B22222; /* Sattes Rot */
-}
-
-/* Spieler-Container */
-.spieler-list-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-}
-
-/* Stil für jeden Spieler */
-.spieler-item {
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #ffffff;
-    max-width: 200px;
-}
-
-.spieler-name, .spieler-level {
-    font-size: 1.2em;
-    font-family: Arial, sans-serif;
-    color: #ffd700;
-    font-weight: normal;
-}
-
-/* Spieler-Level-Bereich nach dem Ausloggen */
-#spieler-level-section {
-    display: block;
-    text-align: center; /* Zentriert den Spieler-Level-Bereich */
-}
-
-/* Quests, Avatar, etc., erscheinen unterhalb des Logbuchs nach dem Ausloggen */
-#quests-section {
-    display: block;
-    text-align: center; /* Zentriert den Quests-Bereich */
-}
-/* Spieler-Level */
-#spieler-level-section {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
-}
-
