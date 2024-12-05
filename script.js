@@ -27,9 +27,42 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-            `;
+            <div id="spieler-level-section"></div>
+        `;
+
+        zeigeSpielerLevel(); // Spielerlevel auf der Startseite anzeigen
     }
 }
+
+// Spielerlevel auf der Startseite anzeigen
+function zeigeSpielerLevel() {
+    console.log("zeigeSpielerLevel() aufgerufen");
+
+    firebase.database().ref('benutzer').get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const benutzerData = snapshot.val();
+            const spielerLevelSection = document.getElementById("spieler-level-section");
+
+            let levelListHtml = "<h3>Spieler und deren Level:</h3><ul>";
+            for (let benutzername in benutzerData) {
+                const benutzerFortschritte = benutzerData[benutzername].fortschritte;
+                if (benutzerFortschritte) {
+                    levelListHtml += `<li>${benutzername}: Level ${benutzerFortschritte.level || 1}</li>`;
+                }
+            }
+            levelListHtml += "</ul>";
+
+            spielerLevelSection.innerHTML = levelListHtml;
+        } else {
+            console.log("Keine Benutzerdaten vorhanden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der Spielerlevel:", error);
+    });
+}
+
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -488,8 +521,10 @@ function ausloggen() {
     if (avatarElement) {
         avatarElement.innerHTML = "";
     }
-}
 
+    // Startseite neu anzeigen (mit Spielerlevel)
+    zeigeStartseite();
+}
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
