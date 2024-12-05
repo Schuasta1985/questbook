@@ -8,17 +8,44 @@ body {
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
 
+/* Textstil für beschreibende Absätze */
+header p {
+    font-size: 1.5em;  /* Größere Schrift */
+    color: #FFD700;    /* Helles Gelb */
+    text-shadow: 1px 1px 2px #000; /* Leichter Textschatten für Kontrast */
+}
+
+/* Textstil für das Benutzer-Auswahl-Label */
+label[for="benutzerDropdown"] {
+    font-size: 1.2em;  /* Größere Schrift */
+    color: #FFD700;    /* Helles Gelb */
+    text-shadow: 1px 1px 2px #000; /* Leichter Textschatten für Kontrast */
+}
+
 /* Header */
 header {
     text-align: center;
     margin-top: 20px;
 }
 
-h1 {
-    font-size: 3rem;
-    font-weight: 600;
-    color: #F5F5DC;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+/* Titelstil für "Willkommen im Quest-Buch" */
+header h1 {
+    font-size: 3em;  /* Sehr große Schrift */
+    font-family: 'Cinzel', serif;  /* Dekorative, abenteuerliche Schriftart */
+    color: #FFD700;  /* Goldene Farbe */
+    text-shadow: 2px 2px 5px #000;  /* Starker Textschatten für Tiefe */
+    text-transform: uppercase;  /* Alle Buchstaben groß */
+    padding-bottom: 0.5em;
+    position: relative;
+}
+
+header h1::after {
+    content: "";
+    display: block;
+    width: 200px;
+    height: 3px;
+    background-color: #FFD700; /* Goldene dekorative Linie */
+    margin: 0.5em auto 0 auto;
 }
 
 /* XP-Zähler und Level */
