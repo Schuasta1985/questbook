@@ -108,6 +108,13 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar();
         ladeGlobaleQuests();
+
+        // Spieler-Level-Container unterhalb der Quests anzeigen
+        const questsSection = document.getElementById('quests-section');
+        const spielerLevelSection = document.getElementById('spieler-level-section');
+        if (questsSection && spielerLevelSection) {
+            questsSection.parentNode.insertBefore(spielerLevelSection, questsSection.nextSibling);
+        }
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
