@@ -8,44 +8,17 @@ body {
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
 
-/* Textstil für beschreibende Absätze */
-header p {
-    font-size: 1.5em;  /* Größere Schrift */
-    color: #FFD700;    /* Helles Gelb */
-    text-shadow: 1px 1px 2px #000; /* Leichter Textschatten für Kontrast */
-}
-
-/* Textstil für das Benutzer-Auswahl-Label */
-label[for="benutzerDropdown"] {
-    font-size: 1.2em;  /* Größere Schrift */
-    color: #FFD700;    /* Helles Gelb */
-    text-shadow: 1px 1px 2px #000; /* Leichter Textschatten für Kontrast */
-}
-
 /* Header */
 header {
     text-align: center;
     margin-top: 20px;
 }
 
-/* Titelstil für "Willkommen im Quest-Buch" */
-header h1 {
-    font-size: 3em;  /* Sehr große Schrift */
-    font-family: 'Cinzel', serif;  /* Dekorative, abenteuerliche Schriftart */
-    color: #FFD700;  /* Goldene Farbe */
-    text-shadow: 2px 2px 5px #000;  /* Starker Textschatten für Tiefe */
-    text-transform: uppercase;  /* Alle Buchstaben groß */
-    padding-bottom: 0.5em;
-    position: relative;
-}
-
-header h1::after {
-    content: "";
-    display: block;
-    width: 200px;
-    height: 3px;
-    background-color: #FFD700; /* Goldene dekorative Linie */
-    margin: 0.5em auto 0 auto;
+h1 {
+    font-size: 3rem;
+    font-weight: 600;
+    color: #F5F5DC;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 /* XP-Zähler und Level */
@@ -116,20 +89,15 @@ header h1::after {
     border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
 }
 
-/* Zentriert alles im Login-Bereich */
+/* Benutzer Login */
 #login-section {
-    display: block;
+    margin-top: 30px;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: 100vh; /* Damit es den gesamten Bildschirm ausfüllt */
-    position: absolute;
-    top: 0;
-    width: 100%;
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
-     display: block; /* Zeigt den Login-Bereich nach Ausloggen */
     margin: 10px 0;
     font-size: 1.2rem;
 }
@@ -225,7 +193,27 @@ button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
 }
 
-/* Spieler- und Levelbereich */
+/* Logbuch Button */
+#logbuch-button {
+    position: absolute;
+    top: 80%; /* Platzierung unter der goldenen Linie */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #808000; /* Olivgrün */
+    color: #FFD700; /* Goldton */
+    border: none;
+    padding: 10px 15px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* Damit er über anderen Inhalten bleibt */
+}
+
+#logbuch-button:hover {
+    background-color: #B22222; /* Sattes Rot */
+}
+
+/* Spieler-Container */
 .spieler-list-container {
     display: flex;
     justify-content: center;
@@ -235,6 +223,7 @@ button.erledigt-button:hover {
     margin-top: 1.5rem; /* Etwas mehr Abstand von oben */
 }
 
+/* Stil für jeden Spieler */
 .spieler-item {
     background-color: rgba(0, 0, 0, 0.6); /* Halbtransparenter schwarzer Hintergrund */
     padding: 10px;
@@ -265,23 +254,3 @@ button.erledigt-button:hover {
     text-align: center; /* Zentriert den Quests-Bereich */
 }
 
-/* Logbuch-Button */
-#logbuch-button {
-    position: absolute;
-    display: block;
-    top: 70%;  /* Damit er unter der goldenen Linie und dem Text erscheint */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10; /* Damit er über anderen Inhalten bleibt */
-    padding: 10px 20px; /* Größere Schaltfläche */
-    font-size: 1.2rem; /* Lesbare Schriftgröße */
-    background-color: #FFD700; /* Goldfarbe */
-    color: #4E3629; /* Dunkelbrauner Text */
-    border: none;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-#logbuch-button:hover {
-    background-color: #B22222; /* Hover-Effekt */
-}
