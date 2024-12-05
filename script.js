@@ -8,7 +8,6 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
-    zeigeSpielerUndLevel(); // Neu hinzugefügt
 };
 
 // Startseite anzeigen
@@ -28,52 +27,9 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-            <div id="spieler-level-section"></div>
-        `;
-
-        zeigeSpielerUndLevel(); // Spielerlevel auf der Startseite anzeigen
+            `;
     }
 }
-
-// Spielerlevel auf der Startseite anzeigen
-function zeigeSpielerUndLevel() {
-    console.log("zeigeSpielerUndLevel() aufgerufen");
-
-    const spielerListContainer = document.getElementById("spieler-list-container");
-
-    // Spieler-Level-Daten abrufen
-    firebase.database().ref('benutzer').get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const benutzerData = snapshot.val();
-            spielerListContainer.innerHTML = ""; // Vorherige Einträge entfernen
-
-            // Durch alle Benutzer iterieren und Daten anzeigen
-            Object.keys(benutzerData).forEach((benutzername) => {
-                const benutzerFortschritt = benutzerData[benutzername].fortschritte || {};
-                const benutzerLevel = benutzerFortschritt.level || 1;
-
-                // Erstelle einen Spieler-Container
-                const spielerItem = document.createElement("div");
-                spielerItem.className = "spieler-item";
-
-                spielerItem.innerHTML = `
-                    <div class="spieler-name">${benutzername}:</div>
-                    <div class="spieler-level" style="color: gold; font-weight: bold;">Level ${benutzerLevel}</div>
-                `;
-
-                spielerListContainer.appendChild(spielerItem);
-            });
-
-            // Spieler-Level-Sektion anzeigen
-            document.getElementById("spieler-level-section").style.display = "block";
-        } else {
-            console.log("Keine Benutzerdaten gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Abrufen der Benutzerdaten:", error);
-    });
-}
-
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -108,13 +64,6 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar();
         ladeGlobaleQuests();
-
-        // Spieler-Level-Container unterhalb der Quests anzeigen
-        const questsSection = document.getElementById('quests-section');
-        const spielerLevelSection = document.getElementById('spieler-level-section');
-        if (questsSection && spielerLevelSection) {
-            questsSection.parentNode.insertBefore(spielerLevelSection, questsSection.nextSibling);
-        }
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -191,37 +140,39 @@ function speichereQuestsInFirebase(quests) {
 // Quests aus Firebase laden
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
-    firebase.database().ref('quests').get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const gespeicherteQuests = snapshot.val();
-            console.log("Globale Quests:", gespeicherteQuests);
+    if (currentUser) {
+        firebase.database().ref(`benutzer/${currentUser}/quests`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const gespeicherteQuests = snapshot.val();
+                console.log("Gespeicherte Quests:", gespeicherteQuests);
 
-            const questList = document.getElementById("quests");
-            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+                const questList = document.getElementById("quests");
+                questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
-            gespeicherteQuests.forEach((quest, index) => {
-                const listItem = document.createElement("li");
-                const istErledigt = quest.erledigt || false;
+                gespeicherteQuests.forEach((quest, index) => {
+                    const listItem = document.createElement("li");
+                    const istErledigt = quest.erledigt || false;
 
-                // Hier füge ich die XP neben der Questbeschreibung ein
-                listItem.innerHTML = `
-                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
-                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <strong style="font-weight: bold;">(${quest.xp} XP)</strong>
-                        ${istErledigt ? ` - erledigt von ${quest.erledigtVon}` : ""}
-                    </span>
-                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-                `;
-                listItem.setAttribute("data-xp", quest.xp);
-                questList.appendChild(listItem);
-            });
-        } else {
-            console.log("Keine globalen Quests gefunden.");
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der globalen Quests:", error);
-    });
+                    listItem.innerHTML = `
+                        <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                    `;
+                    listItem.setAttribute("data-xp", quest.xp);
+                    questList.appendChild(listItem);
+                });
+
+                if (isAdmin) {
+                    zeigeAdminFunktionen();
+                }
+            } else {
+                console.log("Keine Quests gefunden für den Benutzer.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Quests:", error);
+        });
+    }
 }
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
@@ -295,7 +246,6 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
-
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
@@ -304,14 +254,13 @@ function questErledigt(questNummer) {
             let quests = snapshot.val() || [];
             if (quests[questNummer]) {
                 quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                quests[questNummer].erledigtVon = currentUser; // Speichere den Spieler, der die Quest erledigt hat
                 xp += quests[questNummer].xp; // XP hinzufügen
                 speichereFortschritte(); // Fortschritte speichern
                 firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
                     .then(() => {
                         aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                         ladeGlobaleQuests(); // Quests neu laden
-                        console.log(`Quest ${questNummer} wurde als erledigt markiert von ${currentUser}.`);
+                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
                     })
                     .catch((error) => {
                         console.error("Fehler beim Speichern der Quest als erledigt:", error);
@@ -323,7 +272,6 @@ function questErledigt(questNummer) {
         console.error("Fehler beim Markieren der Quest als erledigt:", error);
     });
 }
-
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -363,6 +311,38 @@ function neueQuestErstellen() {
     }
 }
 
+
+
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
+    firebase.database().ref('quests').get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const gespeicherteQuests = snapshot.val();
+            console.log("Globale Quests:", gespeicherteQuests);
+
+            const questList = document.getElementById("quests");
+            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+
+            gespeicherteQuests.forEach((quest, index) => {
+                const listItem = document.createElement("li");
+                const istErledigt = quest.erledigt || false;
+
+                listItem.innerHTML = `
+                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                `;
+                listItem.setAttribute("data-xp", quest.xp);
+                questList.appendChild(listItem);
+            });
+        } else {
+            console.log("Keine globalen Quests gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der globalen Quests:", error);
+    });
+}
 
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
@@ -511,23 +491,16 @@ function zeigeAvatar() {
 }
 
 // Ausloggen-Funktion
-// Ausloggen-Funktion
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
     isAdmin = false;
 
-    // Alle relevanten Bereiche sichtbar machen
-    document.getElementById('quests-section').style.display = 'block';
+    // Elemente zurücksetzen
+    document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('login-section').style.display = 'none'; // Login-Bereich ausblenden
-
-    // Spieler-Level-Sektion anzeigen
-    document.getElementById("spieler-level-section").style.display = "block";
-    
-    // Logbuch-Button anzeigen
-    document.getElementById('logbuch-button').style.display = 'block';
+    document.getElementById('login-section').style.display = 'block';
 
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -549,11 +522,7 @@ function ausloggen() {
     if (avatarElement) {
         avatarElement.innerHTML = "";
     }
-
-    // Quests nach dem Ausloggen leeren
-    document.getElementById('quests').innerHTML = "";
 }
-
 
 
 // Avatar für Benutzer festlegen
@@ -566,44 +535,4 @@ function getAvatarForUser(user) {
         return "avatars/jamie.mp4";
     }
     return "https://via.placeholder.com/100?text=Avatar";
-}
-
-// Logbuch anzeigen
-function zeigeLogbuch() {
-    const logbuch = document.createElement("div");
-    logbuch.id = "logbuch-container";
-    logbuch.style.position = "fixed";
-    logbuch.style.top = "50px";
-    logbuch.style.left = "50px";
-    logbuch.style.width = "400px";
-    logbuch.style.height = "300px";
-    logbuch.style.backgroundColor = "white";
-    logbuch.style.border = "1px solid #ccc";
-    logbuch.style.padding = "20px";
-    logbuch.style.overflowY = "scroll";
-
-    // Logbuch-Inhalt
-    const logbuchInhalt = document.createElement("div");
-    logbuchInhalt.innerHTML = "<h3>Logbuch</h3>";
-
-    // Quest-Daten auslesen und anzeigen
-    firebase.database().ref('quests').get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const quests = snapshot.val();
-            Object.keys(quests).forEach((questIndex) => {
-                const quest = quests[questIndex];
-                if (quest.erledigt) {
-                    const logItem = document.createElement("p");
-                    logItem.textContent = `${quest.beschreibung} wurde abgeschlossen von ${quest.erledigtVon}.`;
-                    logbuchInhalt.appendChild(logItem);
-                }
-            });
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Abrufen der Logbuch-Daten:", error);
-    });
-
-    logbuch.appendChild(logbuchInhalt);
-    document.body.appendChild(logbuch);
 }
