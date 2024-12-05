@@ -116,18 +116,20 @@ header h1::after {
     border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
 }
 
+/* Zentriert alles im Login-Bereich */
 #login-section {
-    display: flex;
+    display: block;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* Höhe anpassen, um alles zu zentrieren */
+    height: 100vh; /* Damit es den gesamten Bildschirm ausfüllt */
     position: absolute;
     top: 0;
     width: 100%;
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
+     display: block; /* Zeigt den Login-Bereich nach Ausloggen */
     margin: 10px 0;
     font-size: 1.2rem;
 }
@@ -249,17 +251,24 @@ button.erledigt-button:hover {
     color: #ffd700; /* Ein etwas weniger auffälliges Gelb, du kannst auch eine andere Farbe wählen */
     font-weight: normal; /* Gewicht der Schrift auf normal setzen */
 }
+/* Spieler-Level-Bereich nach dem Ausloggen */
 #spieler-level-section {
-    display: flex;
-    justify-content: center; /* Spieler-Infos ebenfalls zentriert */
+    display: block;
+    text-align: center; /* Zentriert den Spieler-Level-Bereich */
 }
 
+/* Quests, Avatar, etc., erscheinen unterhalb des Logbuchs nach dem Ausloggen */
 #quests-section {
-    display: flex;
-    justify-content: center; /* Quests bleiben zentriert */
+    display: block;
+    text-align: center; /* Zentriert den Quests-Bereich */
+}
+
 }
 #logbuch-button {
-    position: fixed;
-    bottom: 10px;
-    left: 10px;
+    position: absolute;
+     display: block; /* Stellt sicher, dass der Logbuch-Button immer angezeigt wird */
+    top: 70%;  /* Damit er unter der goldenen Linie und dem Text erscheint */
+    left: 50%;
+    transform: translateX(-50%);
+     z-index: 10; /* Damit er über anderen Inhalten bleibt */
 }
