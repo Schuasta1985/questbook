@@ -121,8 +121,10 @@ header h1::after {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
     height: 100vh; /* Höhe anpassen, um alles zu zentrieren */
+    position: absolute;
+    top: 0;
+    width: 100%;
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
@@ -249,11 +251,15 @@ button.erledigt-button:hover {
 }
 #spieler-level-section {
     display: flex;
-    justify-content: center; /* Spieler- und Level-Info zentriert */
-    margin-top: 20px; /* Abstand */
+    justify-content: center; /* Spieler-Infos ebenfalls zentriert */
 }
 
 #quests-section {
     display: flex;
-    justify-content: center; /* Zentriert auch die Quests */
+    justify-content: center; /* Quests bleiben zentriert */
+}
+#logbuch-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
 }
