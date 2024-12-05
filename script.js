@@ -568,49 +568,42 @@ function getAvatarForUser(user) {
     return "https://via.placeholder.com/100?text=Avatar";
 }
 
+// Logbuch anzeigen
 function zeigeLogbuch() {
-    console.log("zeigeLogbuch() aufgerufen");
-    const logbuchOverlay = document.createElement('div');
-    logbuchOverlay.id = 'logbuch-overlay';
-    logbuchOverlay.style.position = 'fixed';
-    logbuchOverlay.style.top = '0';
-    logbuchOverlay.style.left = '0';
-    logbuchOverlay.style.width = '100%';
-    logbuchOverlay.style.height = '100%';
-    logbuchOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    logbuchOverlay.style.color = '#fff';
-    logbuchOverlay.style.padding = '20px';
-    logbuchOverlay.style.overflowY = 'scroll';
-    logbuchOverlay.style.zIndex = '200';
+    const logbuch = document.createElement("div");
+    logbuch.id = "logbuch-container";
+    logbuch.style.position = "fixed";
+    logbuch.style.top = "50px";
+    logbuch.style.left = "50px";
+    logbuch.style.width = "400px";
+    logbuch.style.height = "300px";
+    logbuch.style.backgroundColor = "white";
+    logbuch.style.border = "1px solid #ccc";
+    logbuch.style.padding = "20px";
+    logbuch.style.overflowY = "scroll";
 
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Schließen';
-    closeButton.onclick = () => document.body.removeChild(logbuchOverlay);
-    logbuchOverlay.appendChild(closeButton);
+    // Logbuch-Inhalt
+    const logbuchInhalt = document.createElement("div");
+    logbuchInhalt.innerHTML = "<h3>Logbuch</h3>";
 
-    const logbuchTitle = document.createElement('h2');
-    logbuchTitle.textContent = 'Logbuch - Abgeschlossene Quests';
-    logbuchOverlay.appendChild(logbuchTitle);
-
-    // Daten von Firebase laden und anzeigen
-    firebase.database().ref('quests').get().then((snapshot) => {
+    // Quest-Daten auslesen und anzeigen
+    firebase.database().ref('quests').get()
+    .then((snapshot) => {
         if (snapshot.exists()) {
             const quests = snapshot.val();
-            quests.forEach((quest, index) => {
+            Object.keys(quests).forEach((questIndex) => {
+                const quest = quests[questIndex];
                 if (quest.erledigt) {
-                    const questEntry = document.createElement('div');
-                    questEntry.textContent = `Quest ${index + 1}: ${quest.beschreibung} - XP: ${quest.xp} - Erledigt von: ${quest.erledigtVon}`;
-                    logbuchOverlay.appendChild(questEntry);
+                    const logItem = document.createElement("p");
+                    logItem.textContent = `${quest.beschreibung} wurde abgeschlossen von ${quest.erledigtVon}.`;
+                    logbuchInhalt.appendChild(logItem);
                 }
             });
-        } else {
-            const noQuestsMessage = document.createElement('p');
-            noQuestsMessage.textContent = 'Keine Quests wurden bisher abgeschlossen.';
-            logbuchOverlay.appendChild(noQuestsMessage);
         }
     }).catch((error) => {
-        console.error("Fehler beim Laden des Logbuchs:", error);
+        console.error("Fehler beim Abrufen der Logbuch-Daten:", error);
     });
 
-    document.body.appendChild(logbuchOverlay);
+    logbuch.appendChild(logbuchInhalt);
+    document.body.appendChild(logbuch);
 }
