@@ -538,6 +538,7 @@ function ausloggen() {
 
     // Spieler-Level-Anzeige neu laden (es bleibt auf der Startseite sichtbar)
     zeigeSpielerUndLevel();
+} // <-- Hier habe ich die fehlende schließende Klammer hinzugefügt
 
 
 // Avatar für Benutzer festlegen
