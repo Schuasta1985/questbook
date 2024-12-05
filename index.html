@@ -4,29 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quest-Buch</title>
+</head>
+        <header>
+        <h1>Willkommen im Quest-Buch</h1>
+        <p>Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen</p>
+    </header>
+<body>
+    <div id="login-section"></div>
+    <div id="quests"></div>
+    <div id="avatar-container"></div>
+    <!-- Andere HTML-Inhalte -->
+
+    <!-- Firebase und dein Script -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+
+    <script>
+        // Firebase-Initialisierung
+  const firebaseConfig = {
+  apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
+  authDomain: "questbook-3e600.firebaseapp.com",
+  databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "questbook-3e600",
+  storageBucket: "questbook-3e600.firebasestorage.app",
+  messagingSenderId: "915094173482",
+  appId: "1:915094173482:web:50c21383be0c5e45c5d053",
+  measurementId: "G-P738GMV24T"
+        };
+
+        // Firebase initialisieren
+        firebase.initializeApp(firebaseConfig);
+    </script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-   <header>
-        <h1>Willkommen im Quest-Buch</h1>
-        <p>Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen</p>
-    </header>
-
-    <!-- Goldene Linie -->
-    <div id="goldene-linie"></div>
-
-    <!-- Logbuch-Button -->
-    <button id="logbuch-button" onclick="zeigeLogbuch()">Logbuch</button>
-
-    <!-- Benutzeranmeldung -->
-    <div id="login-section"></div>
-
-    <!-- Spieler-Level-Sektion -->
-    <div id="spieler-level-section" style="display: none;">
-        <h3>Spieler und deren Level:</h3>
-        <div id="spieler-list-container" class="spieler-list-container"></div>
-    </div>
+ 
 
     <!-- XP und Level Anzeige -->
     <div id="xp-counter" style="display: none;">
@@ -63,42 +78,20 @@
         <button onclick="adminLogin()">Admin Anmelden</button>
     </div>
 
-    <!-- Level eines Benutzers setzen -->
     <div id="level-set-container" style="margin-top: 20px; display: none;">
-        <h3>Level eines Benutzers setzen</h3>
-        <label for="benutzerDropdownLevel">Benutzer auswählen:</label>
-        <select id="benutzerDropdownLevel">
-            <option value="">-- Bitte wählen --</option>
-            <option value="Thomas">Thomas</option>
-            <option value="Elke">Elke</option>
-            <option value="Jamie">Jamie</option>
-            <option value="Massel">Massel</option>
-        </select>
-        <input type="number" id="levelInput" placeholder="Level eingeben">
-        <button id="setLevelButton">Level setzen</button>
-    </div>
-
-    <!-- Firebase und dein Script -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
-    <script>
-        // Firebase-Initialisierung
-        const firebaseConfig = {
-            apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
-            authDomain: "questbook-3e600.firebaseapp.com",
-            databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "questbook-3e600",
-            storageBucket: "questbook-3e600.firebasestorage.app",
-            messagingSenderId: "915094173482",
-            appId: "1:915094173482:web:50c21383be0c5e45c5d053",
-            measurementId: "G-P738GMV24T"
-        };
-
-        // Firebase initialisieren
-        firebase.initializeApp(firebaseConfig);
-    </script>
-
+    <h3>Level eines Benutzers setzen</h3>
+    <label for="benutzerDropdownLevel">Benutzer auswählen:</label>
+    <select id="benutzerDropdownLevel">
+        <option value="">-- Bitte wählen --</option>
+        <option value="Thomas">Thomas</option>
+        <option value="Elke">Elke</option>
+        <option value="Jamie">Jamie</option>
+        <option value="Massel">Massel</option>
+    </select>
+    <input type="number" id="levelInput" placeholder="Level eingeben">
+    <button id="setLevelButton">Level setzen</button>
+</div>
+    
     <script src="script.js"></script>
 </body>
 </html>
