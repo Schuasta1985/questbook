@@ -222,26 +222,29 @@ button.erledigt-button:hover {
 
 .spieler-list-container {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
-    margin-top: 10px;
+    gap: 1.5rem; /* Abstand zwischen den Spielern */
+    margin-top: 1.5rem; /* Etwas mehr Abstand von oben */
 }
 
 .spieler-item {
-    background-color: rgba(0, 0, 0, 0.5); /* Halbtransparenter schwarzer Hintergrund */
+    background-color: rgba(0, 0, 0, 0.6); /* Halbtransparenter schwarzer Hintergrund */
     padding: 10px;
-    margin: 10px;
     border-radius: 8px; /* Abgerundete Ecken für bessere Ästhetik */
     text-align: center;
+    margin-bottom: 1.5rem; /* Abstand zum nächsten Element */
     color: #ffffff; /* Weißer Text für guten Kontrast */
-    max-width: 200px; /* Optional: Maximale Breite festlegen */
+    max-width: 200px; /* Optionale maximale Breite für die Spieler-Box */
 }
 
+/* Stil für Spieler-Name und Level */
 .spieler-name, .spieler-level {
-    font-size: 1.2em; /* Größere Schriftgröße */
+    font-size: 1.5rem; /* Größere Schriftgröße für bessere Lesbarkeit */
     font-family: Arial, sans-serif; /* Gut lesbare serifenlose Schriftart */
-    font-weight: bold; /* Dicke Schrift */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Schatten, um den Text abzuheben */
-    margin-bottom: 5px;
+    font-weight: bold; /* Fett für mehr Kontrast */
+    color: #ffff00; /* Gelbe Farbe für den Text der Spieler-Name und Level */
 }
+
 
