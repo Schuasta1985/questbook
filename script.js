@@ -208,6 +208,7 @@ function ladeGlobaleQuests() {
                 listItem.innerHTML = `
                     <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
                         <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <strong style="font-weight: bold;">(${quest.xp} XP)</strong>
+                        ${istErledigt ? ` - erledigt von ${quest.erledigtVon}` : ""}
                     </span>
                     ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
                 `;
@@ -222,7 +223,6 @@ function ladeGlobaleQuests() {
         console.error("Fehler beim Laden der globalen Quests:", error);
     });
 }
-
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
 
@@ -295,6 +295,7 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
+
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
@@ -303,13 +304,14 @@ function questErledigt(questNummer) {
             let quests = snapshot.val() || [];
             if (quests[questNummer]) {
                 quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
+                quests[questNummer].erledigtVon = currentUser; // Speichere den Spieler, der die Quest erledigt hat
                 xp += quests[questNummer].xp; // XP hinzufügen
                 speichereFortschritte(); // Fortschritte speichern
                 firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
                     .then(() => {
                         aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                         ladeGlobaleQuests(); // Quests neu laden
-                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+                        console.log(`Quest ${questNummer} wurde als erledigt markiert von ${currentUser}.`);
                     })
                     .catch((error) => {
                         console.error("Fehler beim Speichern der Quest als erledigt:", error);
@@ -321,6 +323,7 @@ function questErledigt(questNummer) {
         console.error("Fehler beim Markieren der Quest als erledigt:", error);
     });
 }
+
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -560,3 +563,49 @@ function getAvatarForUser(user) {
     return "https://via.placeholder.com/100?text=Avatar";
 }
 
+function zeigeLogbuch() {
+    console.log("zeigeLogbuch() aufgerufen");
+    const logbuchOverlay = document.createElement('div');
+    logbuchOverlay.id = 'logbuch-overlay';
+    logbuchOverlay.style.position = 'fixed';
+    logbuchOverlay.style.top = '0';
+    logbuchOverlay.style.left = '0';
+    logbuchOverlay.style.width = '100%';
+    logbuchOverlay.style.height = '100%';
+    logbuchOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    logbuchOverlay.style.color = '#fff';
+    logbuchOverlay.style.padding = '20px';
+    logbuchOverlay.style.overflowY = 'scroll';
+    logbuchOverlay.style.zIndex = '200';
+
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Schließen';
+    closeButton.onclick = () => document.body.removeChild(logbuchOverlay);
+    logbuchOverlay.appendChild(closeButton);
+
+    const logbuchTitle = document.createElement('h2');
+    logbuchTitle.textContent = 'Logbuch - Abgeschlossene Quests';
+    logbuchOverlay.appendChild(logbuchTitle);
+
+    // Daten von Firebase laden und anzeigen
+    firebase.database().ref('quests').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const quests = snapshot.val();
+            quests.forEach((quest, index) => {
+                if (quest.erledigt) {
+                    const questEntry = document.createElement('div');
+                    questEntry.textContent = `Quest ${index + 1}: ${quest.beschreibung} - XP: ${quest.xp} - Erledigt von: ${quest.erledigtVon}`;
+                    logbuchOverlay.appendChild(questEntry);
+                }
+            });
+        } else {
+            const noQuestsMessage = document.createElement('p');
+            noQuestsMessage.textContent = 'Keine Quests wurden bisher abgeschlossen.';
+            logbuchOverlay.appendChild(noQuestsMessage);
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden des Logbuchs:", error);
+    });
+
+    document.body.appendChild(logbuchOverlay);
+}
