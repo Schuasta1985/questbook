@@ -511,20 +511,23 @@ function zeigeAvatar() {
 }
 
 // Ausloggen-Funktion
+// Ausloggen-Funktion
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
     isAdmin = false;
 
-    // Elemente zurücksetzen
+    // Alle relevanten Bereiche sichtbar machen
     document.getElementById('quests-section').style.display = 'block';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('login-section').style.display = 'none'; // Login Bereich wird nicht mehr zentriert
+    document.getElementById('login-section').style.display = 'none'; // Login-Bereich ausblenden
 
-    // Spieler-Level-Sektion und Logbuch-Button sichtbar machen
-    document.getElementById("spieler-level-section").style.display = "block"; // Spieler-Level-Sektion sichtbar
-    document.getElementById('logbuch-button').style.display = 'block'; // Logbuch-Button sichtbar
+    // Spieler-Level-Sektion anzeigen
+    document.getElementById("spieler-level-section").style.display = "block";
+    
+    // Logbuch-Button anzeigen
+    document.getElementById('logbuch-button').style.display = 'block';
 
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -547,8 +550,8 @@ function ausloggen() {
         avatarElement.innerHTML = "";
     }
 
-    // Quests verstecken
-    document.getElementById('quests').innerHTML = ""; // Löscht die Quests nach dem Ausloggen
+    // Quests nach dem Ausloggen leeren
+    document.getElementById('quests').innerHTML = "";
 }
 
 
