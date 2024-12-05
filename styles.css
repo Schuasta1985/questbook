@@ -21,6 +21,16 @@ h1 {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
+/* Goldene Linie */
+#goldene-linie {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #FFD700; /* Gold */
+    margin: 20px 0;
+}
+
+
 /* XP-Zähler und Level */
 #xp-counter {
     margin-top: 20px;
@@ -91,10 +101,9 @@ h1 {
 
 /* Benutzer Login */
 #login-section {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
+    text-align: center;
+    margin-top: 50px;
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
@@ -195,8 +204,8 @@ button.erledigt-button:hover {
 
 /* Logbuch Button */
 #logbuch-button {
-    position: absolute;
-    top: 80%; /* Platzierung unter der goldenen Linie */
+    position: relative;
+    top: 20px; /* Direkt unter der goldenen Linie */
     left: 50%;
     transform: translateX(-50%);
     background-color: #808000; /* Olivgrün */
@@ -206,7 +215,7 @@ button.erledigt-button:hover {
     font-weight: 600;
     border-radius: 5px;
     cursor: pointer;
-    z-index: 10; /* Damit er über anderen Inhalten bleibt */
+    z-index: 10;
 }
 
 #logbuch-button:hover {
@@ -219,27 +228,26 @@ button.erledigt-button:hover {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem; /* Abstand zwischen den Spielern */
-    margin-top: 1.5rem; /* Etwas mehr Abstand von oben */
+    gap: 1.5rem;
+    margin-top: 1.5rem;
 }
 
 /* Stil für jeden Spieler */
 .spieler-item {
-    background-color: rgba(0, 0, 0, 0.6); /* Halbtransparenter schwarzer Hintergrund */
+    background-color: rgba(0, 0, 0, 0.6);
     padding: 10px;
-    border-radius: 8px; /* Abgerundete Ecken für bessere Ästhetik */
+    border-radius: 8px;
     text-align: center;
-    margin-bottom: 1.5rem; /* Abstand zum nächsten Element */
-    color: #ffffff; /* Weißer Text für guten Kontrast */
-    max-width: 200px; /* Optionale maximale Breite für die Spieler-Box */
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    max-width: 200px;
 }
 
-/* Stil für Spieler-Name und Level */
 .spieler-name, .spieler-level {
-    font-size: 1.2em; /* Größere Schriftgröße */
-    font-family: Arial, sans-serif; /* Gut lesbare serifenlose Schriftart */
-    color: #ffd700; /* Ein etwas weniger auffälliges Gelb, du kannst auch eine andere Farbe wählen */
-    font-weight: normal; /* Gewicht der Schrift auf normal setzen */
+    font-size: 1.2em;
+    font-family: Arial, sans-serif;
+    color: #ffd700;
+    font-weight: normal;
 }
 
 /* Spieler-Level-Bereich nach dem Ausloggen */
@@ -252,5 +260,11 @@ button.erledigt-button:hover {
 #quests-section {
     display: block;
     text-align: center; /* Zentriert den Quests-Bereich */
+}
+/* Spieler-Level */
+#spieler-level-section {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
 }
 
