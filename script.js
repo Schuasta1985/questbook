@@ -31,7 +31,7 @@ function zeigeStartseite() {
             <div id="spieler-level-section"></div>
         `;
 
-        zeigeSpielerLevel(); // Spielerlevel auf der Startseite anzeigen
+        zeigeSpielerUndLevel(); // Spielerlevel auf der Startseite anzeigen
     }
 }
 
