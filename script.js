@@ -153,9 +153,10 @@ function ladeGlobaleQuests() {
                 const listItem = document.createElement("li");
                 const istErledigt = quest.erledigt || false;
 
+                // Hier füge ich die XP neben der Questbeschreibung ein
                 listItem.innerHTML = `
                     <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
-                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <strong>(${quest.xp} XP)</strong>
+                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <strong style="font-weight: bold;">(${quest.xp} XP)</strong>
                     </span>
                     ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
                 `;
@@ -308,38 +309,6 @@ function neueQuestErstellen() {
     }
 }
 
-
-
-function ladeGlobaleQuests() {
-    console.log("ladeGlobaleQuests() aufgerufen");
-    firebase.database().ref('quests').get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const gespeicherteQuests = snapshot.val();
-            console.log("Globale Quests:", gespeicherteQuests);
-
-            const questList = document.getElementById("quests");
-            questList.innerHTML = ""; // Liste der Quests zurücksetzen
-
-            gespeicherteQuests.forEach((quest, index) => {
-                const listItem = document.createElement("li");
-                const istErledigt = quest.erledigt || false;
-
-                listItem.innerHTML = `
-                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-                `;
-                listItem.setAttribute("data-xp", quest.xp);
-                questList.appendChild(listItem);
-            });
-        } else {
-            console.log("Keine globalen Quests gefunden.");
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der globalen Quests:", error);
-    });
-}
 
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
