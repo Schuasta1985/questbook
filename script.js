@@ -522,6 +522,10 @@ function ausloggen() {
     document.getElementById('logout-button').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
 
+    // Spieler-Level-Sektion und Logbuch-Button sichtbar machen
+    document.getElementById("spieler-level-section").style.display = "block";  // Spielerlevel soll sichtbar bleiben
+    document.getElementById('logbuch-button').style.display = 'block';  // Logbuch-Button sichtbar machen
+
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
@@ -545,10 +549,8 @@ function ausloggen() {
 
     // Quests verstecken
     document.getElementById('quests').innerHTML = ""; // Löscht die Quests nach dem Ausloggen
+}
 
-    // Spieler-Level-Anzeige neu laden (es bleibt auf der Startseite sichtbar)
-    zeigeSpielerUndLevel();
-} // <-- Hier habe ich die fehlende schließende Klammer hinzugefügt
 
 
 // Avatar für Benutzer festlegen
