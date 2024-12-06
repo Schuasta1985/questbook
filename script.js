@@ -66,12 +66,15 @@ function benutzerAnmeldung() {
         zeigeQuestbook();
         zeigeAvatar();
         ladeGlobaleQuests();
+
+        // Entfernen der Zeile, die den Login-Sektionsbereich unsichtbar macht
+        // document.getElementById('login-section').style.display = 'none'; 
+
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
 
-// NPC Login (ehemals adminLogin)
 // NPC Login (ehemals adminLogin)
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
