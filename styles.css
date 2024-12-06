@@ -7,6 +7,12 @@ body {
     font-family: 'Poppins', sans-serif;
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
+.golden-line {
+    width: 200px;
+    height: 3px;
+    background-color: gold;
+    margin: 0.5em auto;
+}
 
 /* Header */
 header {
