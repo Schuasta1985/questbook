@@ -8,6 +8,8 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
+
+    document.getElementById("npcLoginButton").onclick = npcLogin;
 };
 
 // Startseite anzeigen
