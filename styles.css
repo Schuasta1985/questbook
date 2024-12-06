@@ -7,6 +7,10 @@ body {
     font-family: 'Poppins', sans-serif;
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
+.xp-display {
+    font-weight: bold;
+    color: black;
+}
 
 .golden-line {
     width: 350px; /* Die Breite kannst du anpassen */
