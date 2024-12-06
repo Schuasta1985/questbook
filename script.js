@@ -472,7 +472,7 @@ function ausloggen() {
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('login-section').style.display = 'block';
+    document.getElementById('npc-login-section').style.display = 'block';  // geändert von "admin-login-section"
 
     // NPC-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -495,6 +495,7 @@ function ausloggen() {
         avatarElement.innerHTML = "";
     }
 }
+
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
