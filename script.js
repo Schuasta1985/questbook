@@ -76,13 +76,14 @@ function npcLogin() {
     const password = document.getElementById("adminPasswort").value;
 
     if (username === "npc" && password === "1234") {
-        alert("NPC erfolgreich eingeloggt!");
+        console.log("NPC erfolgreich eingeloggt!");
         isAdmin = true;
 
         zeigeQuestbook();
         ladeGlobaleQuests();
         zeigeAdminFunktionen(); // NPC-spezifische Funktionen anzeigen
     } else {
+        console.log("Falsche Anmeldedaten!");
         alert("Falsche Anmeldedaten!");
     }
 }
