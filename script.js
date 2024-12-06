@@ -69,19 +69,19 @@ function benutzerAnmeldung() {
     }
 }
 
-// Admin Login
-function adminLogin() {
-    console.log("adminLogin() aufgerufen");
+// NPC Login (ehemals adminLogin)
+function npcLogin() {
+    console.log("npcLogin() aufgerufen");
     const username = document.getElementById("adminBenutzername").value;
     const password = document.getElementById("adminPasswort").value;
 
-    if (username === "admin" && password === "1234") {
-        alert("Admin erfolgreich eingeloggt!");
+    if (username === "npc" && password === "1234") {
+        alert("NPC erfolgreich eingeloggt!");
         isAdmin = true;
 
         zeigeQuestbook();
         ladeGlobaleQuests();
-        zeigeAdminFunktionen(); // Admin-spezifische Funktionen anzeigen
+        zeigeAdminFunktionen(); // NPC-spezifische Funktionen anzeigen
     } else {
         alert("Falsche Anmeldedaten!");
     }
@@ -461,7 +461,7 @@ function zeigeAvatar() {
     }
 }
 
-// Ausloggen-Funktion
+// Anpassung der Ausloggen-Funktion
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
@@ -473,7 +473,7 @@ function ausloggen() {
     document.getElementById('logout-button').style.display = 'none';
     document.getElementById('login-section').style.display = 'block';
 
-    // Admin-spezifische Elemente entfernen
+    // NPC-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
         adminButtonsContainer.remove();
@@ -494,7 +494,6 @@ function ausloggen() {
         avatarElement.innerHTML = "";
     }
 }
-
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
