@@ -169,6 +169,7 @@ function ladeGlobaleQuests() {
                 }
             } else {
                 console.log("Keine Quests gefunden für den Benutzer.");
+                console.log(gespeicherteQuests);
             }
         })
         .catch((error) => {
@@ -313,6 +314,39 @@ function neueQuestErstellen() {
     }
 }
 
+
+
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
+    firebase.database().ref('quests').get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const gespeicherteQuests = snapshot.val();
+            console.log("Globale Quests:", gespeicherteQuests);
+
+            const questList = document.getElementById("quests");
+            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+
+            gespeicherteQuests.forEach((quest, index) => {
+                const listItem = document.createElement("li");
+                const istErledigt = quest.erledigt || false;
+
+                listItem.innerHTML = `
+                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
+                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                `;
+                listItem.setAttribute("data-xp", quest.xp);
+                questList.appendChild(listItem);
+            });
+        } else {
+            console.log("Keine globalen Quests gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der globalen Quests:", error);
+    });
+}
+
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
 
@@ -327,7 +361,6 @@ function zeigeAdminFunktionen() {
                 editButton.onclick = () => questBearbeiten(index);
                 questItem.appendChild(editButton);
                 console.log(`Bearbeiten-Button für Quest ${index + 1} hinzugefügt.`);
-                console.log(gespeicherteQuests);
             }
         });
 
