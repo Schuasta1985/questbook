@@ -72,6 +72,7 @@ function benutzerAnmeldung() {
 }
 
 // NPC Login (ehemals adminLogin)
+// NPC Login (ehemals adminLogin)
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
     const username = document.getElementById("npcBenutzername").value;  // geändert von "adminBenutzername"
@@ -81,6 +82,7 @@ function npcLogin() {
         console.log("NPC erfolgreich eingeloggt!");
         isAdmin = true;
 
+        document.getElementById('npc-login-section').style.display = 'none'; // NPC-Login Bereich unsichtbar machen
         zeigeQuestbook();
         ladeGlobaleQuests();
         zeigeAdminFunktionen(); // NPC-spezifische Funktionen anzeigen
@@ -89,6 +91,7 @@ function npcLogin() {
         alert("Falsche Anmeldedaten!");
     }
 }
+
 
 
 // Benutzerfortschritte speichern in Firebase
@@ -465,6 +468,7 @@ function zeigeAvatar() {
 }
 
 // Anpassung der Ausloggen-Funktion
+// Anpassung der Ausloggen-Funktion
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
@@ -474,7 +478,7 @@ function ausloggen() {
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('npc-login-section').style.display = 'block';  // geändert von "admin-login-section"
+    document.getElementById('npc-login-section').style.display = 'block';  // NPC-Login wieder sichtbar machen
 
     // NPC-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
