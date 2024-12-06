@@ -78,24 +78,25 @@ function benutzerAnmeldung() {
 // NPC Login (ehemals adminLogin)
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
-    const username = document.getElementById("npcBenutzername").value;  // geändert von "adminBenutzername"
-    const password = document.getElementById("npcPasswort").value;      // geändert von "adminPasswort"
+    const username = document.getElementById("npcBenutzername").value;
+    const password = document.getElementById("npcPasswort").value;
 
     if (username === "npc" && password === "1234") {
         console.log("NPC erfolgreich eingeloggt!");
         isAdmin = true;
 
-        document.getElementById('npc-login-section').style.display = 'none'; // NPC-Login Bereich unsichtbar machen
+        // Questbuch anzeigen
         zeigeQuestbook();
         ladeGlobaleQuests();
-        zeigeAdminFunktionen(); // NPC-spezifische Funktionen anzeigen
+        zeigeAdminFunktionen();
+
+        // **Den NPC-Login-Bereich ausblenden**
+        document.getElementById("npc-login-section").style.display = "none";
     } else {
         console.log("Falsche Anmeldedaten!");
         alert("Falsche Anmeldedaten!");
     }
 }
-
-
 
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
@@ -471,19 +472,23 @@ function zeigeAvatar() {
 }
 
 // Anpassung der Ausloggen-Funktion
-// Anpassung der Ausloggen-Funktion
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
     isAdmin = false;
 
-    // Elemente zurücksetzen
+    // Elemente zurücksetzen und Startseite anzeigen
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('npc-login-section').style.display = 'block';  // NPC-Login wieder sichtbar machen
 
-    // NPC-spezifische Elemente entfernen
+    // **Zurück zur Startseite mit Benutzerauswahl**
+    zeigeStartseite();
+
+    // **Den NPC-Login-Bereich wieder anzeigen**
+    document.getElementById("npc-login-section").style.display = "block";
+
+    // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
         adminButtonsContainer.remove();
