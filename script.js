@@ -154,10 +154,12 @@ function ladeGlobaleQuests() {
                     const listItem = document.createElement("li");
                     const istErledigt = quest.erledigt || false;
 
-                    listItem.innerHTML = `
-                        <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung}</span>
-                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                listItem.innerHTML = `
+            <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span></span>
+                ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
                     `;
+
+                    
                     listItem.setAttribute("data-xp", quest.xp);
                     questList.appendChild(listItem);
                 });
