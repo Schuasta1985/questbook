@@ -138,43 +138,45 @@ function speichereQuestsInFirebase(quests) {
 }
 
 // Quests aus Firebase laden
+// Globale Quests aus Firebase laden
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
-    if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/quests`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const gespeicherteQuests = snapshot.val();
-                console.log("Gespeicherte Quests:", gespeicherteQuests);
+    firebase.database().ref('quests').get()  // Ändere den Pfad zu 'quests' für globale Quests
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const gespeicherteQuests = snapshot.val();
+            console.log("Globale Quests:", gespeicherteQuests);
 
-                const questList = document.getElementById("quests");
-                questList.innerHTML = ""; // Liste der Quests zurücksetzen
+            const questList = document.getElementById("quests");
+            questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
-                gespeicherteQuests.forEach((quest, index) => {
-                    const listItem = document.createElement("li");
-                    const istErledigt = quest.erledigt || false;
+            gespeicherteQuests.forEach((quest, index) => {
+                const listItem = document.createElement("li");
+                const istErledigt = quest.erledigt || false;
 
-                    listItem.innerHTML = `
-                        <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};"><strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span></span>
-                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-                    `;
+                listItem.innerHTML = `
+                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
+                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span>
+                    </span>
+                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                `;
 
-                    listItem.setAttribute("data-xp", quest.xp);
-                    questList.appendChild(listItem);
-                });
+                listItem.setAttribute("data-xp", quest.xp);
+                questList.appendChild(listItem);
+            });
 
-                if (isAdmin) {
-                    zeigeAdminFunktionen();
-                }
-            } else {
-                console.log("Keine Quests gefunden für den Benutzer.");
+            if (isAdmin) {
+                zeigeAdminFunktionen();
             }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Quests:", error);
-        });
-    }
+        } else {
+            console.log("Keine globalen Quests gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der globalen Quests:", error);
+    });
 }
+
 
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
