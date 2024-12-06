@@ -72,8 +72,8 @@ function benutzerAnmeldung() {
 // NPC Login (ehemals adminLogin)
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
-    const username = document.getElementById("adminBenutzername").value;
-    const password = document.getElementById("adminPasswort").value;
+    const username = document.getElementById("npcBenutzername").value;  // geändert von "adminBenutzername"
+    const password = document.getElementById("npcPasswort").value;      // geändert von "adminPasswort"
 
     if (username === "npc" && password === "1234") {
         console.log("NPC erfolgreich eingeloggt!");
