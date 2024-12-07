@@ -29,7 +29,8 @@ function zeigeStartseite() {
             </select>
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
-            `;
+        `;
+        loginSection.style.display = "block"; // Sicherstellen, dass die Login-Sektion sichtbar ist
     }
 }
 
@@ -483,8 +484,12 @@ function ausloggen() {
     document.getElementById('logout-button').style.display = 'none';
     document.getElementById('npc-login-section').style.display = 'block'; // NPC-Login wieder sichtbar
 
-    // Startseite (Benutzerauswahl) anzeigen
-    zeigeStartseite();
+    // Startseite (Benutzerauswahl) anzeigen und Login-Felder vollständig zurücksetzen
+    const loginSection = document.getElementById("login-section");
+    if (loginSection) {
+        loginSection.style.display = "block";
+        zeigeStartseite();
+    }
 
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -496,12 +501,6 @@ function ausloggen() {
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
-
-    // Login-Felder zurücksetzen
-    const benutzerDropdown = document.getElementById("benutzerDropdown");
-    const benutzerPasswort = document.getElementById("benutzerPasswort");
-    if (benutzerDropdown) benutzerDropdown.value = "";
-    if (benutzerPasswort) benutzerPasswort.value = "";
 
     // Avatar entfernen
     const avatarElement = document.getElementById("avatar-container");
