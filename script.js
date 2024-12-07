@@ -63,13 +63,13 @@ function benutzerAnmeldung() {
         currentUser = benutzername;
         isAdmin = false;
 
-        ladeFortschritte();
+        // Startseite (Benutzerauswahl) ausblenden und Questbuch anzeigen
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("npc-login-section").style.display = "block"; // NPC-Login bleibt sichtbar
         zeigeQuestbook();
+        ladeFortschritte();
         zeigeAvatar();
         ladeGlobaleQuests();
-
-        // **Benutzer-Login-Bereich ausblenden**
-        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -85,18 +85,14 @@ function npcLogin() {
         console.log("NPC erfolgreich eingeloggt!");
         isAdmin = true;
 
-        // Questbuch anzeigen
+        // NPC-Login-Bereich ausblenden, Benutzeranmeldung bleibt sichtbar
+        document.getElementById("npc-login-section").style.display = "none";
         zeigeQuestbook();
         ladeGlobaleQuests();
         zeigeAdminFunktionen();
-
-        // **Den NPC-Login-Bereich ausblenden**
-        document.getElementById("npc-login-section").style.display = "none";
     } else {
-        console.log("Falsche Anmeldedaten!");
         alert("Falsche Anmeldedaten!");
     }
-}
 
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
@@ -471,24 +467,18 @@ function zeigeAvatar() {
     }
 }
 
-// Anpassung der Ausloggen-Funktion
+// Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
     isAdmin = false;
 
-    // Elemente zurücksetzen
+    // Alle Bereiche zurücksetzen und Startseite (Benutzerauswahl) anzeigen
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
+    document.getElementById("npc-login-section").style.display = "block"; // NPC-Login wieder sichtbar
 
-    // **NPC-Login wieder sichtbar**
-    document.getElementById("npc-login-section").style.display = "block";
-
-    // **Startseite anzeigen (Benutzerauswahl bleibt stabil)**
-    zeigeStartseite();
-
-    // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
         adminButtonsContainer.remove();
@@ -511,6 +501,8 @@ function ausloggen() {
         avatarElement.innerHTML = "";
     }
 
+    // Startseite zurücksetzen
+    zeigeStartseite();
     console.log("Ausloggen abgeschlossen. Startseite zurückgesetzt.");
 }
 
