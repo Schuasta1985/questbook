@@ -499,10 +499,6 @@ function ausloggen() {
         levelSetContainer.style.display = "none";
     }
 
-    // Login-Felder zurücksetzen
-    document.getElementById("benutzerDropdown").value = "";
-    document.getElementById("benutzerPasswort").value = "";
-
     // Avatar entfernen
     const avatarElement = document.getElementById("avatar-container");
     if (avatarElement) {
