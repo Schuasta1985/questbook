@@ -53,7 +53,7 @@ function benutzerAnmeldung() {
     const passwort = document.getElementById("benutzerPasswort").value;
 
     const benutzerPasswoerter = {
-        Thomas: "passwort1",
+        Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
         Massel: "1234",
@@ -68,9 +68,8 @@ function benutzerAnmeldung() {
         zeigeAvatar();
         ladeGlobaleQuests();
 
-        // Entfernen der Zeile, die den Login-Sektionsbereich unsichtbar macht
-        // document.getElementById('login-section').style.display = 'none'; 
-
+        // **Benutzer-Login-Bereich ausblenden**
+        document.getElementById("login-section").style.display = "none";
     } else {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
@@ -478,18 +477,16 @@ function ausloggen() {
     currentUser = null;
     isAdmin = false;
 
-    // Sichtbarkeitseinstellungen zurücksetzen
+    // Elemente zurücksetzen
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
-    document.getElementById('npc-login-section').style.display = 'block'; // NPC-Login wieder sichtbar
 
-    // Startseite (Benutzerauswahl) anzeigen und Login-Felder vollständig zurücksetzen
-    const loginSection = document.getElementById("login-section");
-    if (loginSection) {
-        loginSection.style.display = "block";
-        zeigeStartseite();
-    }
+    // **NPC-Login wieder sichtbar**
+    document.getElementById("npc-login-section").style.display = "block";
+
+    // **Startseite anzeigen (Benutzerauswahl bleibt stabil)**
+    zeigeStartseite();
 
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -501,6 +498,12 @@ function ausloggen() {
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
+
+    // Login-Felder zurücksetzen
+    const benutzerDropdown = document.getElementById("benutzerDropdown");
+    const benutzerPasswort = document.getElementById("benutzerPasswort");
+    if (benutzerDropdown) benutzerDropdown.value = "";
+    if (benutzerPasswort) benutzerPasswort.value = "";
 
     // Avatar entfernen
     const avatarElement = document.getElementById("avatar-container");
