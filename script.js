@@ -477,16 +477,14 @@ function ausloggen() {
     currentUser = null;
     isAdmin = false;
 
-    // Elemente zurücksetzen und Startseite anzeigen
+    // Sichtbarkeitseinstellungen zurücksetzen
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
+    document.getElementById('npc-login-section').style.display = 'block'; // NPC-Login wieder sichtbar
 
-    // **Zurück zur Startseite mit Benutzerauswahl**
+    // Startseite (Benutzerauswahl) anzeigen
     zeigeStartseite();
-
-    // **Den NPC-Login-Bereich wieder anzeigen**
-    document.getElementById("npc-login-section").style.display = "block";
 
     // Admin-spezifische Elemente entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
@@ -499,11 +497,19 @@ function ausloggen() {
         levelSetContainer.style.display = "none";
     }
 
+    // Login-Felder zurücksetzen
+    const benutzerDropdown = document.getElementById("benutzerDropdown");
+    const benutzerPasswort = document.getElementById("benutzerPasswort");
+    if (benutzerDropdown) benutzerDropdown.value = "";
+    if (benutzerPasswort) benutzerPasswort.value = "";
+
     // Avatar entfernen
     const avatarElement = document.getElementById("avatar-container");
     if (avatarElement) {
         avatarElement.innerHTML = "";
     }
+
+    console.log("Ausloggen abgeschlossen. Startseite zurückgesetzt.");
 }
 
 
