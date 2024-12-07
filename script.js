@@ -93,6 +93,7 @@ function npcLogin() {
     } else {
         alert("Falsche Anmeldedaten!");
     }
+} 
 
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
