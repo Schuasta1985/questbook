@@ -68,7 +68,7 @@ function benutzerAnmeldung() {
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
-        isAdmin = false;
+        isAdmin = false; // Admin-Status deaktivieren
 
         document.getElementById("login-section").style.display = "none";
         document.getElementById("npc-login-section").style.display = "none"; // NPC-Login ausblenden
@@ -82,7 +82,7 @@ function benutzerAnmeldung() {
 }
 
 
-// NPC Login (ehemals adminLogin)
+// NPC Login
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
     const username = document.getElementById("npcBenutzername").value;
@@ -90,9 +90,9 @@ function npcLogin() {
 
     if (username === "npc" && password === "1234") {
         console.log("NPC erfolgreich eingeloggt!");
-        isAdmin = true;
+        isAdmin = true; // Admin-Status aktivieren
+        currentUser = null; // Kein regulärer Benutzer
 
-        // NPC-Login-Bereich ausblenden, Benutzeranmeldung bleibt sichtbar
         document.getElementById("npc-login-section").style.display = "none";
         zeigeQuestbook();
         ladeGlobaleQuests();
@@ -100,7 +100,8 @@ function npcLogin() {
     } else {
         alert("Falsche Anmeldedaten!");
     }
-} 
+}
+
 
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
@@ -486,12 +487,6 @@ function ausloggen() {
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
 
-    // Quests zurücksetzen (leeren)
-    const questList = document.getElementById("quests");
-    if (questList) {
-        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
-    }
-
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) npcLoginSection.style.display = "block";
@@ -500,10 +495,15 @@ function ausloggen() {
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) avatarContainer.innerHTML = "";
 
+    // Quests zurücksetzen (leeren)
+    const questList = document.getElementById("quests");
+    if (questList) {
+        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
+    }
+
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
-
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
