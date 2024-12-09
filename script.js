@@ -58,10 +58,9 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    const benutzernameInput = document.getElementById("spielerDropdown"); // Spieler-Dropdown
-    const passwortInput = document.getElementById("spielerPasswort"); // Korrigiert von benutzerPasswort zu spielerPasswort
+    const benutzernameInput = document.getElementById("spielerDropdown");
+    const passwortInput = document.getElementById("spielerPasswort");
 
-    // Überprüfen, ob die Elemente gefunden werden
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
         return;
@@ -82,7 +81,9 @@ function benutzerAnmeldung() {
         isAdmin = false;
 
         // Login-Bereich ausblenden
-        document.getElementById("login-section").style.display = "none";
+        console.log("Verstecke login-section");
+        const loginSection = document.getElementById("login-section");
+        loginSection.style.display = "none";
 
         // Quests und XP-Bereich anzeigen
         zeigeQuestbook();
@@ -93,7 +94,6 @@ function benutzerAnmeldung() {
         alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
     }
 }
-
 
 
 // NPC Login
