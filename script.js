@@ -56,8 +56,18 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-    const benutzername = document.getElementById("spielerDropdown").value;
-    const passwort = document.getElementById("spielerPasswort").value;
+
+    const benutzernameInput = document.getElementById("spielerDropdown");
+    const passwortInput = document.getElementById("spielerPasswort");
+
+    // Überprüfen, ob die Elemente gefunden werden
+    if (!benutzernameInput || !passwortInput) {
+        console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
+        return;
+    }
+
+    const benutzername = benutzernameInput.value;
+    const passwort = passwortInput.value;
 
     const benutzerPasswoerter = {
         Thomas: "12345",
@@ -68,21 +78,18 @@ function benutzerAnmeldung() {
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
-        isAdmin = false; // Admin-Status deaktivieren
+        isAdmin = false;
 
-        // Blende den Login-Bereich aus
+        // Login-Bereich ausblenden
         document.getElementById("login-section").style.display = "none";
-        
-        // Blende den NPC-Login-Bereich aus
-        document.getElementById("npc-login-section").style.display = "none";
 
-        // Zeige das Questbuch
+        // Quests und XP-Bereich anzeigen
         zeigeQuestbook();
         ladeFortschritte();
         zeigeAvatar();
         ladeGlobaleQuests();
     } else {
-        alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
+        alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
     }
 }
 
