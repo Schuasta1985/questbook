@@ -109,7 +109,14 @@ h1 {
     text-align: center; /* Zentriert den Text */
 }
 
-#login-section label,
+#login-section label {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+    margin-bottom: 15px;
+}
+
 #login-section select,
 #login-section input,
 #login-section button {
