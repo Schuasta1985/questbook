@@ -56,8 +56,8 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-    const benutzername = document.getElementById("benutzerDropdown").value;
-    const passwort = document.getElementById("benutzerPasswort").value;
+    const benutzername = document.getElementById("spielerDropdown").value;
+    const passwort = document.getElementById("spielerPasswort").value;
 
     const benutzerPasswoerter = {
         Thomas: "12345",
@@ -70,8 +70,13 @@ function benutzerAnmeldung() {
         currentUser = benutzername;
         isAdmin = false; // Admin-Status deaktivieren
 
+        // Blende den Login-Bereich aus
         document.getElementById("login-section").style.display = "none";
-        document.getElementById("npc-login-section").style.display = "none"; // NPC-Login ausblenden
+        
+        // Blende den NPC-Login-Bereich aus
+        document.getElementById("npc-login-section").style.display = "none";
+
+        // Zeige das Questbuch
         zeigeQuestbook();
         ladeFortschritte();
         zeigeAvatar();
