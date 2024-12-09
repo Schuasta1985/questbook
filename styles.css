@@ -220,3 +220,33 @@ button.erledigt-button {
 button.erledigt-button:hover {
     background-color: #45a049; /* Etwas dunkleres Grün bei Hover */
 }
+
+#spieler-info-container {
+    margin: 20px auto;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.7); /* Dunkler transparenter Hintergrund */
+    color: #FFD700; /* Goldene Schriftfarbe */
+    border-radius: 10px;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#spieler-info-container h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #F5F5DC; /* Elfenbeinfarbene Überschrift */
+}
+
+#spieler-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#spieler-list li {
+    margin: 10px 0;
+    font-size: 1.2em;
+    color: #FFD700; /* Goldene Schrift */
+}
+
