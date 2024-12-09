@@ -100,7 +100,6 @@ h1 {
     border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
 }
 
-/* Benutzer Login */
 #login-section {
     display: flex;
     flex-direction: column; /* Ordnet die Elemente vertikal an */
@@ -110,20 +109,27 @@ h1 {
     text-align: center; /* Zentriert den Text */
 }
 
-#login-section label, #login-section select, #login-section input, #login-section button {
-    margin: 10px 0; /* Abstand zwischen den Elementen */
+#login-section label {
+    margin-bottom: 5px; /* Abstand zum nächsten Element */
+}
+
+#login-section select,
+#login-section input,
+#login-section button {
+    margin: 10px 0; /* Gleicher Abstand zwischen allen Elementen */
     width: 300px; /* Einheitliche Breite */
-    padding: 10px; /* Polsterung */
+    padding: 10px; /* Polsterung für die Elemente */
     font-size: 16px; /* Einheitliche Schriftgröße */
-    text-align: center; /* Zentrierter Text */
+    text-align: center; /* Text zentrieren */
 }
 
-#benutzerDropdown, #benutzerPasswort {
-    width: calc(100% - 40px);
-    max-width: 300px;
-    padding: 10px;
+#benutzerDropdown {
+    width: 100%; /* Volle Breite innerhalb des Containers */
 }
 
+#benutzerPasswort {
+    width: 100%; /* Volle Breite innerhalb des Containers */
+}
 /* Buttons */
 button {
     background-color: #808000; /* Olivgrün */
