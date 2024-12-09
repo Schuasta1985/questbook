@@ -25,14 +25,15 @@ if (loginSection) {
             <option value="Thomas">Thomas</option>
             <option value="Elke">Elke</option>
             <option value="Jamie">Jamie</option>
-            <option value="Massel">Massel</option>
-        </select>
+            </select>
         <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
         <button onclick="benutzerAnmeldung()">Anmelden</button>
-    `; // Hier ist der korrekte Abschluss der Zeichenkette
-    loginSection.style.display = "block";
-}
+    `; // Zeichenkette korrekt abgeschlossen
 
+    loginSection.style.display = "block";
+} else {
+    console.error("Element mit der ID 'login-section' wurde nicht gefunden!");
+}
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
@@ -363,50 +364,39 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
     }
 }
-
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
 
-    const levelSetContainer = document.getElementById("level-set-container");
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-
-    if (isAdmin) {
-        // Admin-spezifische Funktionen aktivieren
-        console.log("Admin-Modus aktiv, zeige Admin-Funktionen");
-
-        // Bearbeiten-Button für Quests hinzufügen
-        const questItems = document.querySelectorAll("#quests li");
-        questItems.forEach((questItem, index) => {
-            if (!questItem.querySelector(".edit-button")) {
-                const editButton = document.createElement("button");
-                editButton.textContent = "Bearbeiten";
-                editButton.className = "edit-button";
-                editButton.onclick = () => questBearbeiten(index);
-                questItem.appendChild(editButton);
-                console.log(`Bearbeiten-Button für Quest ${index + 1} hinzugefügt.`);
-                function zeigeAdminFunktionen() {
     const questItems = document.querySelectorAll("#quests li");
+
+    // Durch alle Quests iterieren
     questItems.forEach((questItem, index) => {
+        // Admin-Steuerelemente hinzufügen, falls noch nicht vorhanden
         if (!questItem.querySelector(".admin-controls")) {
             const adminControls = document.createElement("div");
             adminControls.className = "admin-controls";
 
+            // Checkbox: Alle Spieler können abschließen
             const alleSpielerCheckbox = document.createElement("input");
             alleSpielerCheckbox.type = "checkbox";
             alleSpielerCheckbox.id = `alleSpieler-${index}`;
             alleSpielerCheckbox.onchange = () => questOptionenSetzen(index, "fuerAlleSpieler", alleSpielerCheckbox.checked);
+            
             const alleSpielerLabel = document.createElement("label");
             alleSpielerLabel.textContent = "Alle Spieler können abschließen";
             alleSpielerLabel.htmlFor = alleSpielerCheckbox.id;
 
+            // Checkbox: Zählfunktion aktivieren
             const zaehlfunktionCheckbox = document.createElement("input");
             zaehlfunktionCheckbox.type = "checkbox";
             zaehlfunktionCheckbox.id = `zaehlfunktion-${index}`;
             zaehlfunktionCheckbox.onchange = () => questOptionenSetzen(index, "zaehlfunktion", zaehlfunktionCheckbox.checked);
+
             const zaehlfunktionLabel = document.createElement("label");
             zaehlfunktionLabel.textContent = "Zählfunktion aktivieren";
             zaehlfunktionLabel.htmlFor = zaehlfunktionCheckbox.id;
 
+            // Steuerelemente hinzufügen
             adminControls.appendChild(alleSpielerCheckbox);
             adminControls.appendChild(alleSpielerLabel);
             adminControls.appendChild(zaehlfunktionCheckbox);
@@ -415,59 +405,46 @@ function zeigeAdminFunktionen() {
             questItem.appendChild(adminControls);
         }
     });
-}
 
-        // Admin-Buttons erstellen, falls sie nicht existieren
-        if (!adminButtonsContainer) {
-            console.log("Admin-Buttons werden erstellt.");
-            const questbookContainer = document.getElementById("quests-section");
-            const newAdminButtonsContainer = document.createElement("div");
-            newAdminButtonsContainer.id = "admin-buttons-container";
+    // Admin-Buttons erstellen, falls sie nicht existieren
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (!adminButtonsContainer) {
+        const questbookContainer = document.getElementById("quests-section");
+        const newAdminButtonsContainer = document.createElement("div");
+        newAdminButtonsContainer.id = "admin-buttons-container";
 
-            const createButton = document.createElement("button");
-            createButton.textContent = "Neue Quest erstellen";
-            createButton.id = "createQuestButton";
-            createButton.onclick = neueQuestErstellen;
+        // Button: Neue Quest erstellen
+        const createButton = document.createElement("button");
+        createButton.textContent = "Neue Quest erstellen";
+        createButton.id = "createQuestButton";
+        createButton.onclick = neueQuestErstellen;
 
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "Alle Quests zurücksetzen";
-            deleteButton.id = "deleteQuestsButton";
-            deleteButton.onclick = questsZuruecksetzen;
+        // Button: Alle Quests zurücksetzen
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Alle Quests zurücksetzen";
+        deleteButton.id = "deleteQuestsButton";
+        deleteButton.onclick = questsZuruecksetzen;
 
-            newAdminButtonsContainer.appendChild(createButton);
-            newAdminButtonsContainer.appendChild(deleteButton);
-            questbookContainer.appendChild(newAdminButtonsContainer);
-        } else {
-            console.log("Admin-Buttons sind bereits vorhanden.");
-        }
-
-        // Level-Set-Container anzeigen
-        if (levelSetContainer) {
-            levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
-            const setLevelButton = document.getElementById("setLevelButton");
-            if (setLevelButton) {
-                setLevelButton.onclick = levelSetzen;
-            }
-        }
-    } else {
-        // Admin-spezifische Elemente ausblenden oder entfernen
-        console.log("Kein Admin-Modus, verstecke Admin-Funktionen");
-
-        if (adminButtonsContainer) {
-            adminButtonsContainer.remove(); // Admin-Buttons entfernen
-        }
-
-        if (levelSetContainer) {
-            levelSetContainer.style.display = "none"; // Level-Set-Container verstecken
-        }
-
-        // Bearbeiten-Buttons von Quests entfernen
-        const editButtons = document.querySelectorAll(".edit-button");
-        editButtons.forEach((editButton) => {
-            editButton.remove();
-        });
+        // Buttons hinzufügen
+        newAdminButtonsContainer.appendChild(createButton);
+        newAdminButtonsContainer.appendChild(deleteButton);
+        questbookContainer.appendChild(newAdminButtonsContainer);
     }
 }
+
+// Funktion, um Optionen für eine Quest zu setzen
+function questOptionenSetzen(questIndex, option, wert) {
+    console.log(`Option ${option} für Quest ${questIndex} gesetzt auf ${wert}`);
+    firebase.database().ref(`quests/${questIndex}`).update({
+        [option]: wert,
+    }).then(() => {
+        console.log(`Option ${option} erfolgreich aktualisiert.`);
+        ladeGlobaleQuests();
+    }).catch((error) => {
+        console.error("Fehler beim Aktualisieren der Questoption:", error);
+    });
+}
+
 
 
 // Level eines Benutzers setzen
