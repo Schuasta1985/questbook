@@ -603,3 +603,22 @@ function getAvatarForUser(user) {
     }
     return "https://via.placeholder.com/100?text=Avatar";
 }
+
+function ladeSpielerInformationen() {
+    console.log("ladeSpielerInformationen() aufgerufen");
+    // Beispiel: Lade Spielerinformationen aus Firebase
+    firebase.database().ref("benutzer").get()
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const benutzerDaten = snapshot.val();
+            console.log("Benutzerinformationen geladen:", benutzerDaten);
+            // Hier kannst du die Benutzerinformationen verarbeiten
+        } else {
+            console.log("Keine Benutzerinformationen gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der Benutzerinformationen:", error);
+    });
+}
+
