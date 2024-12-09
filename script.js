@@ -8,6 +8,8 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
+    ladeSpielerInformationen(); // Spielerinformationen laden
+};
 
     document.getElementById("npcLoginButton").onclick = npcLogin;
 };
@@ -152,6 +154,45 @@ function ladeFortschritte() {
         });
     }
 }
+// Beispiel: Nach ladeGlobaleQuests()
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
+    // ...
+}
+
+// Hier füge die neue Funktion ein
+function ladeSpielerInformationen() {
+    console.log("ladeSpielerInformationen() aufgerufen");
+
+    const spielerInfoContainer = document.getElementById("spieler-info-container");
+    const spielerList = document.getElementById("spieler-list");
+
+    // Firebase-Daten abrufen
+    firebase.database().ref('benutzer').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const benutzerDaten = snapshot.val();
+            spielerList.innerHTML = ""; // Liste zurücksetzen
+
+            Object.keys(benutzerDaten).forEach((spielerName) => {
+                const spielerData = benutzerDaten[spielerName].fortschritte;
+                const spielerLevel = spielerData ? spielerData.level || 1 : 1;
+
+                const listItem = document.createElement("li");
+                listItem.textContent = `${spielerName}: Level ${spielerLevel}`;
+                spielerList.appendChild(listItem);
+            });
+
+            spielerInfoContainer.style.display = "block"; // Container anzeigen
+        } else {
+            console.log("Keine Benutzerdaten gefunden.");
+            spielerList.innerHTML = "<li>Keine Spieler vorhanden</li>";
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Spielerinformationen:", error);
+    });
+}
+
+
 
 // Quests speichern in Firebase
 function speichereQuestsInFirebase(quests) {
