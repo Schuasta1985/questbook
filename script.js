@@ -379,6 +379,16 @@ function zeigeAdminFunktionen() {
             const setLevelButton = document.getElementById("setLevelButton");
             setLevelButton.onclick = levelSetzen;
         }
+    } else {
+        // Admin-Funktionen ausblenden, falls der Benutzer kein Admin ist
+        const adminButtonsContainer = document.getElementById("admin-buttons-container");
+        if (adminButtonsContainer) {
+            adminButtonsContainer.remove();
+        }
+        const levelSetContainer = document.getElementById("level-set-container");
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "none";
+        }
     }
 }
 
@@ -480,7 +490,7 @@ function zeigeAvatar() {
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     currentUser = null;
-    isAdmin = false;
+    isAdmin = false; // Admin-Status zurücksetzen
 
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
@@ -490,6 +500,12 @@ function ausloggen() {
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) npcLoginSection.style.display = "block";
+
+    // Admin-Bereich entfernen
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (adminButtonsContainer) {
+        adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
+    }
 
     // Avatar entfernen
     const avatarContainer = document.getElementById("avatar-container");
