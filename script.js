@@ -17,22 +17,21 @@ function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
-    if (loginSection) {
-loginSection.innerHTML = `
-    <label for="spielerDropdown">Spieler auswählen:</label>
-    <select id="spielerDropdown">
-        <option value="">-- Bitte wählen --</option>
-        <option value="Thomas">Thomas</option>
-        <option value="Elke">Elke</option>
-        <option value="Jamie">Jamie</option>
-        <option value="Massel">Massel</option>
-    </select>
-    <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-    <button onclick="benutzerAnmeldung()">Anmelden</button>
-
-        `;
-        loginSection.style.display = "block";
-    }
+if (loginSection) {
+    loginSection.innerHTML = `
+        <label for="spielerDropdown">Spieler auswählen:</label>
+        <select id="spielerDropdown">
+            <option value="">-- Bitte wählen --</option>
+            <option value="Thomas">Thomas</option>
+            <option value="Elke">Elke</option>
+            <option value="Jamie">Jamie</option>
+            <option value="Massel">Massel</option>
+        </select>
+        <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+        <button onclick="benutzerAnmeldung()">Anmelden</button>
+    `; // Hier ist der korrekte Abschluss der Zeichenkette
+    loginSection.style.display = "block";
+}
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
@@ -228,48 +227,6 @@ function speichereQuestsInFirebase(quests) {
         });
     }
 }
-
-// Quests aus Firebase laden
-// Globale Quests aus Firebase laden
-function ladeGlobaleQuests() {
-    console.log("ladeGlobaleQuests() aufgerufen");
-    firebase.database().ref('quests').get()  // Ändere den Pfad zu 'quests' für globale Quests
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const gespeicherteQuests = snapshot.val();
-            console.log("Globale Quests:", gespeicherteQuests);
-
-            const questList = document.getElementById("quests");
-            questList.innerHTML = ""; // Liste der Quests zurücksetzen
-
-            gespeicherteQuests.forEach((quest, index) => {
-                const listItem = document.createElement("li");
-                const istErledigt = quest.erledigt || false;
-
-                listItem.innerHTML = `
-                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
-                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span>
-                    </span>
-                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-                `;
-
-                listItem.setAttribute("data-xp", quest.xp);
-                questList.appendChild(listItem);
-            });
-
-            if (isAdmin) {
-                zeigeAdminFunktionen();
-            }
-        } else {
-            console.log("Keine globalen Quests gefunden.");
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der globalen Quests:", error);
-    });
-}
-
-
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
 
