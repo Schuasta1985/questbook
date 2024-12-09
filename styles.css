@@ -109,19 +109,18 @@ h1 {
     text-align: center; /* Zentriert den Text */
 }
 
-#login-section label {
-    margin-bottom: 5px; /* Abstand zum nächsten Element */
-}
-
+#login-section label,
 #login-section select,
 #login-section input,
 #login-section button {
-    margin: 10px 0; /* Gleicher Abstand zwischen allen Elementen */
-    width: 300px; /* Einheitliche Breite */
-    padding: 10px; /* Polsterung für die Elemente */
+    margin: 10px 0; /* Abstand zwischen den Elementen */
+    width: 80%; /* Einheitliche Breite */
+    max-width: 300px; /* Maximalbreite */
+    padding: 10px; /* Polsterung */
     font-size: 16px; /* Einheitliche Schriftgröße */
-    text-align: center; /* Text zentrieren */
+    text-align: center; /* Zentrierter Text */
 }
+
 
 #benutzerDropdown {
     width: 100%; /* Volle Breite innerhalb des Containers */
