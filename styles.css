@@ -102,15 +102,19 @@ h1 {
 
 /* Benutzer Login */
 #login-section {
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100vh; /* Zentriert die Inhalte vertikal */
+    text-align: center; /* Zentriert den Text */
 }
 
 #login-section label, #login-section select, #login-section input, #login-section button {
-    margin: 10px 0;
-    font-size: 1.2rem;
+    margin: 10px 0; /* Abstand zwischen den Elementen */
+    width: 300px; /* Einheitliche Breite für die Felder */
+    padding: 10px; /* Polsterung für bessere Optik */
+    font-size: 16px; /* Einheitliche Schriftgröße */
 }
 
 #benutzerDropdown, #benutzerPasswort {
