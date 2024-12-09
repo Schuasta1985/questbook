@@ -57,8 +57,8 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    const benutzernameInput = document.getElementById("spielerDropdown");
-    const passwortInput = document.getElementById("spielerPasswort");
+    const benutzernameInput = document.getElementById("spielerDropdown"); // Spieler-Dropdown
+    const passwortInput = document.getElementById("benutzerPasswort"); // Korrigiert von spielerPasswort zu benutzerPasswort
 
     // Überprüfen, ob die Elemente gefunden werden
     if (!benutzernameInput || !passwortInput) {
