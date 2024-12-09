@@ -486,6 +486,12 @@ function ausloggen() {
     document.getElementById('xp-counter').style.display = 'none';
     document.getElementById('logout-button').style.display = 'none';
 
+    // Quests zurücksetzen (leeren)
+    const questList = document.getElementById("quests");
+    if (questList) {
+        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
+    }
+
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) npcLoginSection.style.display = "block";
