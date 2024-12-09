@@ -18,17 +18,18 @@ function zeigeStartseite() {
     const loginSection = document.getElementById("login-section");
 
     if (loginSection) {
-        loginSection.innerHTML = `
-            <label for="benutzerDropdown">Spieler auswählen:</label>
-            <select id="benutzerDropdown">
-                <option value="">-- Bitte wählen --</option>
-                <option value="Thomas">Thomas</option>
-                <option value="Elke">Elke</option>
-                <option value="Jamie">Jamie</option>
-                <option value="Massel">Massel</option>
-            </select>
-            <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
-            <button onclick="benutzerAnmeldung()">Anmelden</button>
+loginSection.innerHTML = `
+    <label for="spielerDropdown">Spieler auswählen:</label>
+    <select id="spielerDropdown">
+        <option value="">-- Bitte wählen --</option>
+        <option value="Thomas">Thomas</option>
+        <option value="Elke">Elke</option>
+        <option value="Jamie">Jamie</option>
+        <option value="Massel">Massel</option>
+    </select>
+    <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+    <button onclick="benutzerAnmeldung()">Anmelden</button>
+
         `;
         loginSection.style.display = "block";
     }
