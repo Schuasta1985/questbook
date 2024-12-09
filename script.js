@@ -30,9 +30,16 @@ function zeigeStartseite() {
             <input type="password" id="benutzerPasswort" placeholder="Passwort eingeben">
             <button onclick="benutzerAnmeldung()">Anmelden</button>
         `;
-        loginSection.style.display = "block"; // Sicherstellen, dass die Login-Sektion sichtbar ist
+        loginSection.style.display = "block";
     }
+
+    // Verstecke andere Sektionen
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+    document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
 }
+
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -63,9 +70,8 @@ function benutzerAnmeldung() {
         currentUser = benutzername;
         isAdmin = false;
 
-        // Startseite (Benutzerauswahl) ausblenden und Questbuch anzeigen
         document.getElementById("login-section").style.display = "none";
-        document.getElementById("npc-login-section").style.display = "block"; // NPC-Login bleibt sichtbar
+        document.getElementById("npc-login-section").style.display = "none"; // NPC-Login ausblenden
         zeigeQuestbook();
         ladeFortschritte();
         zeigeAvatar();
@@ -74,6 +80,7 @@ function benutzerAnmeldung() {
         alert("Bitte wähle einen Benutzer und gib das richtige Passwort ein.");
     }
 }
+
 
 // NPC Login (ehemals adminLogin)
 function npcLogin() {
@@ -471,40 +478,22 @@ function zeigeAvatar() {
 // Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
+
     currentUser = null;
     isAdmin = false;
 
-    // Alle Bereiche zurücksetzen und Startseite (Benutzerauswahl) anzeigen
-    document.getElementById('quests-section').style.display = 'none';
-    document.getElementById('xp-counter').style.display = 'none';
-    document.getElementById('logout-button').style.display = 'none';
-    document.getElementById("npc-login-section").style.display = "block"; // NPC-Login wieder sichtbar
+    // Setze alle UI-Elemente zurück
+    const avatarContainer = document.getElementById("avatar-container");
+    if (avatarContainer) avatarContainer.innerHTML = "";
 
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (adminButtonsContainer) {
-        adminButtonsContainer.remove();
-    }
+    if (adminButtonsContainer) adminButtonsContainer.remove();
 
     const levelSetContainer = document.getElementById("level-set-container");
-    if (levelSetContainer) {
-        levelSetContainer.style.display = "none";
-    }
+    if (levelSetContainer) levelSetContainer.style.display = "none";
 
-    // Login-Felder zurücksetzen
-    const benutzerDropdown = document.getElementById("benutzerDropdown");
-    const benutzerPasswort = document.getElementById("benutzerPasswort");
-    if (benutzerDropdown) benutzerDropdown.value = "";
-    if (benutzerPasswort) benutzerPasswort.value = "";
-
-    // Avatar entfernen
-    const avatarElement = document.getElementById("avatar-container");
-    if (avatarElement) {
-        avatarElement.innerHTML = "";
-    }
-
-    // Startseite zurücksetzen
+    // Zeige die Startseite
     zeigeStartseite();
-    console.log("Ausloggen abgeschlossen. Startseite zurückgesetzt.");
 }
 
 
