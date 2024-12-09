@@ -32,7 +32,19 @@
         <p style="font-size: 1.5em; color: #FFD700; text-shadow: 1px 1px 2px #000;">Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!</p>
     </header>
 
-    <div id="login-section"></div>
+    <div id="login-section">
+        <label for="spielerDropdown">Spieler auswählen:</label>
+        <select id="spielerDropdown">
+            <option value="">-- Bitte wählen --</option>
+            <option value="Thomas">Thomas</option>
+            <option value="Elke">Elke</option>
+            <option value="Jamie">Jamie</option>
+            <option value="Massel">Massel</option>
+        </select>
+        <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+        <button onclick="benutzerAnmeldung()">Anmelden</button>
+    </div>
+
     <div id="quests"></div>
     <div id="avatar-container"></div>
 
@@ -84,10 +96,9 @@
         <input type="number" id="levelInput" placeholder="Level eingeben">
         <button id="setLevelButton">Level setzen</button>
     </div>
- 
+
     <script>
         function npcLogin() {
-            // Die NPC-Login-Logik
             console.log("npcLogin() aufgerufen");
             const username = document.getElementById("npcBenutzername").value;
             const password = document.getElementById("npcPasswort").value;
@@ -95,22 +106,20 @@
             if (username === "npc" && password === "1234") {
                 alert("NPC erfolgreich eingeloggt!");
                 document.getElementById("npc-login-section").style.display = "none";
-                // Weitere Logik für den NPC-Login
             } else {
                 alert("Falsche Anmeldedaten!");
             }
         }
 
         function ausloggen() {
-            // Die Auslogg-Logik
             console.log("ausloggen() aufgerufen");
-            document.getElementById("npc-login-section").style.display = "block"; // Zeige den NPC-Login wieder an
-            document.getElementById("login-section").style.display = "block"; // Zeige den Benutzer-Login-Bereich wieder an
-            document.getElementById("quests-section").style.display = "none"; // Verstecke die Quests
-            document.getElementById("xp-counter").style.display = "none"; // Verstecke den XP-Anzeige-Bereich
-            document.getElementById("logout-button").style.display = "none"; // Verstecke den Logout-Button
+            document.getElementById("npc-login-section").style.display = "block";
+            document.getElementById("login-section").style.display = "block";
+            document.getElementById("quests-section").style.display = "none";
+            document.getElementById("xp-counter").style.display = "none";
+            document.getElementById("logout-button").style.display = "none";
         }
     </script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
