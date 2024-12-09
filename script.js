@@ -333,8 +333,14 @@ function neueQuestErstellen() {
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
 
+    const levelSetContainer = document.getElementById("level-set-container");
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+
     if (isAdmin) {
-        // Quest-Items durchgehen und Bearbeiten-Button hinzufügen
+        // Admin-spezifische Funktionen aktivieren
+        console.log("Admin-Modus aktiv, zeige Admin-Funktionen");
+
+        // Bearbeiten-Button für Quests hinzufügen
         const questItems = document.querySelectorAll("#quests li");
         questItems.forEach((questItem, index) => {
             if (!questItem.querySelector(".edit-button")) {
@@ -347,13 +353,12 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        // Admin-Buttons erstellen, falls noch nicht vorhanden
-        if (!document.getElementById("admin-buttons-container")) {
+        // Admin-Buttons erstellen, falls sie nicht existieren
+        if (!adminButtonsContainer) {
             console.log("Admin-Buttons werden erstellt.");
-
             const questbookContainer = document.getElementById("quests-section");
-            const adminButtonsContainer = document.createElement("div");
-            adminButtonsContainer.id = "admin-buttons-container";
+            const newAdminButtonsContainer = document.createElement("div");
+            newAdminButtonsContainer.id = "admin-buttons-container";
 
             const createButton = document.createElement("button");
             createButton.textContent = "Neue Quest erstellen";
@@ -365,30 +370,38 @@ function zeigeAdminFunktionen() {
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
-            adminButtonsContainer.appendChild(createButton);
-            adminButtonsContainer.appendChild(deleteButton);
-            questbookContainer.appendChild(adminButtonsContainer);
+            newAdminButtonsContainer.appendChild(createButton);
+            newAdminButtonsContainer.appendChild(deleteButton);
+            questbookContainer.appendChild(newAdminButtonsContainer);
         } else {
             console.log("Admin-Buttons sind bereits vorhanden.");
         }
 
         // Level-Set-Container anzeigen
-        const levelSetContainer = document.getElementById("level-set-container");
         if (levelSetContainer) {
             levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
             const setLevelButton = document.getElementById("setLevelButton");
-            setLevelButton.onclick = levelSetzen;
+            if (setLevelButton) {
+                setLevelButton.onclick = levelSetzen;
+            }
         }
     } else {
-        // Admin-Funktionen ausblenden, falls der Benutzer kein Admin ist
-        const adminButtonsContainer = document.getElementById("admin-buttons-container");
+        // Admin-spezifische Elemente ausblenden oder entfernen
+        console.log("Kein Admin-Modus, verstecke Admin-Funktionen");
+
         if (adminButtonsContainer) {
-            adminButtonsContainer.remove();
+            adminButtonsContainer.remove(); // Admin-Buttons entfernen
         }
-        const levelSetContainer = document.getElementById("level-set-container");
+
         if (levelSetContainer) {
-            levelSetContainer.style.display = "none";
+            levelSetContainer.style.display = "none"; // Level-Set-Container verstecken
         }
+
+        // Bearbeiten-Buttons von Quests entfernen
+        const editButtons = document.querySelectorAll(".edit-button");
+        editButtons.forEach((editButton) => {
+            editButton.remove();
+        });
     }
 }
 
@@ -492,6 +505,12 @@ function ausloggen() {
     currentUser = null;
     isAdmin = false; // Admin-Status zurücksetzen
 
+    // Level-Set-Container verstecken
+    const levelSetContainer = document.getElementById("level-set-container");
+    if (levelSetContainer) {
+        levelSetContainer.style.display = "none";
+    }
+
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
@@ -501,12 +520,6 @@ function ausloggen() {
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) npcLoginSection.style.display = "block";
 
-    // Admin-Bereich entfernen
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (adminButtonsContainer) {
-        adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
-    }
-
     // Avatar entfernen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) avatarContainer.innerHTML = "";
@@ -515,6 +528,11 @@ function ausloggen() {
     const questList = document.getElementById("quests");
     if (questList) {
         questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
+    }
+        // Admin-Bereich entfernen
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (adminButtonsContainer) {
+        adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
     }
 
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
