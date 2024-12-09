@@ -10,7 +10,7 @@ window.onload = function () {
     zeigeStartseite();
     ladeSpielerInformationen(); // Spielerinformationen laden
     document.getElementById("npcLoginButton").onclick = npcLogin;
-};
+}
 
 // Startseite anzeigen
 function zeigeStartseite() {
@@ -55,6 +55,7 @@ function zeigeQuestbook() {
 }
 
 // Benutzeranmeldung
+// Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -80,10 +81,14 @@ function benutzerAnmeldung() {
         currentUser = benutzername;
         isAdmin = false;
 
-        // Login-Bereich ausblenden
-        console.log("Verstecke login-section");
+        // Login-Bereich ausblenden, nur wenn er existiert
         const loginSection = document.getElementById("login-section");
-        loginSection.style.display = "none";
+        if (loginSection) {
+            console.log("Verstecke login-section");
+            loginSection.style.display = "none";
+        } else {
+            console.error("Fehler: login-section nicht gefunden!");
+        }
 
         // Quests und XP-Bereich anzeigen
         zeigeQuestbook();
@@ -94,6 +99,7 @@ function benutzerAnmeldung() {
         alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
     }
 }
+
 
 
 // NPC Login
