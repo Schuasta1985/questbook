@@ -19,7 +19,7 @@ function zeigeStartseite() {
 
     if (loginSection) {
         loginSection.innerHTML = `
-            <label for="benutzerDropdown">Benutzer auswählen:</label>
+            <label for="benutzerDropdown">Spieler auswählen:</label>
             <select id="benutzerDropdown">
                 <option value="">-- Bitte wählen --</option>
                 <option value="Thomas">Thomas</option>
