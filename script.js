@@ -478,21 +478,23 @@ function zeigeAvatar() {
 // Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
-
     currentUser = null;
     isAdmin = false;
 
-    // Setze alle UI-Elemente zurück
+    // Alle nicht benötigten Bereiche ausblenden
+    document.getElementById('quests-section').style.display = 'none';
+    document.getElementById('xp-counter').style.display = 'none';
+    document.getElementById('logout-button').style.display = 'none';
+
+    // NPC-Login-Bereich sichtbar machen
+    const npcLoginSection = document.getElementById("npc-login-section");
+    if (npcLoginSection) npcLoginSection.style.display = "block";
+
+    // Avatar entfernen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) avatarContainer.innerHTML = "";
 
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (adminButtonsContainer) adminButtonsContainer.remove();
-
-    const levelSetContainer = document.getElementById("level-set-container");
-    if (levelSetContainer) levelSetContainer.style.display = "none";
-
-    // Zeige die Startseite
+    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
 
