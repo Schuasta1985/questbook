@@ -9,8 +9,6 @@ window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
     ladeSpielerInformationen(); // Spielerinformationen laden
-};
-
     document.getElementById("npcLoginButton").onclick = npcLogin;
 };
 
