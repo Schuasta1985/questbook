@@ -8,7 +8,7 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
-    ladeSpielerInformationen(); // Spielerinformationen laden
+
     document.getElementById("npcLoginButton").onclick = npcLogin;
 };
 
@@ -152,63 +152,6 @@ function ladeFortschritte() {
         });
     }
 }
-// Beispiel: Nach ladeGlobaleQuests()
-function ladeGlobaleQuests() {
-    console.log("ladeGlobaleQuests() aufgerufen");
-    firebase.database().ref('quests').once('value').then((snapshot) => {
-        const quests = snapshot.val();
-        const questList = document.getElementById("quests");
-        questList.innerHTML = ""; // Liste der Quests zurücksetzen
-
-        quests.forEach((quest, index) => {
-            const listItem = document.createElement("li");
-            listItem.innerHTML = `
-                <span>${quest.beschreibung} (${quest.xp} XP)</span>
-            `;
-
-            if (quest.zaehlfunktion) {
-                const inputField = document.createElement("input");
-                inputField.type = "number";
-                inputField.min = "1";
-                inputField.placeholder = "Menge eingeben";
-
-                const zaehlButton = document.createElement("button");
-                zaehlButton.textContent = "Einreichen";
-                zaehlButton.onclick = () => {
-                    const menge = parseInt(inputField.value, 10);
-                    if (!isNaN(menge) && menge > 0) {
-                        const xpGained = menge * quest.xp;
-                        xp += xpGained;
-                        aktualisiereXPAnzeige();
-                        speichereFortschritte();
-                        alert(`${menge} Einheiten abgeschlossen! ${xpGained} XP erhalten.`);
-                    } else {
-                        alert("Ungültige Eingabe. Bitte eine Zahl größer als 0 eingeben.");
-                    }
-                };
-
-                listItem.appendChild(inputField);
-                listItem.appendChild(zaehlButton);
-            } else if (quest.fuerAlleSpieler) {
-                const abschliessenButton = document.createElement("button");
-                abschliessenButton.textContent = "Abschließen";
-                abschliessenButton.onclick = () => questErledigt(index);
-                listItem.appendChild(abschliessenButton);
-            } else {
-                const abschliessenButton = document.createElement("button");
-                abschliessenButton.textContent = "Abschließen";
-                abschliessenButton.onclick = () => questErledigt(index);
-                listItem.appendChild(abschliessenButton);
-            }
-
-            questList.appendChild(listItem);
-        });
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Quests:", error);
-    });
-}
-
-
 
 // Quests speichern in Firebase
 function speichereQuestsInFirebase(quests) {
@@ -421,38 +364,8 @@ function zeigeAdminFunktionen() {
                 editButton.onclick = () => questBearbeiten(index);
                 questItem.appendChild(editButton);
                 console.log(`Bearbeiten-Button für Quest ${index + 1} hinzugefügt.`);
-                function zeigeAdminFunktionen() {
-    const questItems = document.querySelectorAll("#quests li");
-    questItems.forEach((questItem, index) => {
-        if (!questItem.querySelector(".admin-controls")) {
-            const adminControls = document.createElement("div");
-            adminControls.className = "admin-controls";
-
-            const alleSpielerCheckbox = document.createElement("input");
-            alleSpielerCheckbox.type = "checkbox";
-            alleSpielerCheckbox.id = `alleSpieler-${index}`;
-            alleSpielerCheckbox.onchange = () => questOptionenSetzen(index, "fuerAlleSpieler", alleSpielerCheckbox.checked);
-            const alleSpielerLabel = document.createElement("label");
-            alleSpielerLabel.textContent = "Alle Spieler können abschließen";
-            alleSpielerLabel.htmlFor = alleSpielerCheckbox.id;
-
-            const zaehlfunktionCheckbox = document.createElement("input");
-            zaehlfunktionCheckbox.type = "checkbox";
-            zaehlfunktionCheckbox.id = `zaehlfunktion-${index}`;
-            zaehlfunktionCheckbox.onchange = () => questOptionenSetzen(index, "zaehlfunktion", zaehlfunktionCheckbox.checked);
-            const zaehlfunktionLabel = document.createElement("label");
-            zaehlfunktionLabel.textContent = "Zählfunktion aktivieren";
-            zaehlfunktionLabel.htmlFor = zaehlfunktionCheckbox.id;
-
-            adminControls.appendChild(alleSpielerCheckbox);
-            adminControls.appendChild(alleSpielerLabel);
-            adminControls.appendChild(zaehlfunktionCheckbox);
-            adminControls.appendChild(zaehlfunktionLabel);
-
-            questItem.appendChild(adminControls);
-        }
-    });
-}
+            }
+        });
 
         // Admin-Buttons erstellen, falls sie nicht existieren
         if (!adminButtonsContainer) {
@@ -638,18 +551,6 @@ function ausloggen() {
 
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
-}
-
-function questOptionenSetzen(questIndex, option, wert) {
-    console.log(`Option ${option} für Quest ${questIndex} gesetzt auf ${wert}`);
-    firebase.database().ref(`quests/${questIndex}`).update({
-        [option]: wert,
-    }).then(() => {
-        console.log(`Option ${option} erfolgreich aktualisiert.`);
-        ladeGlobaleQuests();
-    }).catch((error) => {
-        console.error("Fehler beim Aktualisieren der Questoption:", error);
-    });
 }
 
 // Avatar für Benutzer festlegen
