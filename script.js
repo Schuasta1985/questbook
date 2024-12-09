@@ -10,30 +10,30 @@ window.onload = function () {
     zeigeStartseite();
     ladeSpielerInformationen(); // Spielerinformationen laden
     document.getElementById("npcLoginButton").onclick = npcLogin;
-}
+};
 
 // Startseite anzeigen
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
-if (loginSection) {
-    loginSection.innerHTML = `
-        <label for="spielerDropdown">Spieler auswählen:</label>
-        <select id="spielerDropdown">
-            <option value="">-- Bitte wählen --</option>
-            <option value="Thomas">Thomas</option>
-            <option value="Elke">Elke</option>
-            <option value="Jamie">Jamie</option>
-            </select>
-        <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-        <button onclick="benutzerAnmeldung()">Anmelden</button>
-    `; // Zeichenkette korrekt abgeschlossen
+    if (loginSection) {
+loginSection.innerHTML = `
+    <label for="spielerDropdown">Spieler auswählen:</label>
+    <select id="spielerDropdown">
+        <option value="">-- Bitte wählen --</option>
+        <option value="Thomas">Thomas</option>
+        <option value="Elke">Elke</option>
+        <option value="Jamie">Jamie</option>
+        <option value="Massel">Massel</option>
+    </select>
+    <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+    <button onclick="benutzerAnmeldung()">Anmelden</button>
 
-    loginSection.style.display = "block";
-} else {
-    console.error("Element mit der ID 'login-section' wurde nicht gefunden!");
-}
+        `;
+        loginSection.style.display = "block";
+    }
+
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
@@ -54,7 +54,6 @@ function zeigeQuestbook() {
     document.getElementById('login-section').style.display = 'none';
 }
 
-// Benutzeranmeldung
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
@@ -81,14 +80,10 @@ function benutzerAnmeldung() {
         currentUser = benutzername;
         isAdmin = false;
 
-        // Login-Bereich ausblenden, nur wenn er existiert
+        // Login-Bereich ausblenden
+        console.log("Verstecke login-section");
         const loginSection = document.getElementById("login-section");
-        if (loginSection) {
-            console.log("Verstecke login-section");
-            loginSection.style.display = "none";
-        } else {
-            console.error("Fehler: login-section nicht gefunden!");
-        }
+        loginSection.style.display = "none";
 
         // Quests und XP-Bereich anzeigen
         zeigeQuestbook();
@@ -99,7 +94,6 @@ function benutzerAnmeldung() {
         alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
     }
 }
-
 
 
 // NPC Login
@@ -228,6 +222,48 @@ function speichereQuestsInFirebase(quests) {
         });
     }
 }
+
+// Quests aus Firebase laden
+// Globale Quests aus Firebase laden
+function ladeGlobaleQuests() {
+    console.log("ladeGlobaleQuests() aufgerufen");
+    firebase.database().ref('quests').get()  // Ändere den Pfad zu 'quests' für globale Quests
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const gespeicherteQuests = snapshot.val();
+            console.log("Globale Quests:", gespeicherteQuests);
+
+            const questList = document.getElementById("quests");
+            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+
+            gespeicherteQuests.forEach((quest, index) => {
+                const listItem = document.createElement("li");
+                const istErledigt = quest.erledigt || false;
+
+                listItem.innerHTML = `
+                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
+                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span>
+                    </span>
+                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                `;
+
+                listItem.setAttribute("data-xp", quest.xp);
+                questList.appendChild(listItem);
+            });
+
+            if (isAdmin) {
+                zeigeAdminFunktionen();
+            }
+        } else {
+            console.log("Keine globalen Quests gefunden.");
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Laden der globalen Quests:", error);
+    });
+}
+
+
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
 
@@ -364,39 +400,50 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
     }
 }
+
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
 
-    const questItems = document.querySelectorAll("#quests li");
+    const levelSetContainer = document.getElementById("level-set-container");
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
 
-    // Durch alle Quests iterieren
+    if (isAdmin) {
+        // Admin-spezifische Funktionen aktivieren
+        console.log("Admin-Modus aktiv, zeige Admin-Funktionen");
+
+        // Bearbeiten-Button für Quests hinzufügen
+        const questItems = document.querySelectorAll("#quests li");
+        questItems.forEach((questItem, index) => {
+            if (!questItem.querySelector(".edit-button")) {
+                const editButton = document.createElement("button");
+                editButton.textContent = "Bearbeiten";
+                editButton.className = "edit-button";
+                editButton.onclick = () => questBearbeiten(index);
+                questItem.appendChild(editButton);
+                console.log(`Bearbeiten-Button für Quest ${index + 1} hinzugefügt.`);
+                function zeigeAdminFunktionen() {
+    const questItems = document.querySelectorAll("#quests li");
     questItems.forEach((questItem, index) => {
-        // Admin-Steuerelemente hinzufügen, falls noch nicht vorhanden
         if (!questItem.querySelector(".admin-controls")) {
             const adminControls = document.createElement("div");
             adminControls.className = "admin-controls";
 
-            // Checkbox: Alle Spieler können abschließen
             const alleSpielerCheckbox = document.createElement("input");
             alleSpielerCheckbox.type = "checkbox";
             alleSpielerCheckbox.id = `alleSpieler-${index}`;
             alleSpielerCheckbox.onchange = () => questOptionenSetzen(index, "fuerAlleSpieler", alleSpielerCheckbox.checked);
-            
             const alleSpielerLabel = document.createElement("label");
             alleSpielerLabel.textContent = "Alle Spieler können abschließen";
             alleSpielerLabel.htmlFor = alleSpielerCheckbox.id;
 
-            // Checkbox: Zählfunktion aktivieren
             const zaehlfunktionCheckbox = document.createElement("input");
             zaehlfunktionCheckbox.type = "checkbox";
             zaehlfunktionCheckbox.id = `zaehlfunktion-${index}`;
             zaehlfunktionCheckbox.onchange = () => questOptionenSetzen(index, "zaehlfunktion", zaehlfunktionCheckbox.checked);
-
             const zaehlfunktionLabel = document.createElement("label");
             zaehlfunktionLabel.textContent = "Zählfunktion aktivieren";
             zaehlfunktionLabel.htmlFor = zaehlfunktionCheckbox.id;
 
-            // Steuerelemente hinzufügen
             adminControls.appendChild(alleSpielerCheckbox);
             adminControls.appendChild(alleSpielerLabel);
             adminControls.appendChild(zaehlfunktionCheckbox);
@@ -405,46 +452,59 @@ function zeigeAdminFunktionen() {
             questItem.appendChild(adminControls);
         }
     });
+}
 
-    // Admin-Buttons erstellen, falls sie nicht existieren
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (!adminButtonsContainer) {
-        const questbookContainer = document.getElementById("quests-section");
-        const newAdminButtonsContainer = document.createElement("div");
-        newAdminButtonsContainer.id = "admin-buttons-container";
+        // Admin-Buttons erstellen, falls sie nicht existieren
+        if (!adminButtonsContainer) {
+            console.log("Admin-Buttons werden erstellt.");
+            const questbookContainer = document.getElementById("quests-section");
+            const newAdminButtonsContainer = document.createElement("div");
+            newAdminButtonsContainer.id = "admin-buttons-container";
 
-        // Button: Neue Quest erstellen
-        const createButton = document.createElement("button");
-        createButton.textContent = "Neue Quest erstellen";
-        createButton.id = "createQuestButton";
-        createButton.onclick = neueQuestErstellen;
+            const createButton = document.createElement("button");
+            createButton.textContent = "Neue Quest erstellen";
+            createButton.id = "createQuestButton";
+            createButton.onclick = neueQuestErstellen;
 
-        // Button: Alle Quests zurücksetzen
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Alle Quests zurücksetzen";
-        deleteButton.id = "deleteQuestsButton";
-        deleteButton.onclick = questsZuruecksetzen;
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Alle Quests zurücksetzen";
+            deleteButton.id = "deleteQuestsButton";
+            deleteButton.onclick = questsZuruecksetzen;
 
-        // Buttons hinzufügen
-        newAdminButtonsContainer.appendChild(createButton);
-        newAdminButtonsContainer.appendChild(deleteButton);
-        questbookContainer.appendChild(newAdminButtonsContainer);
+            newAdminButtonsContainer.appendChild(createButton);
+            newAdminButtonsContainer.appendChild(deleteButton);
+            questbookContainer.appendChild(newAdminButtonsContainer);
+        } else {
+            console.log("Admin-Buttons sind bereits vorhanden.");
+        }
+
+        // Level-Set-Container anzeigen
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
+            const setLevelButton = document.getElementById("setLevelButton");
+            if (setLevelButton) {
+                setLevelButton.onclick = levelSetzen;
+            }
+        }
+    } else {
+        // Admin-spezifische Elemente ausblenden oder entfernen
+        console.log("Kein Admin-Modus, verstecke Admin-Funktionen");
+
+        if (adminButtonsContainer) {
+            adminButtonsContainer.remove(); // Admin-Buttons entfernen
+        }
+
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "none"; // Level-Set-Container verstecken
+        }
+
+        // Bearbeiten-Buttons von Quests entfernen
+        const editButtons = document.querySelectorAll(".edit-button");
+        editButtons.forEach((editButton) => {
+            editButton.remove();
+        });
     }
 }
-
-// Funktion, um Optionen für eine Quest zu setzen
-function questOptionenSetzen(questIndex, option, wert) {
-    console.log(`Option ${option} für Quest ${questIndex} gesetzt auf ${wert}`);
-    firebase.database().ref(`quests/${questIndex}`).update({
-        [option]: wert,
-    }).then(() => {
-        console.log(`Option ${option} erfolgreich aktualisiert.`);
-        ladeGlobaleQuests();
-    }).catch((error) => {
-        console.error("Fehler beim Aktualisieren der Questoption:", error);
-    });
-}
-
 
 
 // Level eines Benutzers setzen
@@ -603,22 +663,3 @@ function getAvatarForUser(user) {
     }
     return "https://via.placeholder.com/100?text=Avatar";
 }
-
-function ladeSpielerInformationen() {
-    console.log("ladeSpielerInformationen() aufgerufen");
-    // Beispiel: Lade Spielerinformationen aus Firebase
-    firebase.database().ref("benutzer").get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const benutzerDaten = snapshot.val();
-            console.log("Benutzerinformationen geladen:", benutzerDaten);
-            // Hier kannst du die Benutzerinformationen verarbeiten
-        } else {
-            console.log("Keine Benutzerinformationen gefunden.");
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der Benutzerinformationen:", error);
-    });
-}
-
