@@ -58,7 +58,7 @@ function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
     const benutzernameInput = document.getElementById("spielerDropdown"); // Spieler-Dropdown
-    const passwortInput = document.getElementById("benutzerPasswort"); // Korrigiert von spielerPasswort zu benutzerPasswort
+    const passwortInput = document.getElementById("spielerPasswort"); // Korrigiert von benutzerPasswort zu spielerPasswort
 
     // Überprüfen, ob die Elemente gefunden werden
     if (!benutzernameInput || !passwortInput) {
@@ -92,6 +92,7 @@ function benutzerAnmeldung() {
         alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
     }
 }
+
 
 
 // NPC Login
