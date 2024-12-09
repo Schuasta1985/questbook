@@ -101,11 +101,11 @@ h1 {
 }
 
 #login-section {
-    display: flex;
-    flex-direction: column; /* Ordnet die Elemente vertikal an */
+    display: flex !important;
+    flex-direction: column !important; /* Ordnet die Elemente vertikal an */
     align-items: center; /* Zentriert die Elemente horizontal */
     justify-content: center; /* Zentriert die Elemente vertikal */
-    height: 100vh; /* Volle Höhe des Bildschirms */
+    height: auto; /* Höhe passend anpassen */
     text-align: center; /* Zentriert den Text */
 }
 
