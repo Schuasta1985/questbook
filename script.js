@@ -67,11 +67,9 @@ function benutzerAnmeldung() {
     // Avatar nach oben verschieben und anzeigen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
-    avatarContainer.style.position = "absolute";
-    avatarContainer.style.top = "10px"; // Abstand von oben
-    avatarContainer.style.left = "50%"; // Zentriert horizontal
-    avatarContainer.style.transform = "translateX(-50%)";
-    avatarContainer.style.display = "flex"; // Sicherstellen, dass es sichtbar ist
+avatarContainer.style.position = "relative";
+avatarContainer.style.marginTop = "20px"; // Platz nach oben
+avatarContainer.style.display = "flex"; // Sichtbar machen
 }
 
     const benutzernameInput = document.getElementById("spielerDropdown");
