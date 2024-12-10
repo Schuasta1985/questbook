@@ -351,12 +351,11 @@ button:hover {
 }
 
 #mp-progress {
-    width: 100%;
-    height: 100%;
-    background-color: #0000FF; /* Blau für die MP-Leiste */
-    border-radius: 10px;
+    height: 20px;
+    background-color: blue; /* Blau für die MP-Leiste */
+    border-radius: 5px;
     text-align: center;
-    line-height: 20px;
     color: white;
     font-weight: bold;
 }
+
