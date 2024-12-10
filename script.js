@@ -668,20 +668,35 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
-        // Platzhalter für aktive Zauber
-        const zauberElement = document.createElement("div");
-        zauberElement.textContent = "Aktiver Zauber: (keiner)";
-        zauberElement.style.fontStyle = "italic";
+        // HP-Leiste
+        const hpElement = document.createElement("div");
+        hpElement.className = "hp-bar";
+        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
+        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
+        const hpProzent = (aktuelleHP / maxHP) * 100;
+        hpElement.innerHTML = `<div class="progress" style="width: ${hpProzent}%;"></div>`;
+        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
+
+        // MP-Leiste (falls gewünscht)
+        const mpElement = document.createElement("div");
+        mpElement.className = "mp-bar";
+        const aktuelleMP = daten.fortschritte?.mp || 0;
+        const maxMP = 100 + (daten.fortschritte?.level || 1) * 10; // Beispiel-Formel
+        const mpProzent = (aktuelleMP / maxMP) * 100;
+        mpElement.innerHTML = `<div class="progress" style="width: ${mpProzent}%;"></div>`;
+        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
 
         // Alles zusammenfügen
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
-        benutzerElement.appendChild(zauberElement);
+        benutzerElement.appendChild(hpElement);
+        benutzerElement.appendChild(mpElement);
 
         benutzerContainer.appendChild(benutzerElement);
     }
 }
+
 
 
 // Avatar für Benutzer festlegen
