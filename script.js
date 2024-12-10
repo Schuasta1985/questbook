@@ -19,43 +19,56 @@ window.onload = function () {
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
+    const header = document.querySelector("header");
+    const avatarContainer = document.getElementById("avatar-container");
 
+    // Login-Section sichtbar machen
     if (loginSection) {
-        loginSection.innerHTML = `
-            <label for="spielerDropdown">Spieler auswählen:</label>
-            <select id="spielerDropdown">
-                <option value="">-- Bitte wählen --</option>
-                <option value="Thomas">Thomas</option>
-                <option value="Elke">Elke</option>
-                <option value="Jamie">Jamie</option>
-            </select>
-            <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-            <button id="benutzerLoginButton">Anmelden</button>
-        `;
         loginSection.style.display = "block";
-
-        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
-        if (benutzerLoginButton) {
-            benutzerLoginButton.onclick = benutzerAnmeldung;
-        }
     }
 
-    // Benutzerinformationen laden und anzeigen
-    ladeBenutzerdaten();
+    // Header anzeigen
+    if (header) {
+        header.style.display = "block";
+    }
 
-    // Verstecke andere Sektionen
+    // Avatar ausblenden
+    if (avatarContainer) {
+        avatarContainer.style.display = "none";
+    }
+
+    // Andere Sektionen verstecken
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
 }
 
+
 // Questbuch anzeigen
 function zeigeQuestbook() {
     console.log("zeigeQuestbook() aufgerufen");
+
+    // Avatar oben positionieren
+    const avatarContainer = document.getElementById("avatar-container");
+    if (avatarContainer) {
+        avatarContainer.style.display = "flex"; // Avatar sichtbar machen
+        avatarContainer.style.marginTop = "0"; // Kein zusätzlicher Abstand
+        avatarContainer.style.justifyContent = "center"; // Zentrierung
+    }
+
+    // Header ausblenden
+    const header = document.querySelector("header");
+    if (header) {
+        header.style.display = "none"; // Header nur ausblenden
+    }
+
+    // Sichtbarkeit der relevanten Elemente aktivieren
     document.getElementById("quests-section").style.display = "block";
     document.getElementById("xp-counter").style.display = "block";
     document.getElementById("logout-button").style.display = "block";
+
+    // Login-Sektion ausblenden
     document.getElementById("login-section").style.display = "none";
 }
 
