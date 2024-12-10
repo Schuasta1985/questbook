@@ -283,6 +283,8 @@ button:hover {
     margin: 10px auto;
     width: 80%; /* Gleiche Breite wie der Avatar */
     max-width: 200px; /* Maximalbreite auf den Avatar beschränken */
+    position: relative; /* Position relativ zum Container */
+    margin-top: -20px; /* Leicht an den Avatar anschließen */
 }
 
 #hp-progress {
@@ -292,8 +294,6 @@ button:hover {
     line-height: 20px;
     font-weight: bold;
     color: white;
-    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
-}
-#hp-progress {
+    background: green; /* Standardfarbe */
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
