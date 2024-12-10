@@ -32,17 +32,20 @@
         <p style="font-size: 1.5em; color: #FFD700; text-shadow: 1px 1px 2px #000;">Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!</p>
     </header>
 
-    <div id="login-section">
+<div id="login-section">
+    <form onsubmit="return false;"> <!-- Form hinzugefügt -->
         <label for="spielerDropdown">Spieler auswählen:</label>
         <select id="spielerDropdown">
             <option value="">-- Bitte wählen --</option>
             <option value="Thomas">Thomas</option>
             <option value="Elke">Elke</option>
             <option value="Jamie">Jamie</option>
-              </select>
+        </select>
         <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-        <button onclick="benutzerAnmeldung()">Anmelden</button>
-    </div>
+        <button type="button" onclick="benutzerAnmeldung()">Anmelden</button>
+    </form>
+</div>
+
     <div id="benutzer-container" class="benutzer-grid"></div>
 
 
