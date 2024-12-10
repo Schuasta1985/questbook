@@ -506,23 +506,39 @@ function questBearbeiten(questNummer) {
 }
 
 
-// Avatar anzeigen
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
+
     if (currentUser) {
-        const avatarElement = document.getElementById("avatar-container");
+        const avatarContainer = document.getElementById("avatar-container");
+
+        if (!avatarContainer) {
+            console.error("Avatar-Container wurde nicht gefunden!");
+            return;
+        }
+
         const avatarPath = getAvatarForUser(currentUser);
 
-        if (avatarElement) {
-            avatarElement.innerHTML = `
-                <video autoplay loop muted>
-                    <source src="${avatarPath}" type="video/mp4">
-                    Dein Browser unterstützt das Video-Tag nicht.
-                </video>
-            `;
+        if (!avatarPath) {
+            console.error(`Kein Avatar gefunden für Benutzer: ${currentUser}`);
+            return;
         }
+
+        // Avatar-Video einfügen
+        avatarContainer.innerHTML = `
+            <video autoplay loop muted>
+                <source src="${avatarPath}" type="video/mp4">
+                Dein Browser unterstützt das Video-Tag nicht.
+            </video>
+        `;
+
+        avatarContainer.style.display = "flex"; // Avatar sichtbar machen
+        avatarContainer.style.marginTop = "20px"; // Platz schaffen
+    } else {
+        console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
+
 
 // Ausloggen
 function ausloggen() {
