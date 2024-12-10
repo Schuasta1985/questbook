@@ -86,7 +86,7 @@ h1 {
 
 #avatar-container {
     transition: all 0.3s ease-in-out; /* Sanfte Animation bei Größenänderungen */
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     margin: 20px auto; /* Platz oben und unten */
@@ -209,18 +209,19 @@ button:hover {
 }
 
 #quests li {
-     background: rgba(0, 0, 0, 0.7);  /* Dunkler Hintergrund für besseren Kontrast */
+    background: rgba(255, 255, 255, 0.7);  /* Leichter, heller Hintergrund */
     padding: 15px;
     border-radius: 10px;
     margin-bottom: 10px;
     width: 90%;  /* Damit die Quests gleichmäßig wirken */
-    max-width: 600px;  /* Maximalbreite, um die Darstellung zu verbessern */
-   box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1); /* Leichter Schimmer */
-    color: #4E3629;  /* Dunkelbrauner Text für bessere Lesbarkeit */
+    max-width: 600px;  /* Maximalbreite */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+    color: #4E3629;  /* Dunkelbraune Schriftfarbe */
     display: flex;
-    justify-content: space-between; /* Platzierung von Text und Button */
+    justify-content: space-between; /* Text und Button positionieren */
     align-items: center;
 }
+
 
 /* Button für "Erledigt" am rechten Rand positionieren */
 button.erledigt-button {
