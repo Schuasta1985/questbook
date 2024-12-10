@@ -299,9 +299,7 @@ button:hover {
     border-radius: 5px;
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
-#avatar-jamie video {
-    width: 150px; /* Beispielgröße */
+#avatar-container video[src*="jamie.mp4"] {
+    width: 100px; /* Größe für Jamies Avatar */
     height: auto; /* Seitenverhältnis beibehalten */
-    border-radius: 50%; /* Falls du einen runden Avatar möchtest */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: kleiner Schatten für einen 3D-Effekt */
 }
