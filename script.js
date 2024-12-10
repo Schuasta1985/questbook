@@ -742,6 +742,13 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
+function berechneHPFarbe(prozent) {
+    if (prozent > 75) return "green";
+    if (prozent > 50) return "yellow";
+    if (prozent > 25) return "orange";
+    return "red";
+}
+
 
 function aktualisiereLayout() {
     const hpContainer = document.getElementById("hp-bar-container");
