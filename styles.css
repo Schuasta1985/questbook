@@ -276,3 +276,22 @@ button:hover {
     color: #FFFFFF; /* Weiße Schriftfarbe */
     text-shadow: 1px 1px 2px #000000; /* Schwarzer Textschatten */
 }
+#hp-bar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+    width: 80%; /* Gleiche Breite wie der Avatar */
+    max-width: 200px; /* Maximalbreite auf den Avatar beschränken */
+}
+
+#hp-progress {
+    height: 20px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 20px;
+    font-weight: bold;
+    color: white;
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
+
