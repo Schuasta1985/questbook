@@ -280,31 +280,36 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
-    width: 200px; /* Breite passend zum Avatar */
-    position: relative;
+    margin: 10px auto;
+    width: 200px; /* Gleiche Breite wie der Avatar */
+    position: relative; /* Verhindert Überlappung */
+    z-index: 1; /* Sicherstellen, dass die Leiste sichtbar bleibt */
 }
 
 #hp-progress {
     height: 15px;
-    width: 100%; /* Nimmt die volle Breite des Containers ein */
+    width: 100%; /* Breite des Containers */
     border-radius: 8px;
     text-align: center;
     line-height: 15px;
     font-weight: bold;
     color: white;
     background: green; /* Standardfarbe */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
-    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Schatteneffekt */
     border: 1px solid #FFD700; /* Goldener Rahmen */
+    position: relative; /* Für Text im Balken */
 }
 
 #hp-progress span {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
+    text-align: center;
     font-size: 12px;
     color: white;
-    z-index: 2;
+    line-height: 15px;
+    z-index: 2; /* Text über der Farbe */
     text-shadow: 1px 1px 2px black; /* Für bessere Lesbarkeit */
 }
 
