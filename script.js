@@ -685,7 +685,6 @@ function berechneMaxHP(level) {
     return 100 + Math.floor((level - 1) / 10) * 200;
 }
 
-// Funktion zur Aktualisierung der HP-Leiste
 function aktualisiereHPLeiste(aktuelleHP, level) {
     const maxHP = berechneMaxHP(level);
     const hpProgress = document.getElementById("hp-progress");
