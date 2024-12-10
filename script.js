@@ -62,7 +62,7 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-
+     document.getElementById("welcome-text").style.display = "none";
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
@@ -543,6 +543,7 @@ function zeigeAvatar() {
 // Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
+    document.getElementById("welcome-text").style.display = "block";
     currentUser = null;
     isAdmin = false; // Admin-Status zurücksetzen
 
