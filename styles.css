@@ -86,18 +86,21 @@ h1 {
 
 /* Avatar-Container anpassen */
 #avatar-container {
+    position: relative; /* Positionierung für flexible Anpassung */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;  /* Abstand nach oben */
-    margin-bottom: 20px;  /* Abstand nach unten */
+    margin: 20px auto; /* Zentriere den Avatar */
+    width: 200px; /* Breite anpassen */
+    height: 200px; /* Höhe anpassen */
 }
 
 #avatar-container video {
-    border-radius: 50%;  /* Avatar rund machen */
-    width: 150px;  /* Größe des Avatars */
-    height: 150px;
-    border: 3px solid #F5F5DC;  /* Rahmen um den Avatar */
+    border-radius: 50%; /* Rundes Design */
+    width: 100%; /* Nimmt die gesamte Breite ein */
+    height: auto; /* Automatische Höhe, passend zur Breite */
+    border: 5px solid #FFD700; /* Goldener Rahmen */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
 }
 
 body #login-section {
