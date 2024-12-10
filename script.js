@@ -602,6 +602,11 @@ function ausloggen() {
     if (adminButtonsContainer) {
         adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
     }
+    // HP-Anzeige ausblenden
+    const hpContainer = document.getElementById("hp-bar-container");
+    if (hpContainer) {
+        hpContainer.style.display = "none";
+    }
 
     // Benutzerübersicht einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
