@@ -140,8 +140,8 @@ function speichereFortschritte() {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
             level: level,
-            hp: aktuelleHP, // Füge HP hinzu
-            maxHP: maxHP    // Optional, falls benötigt
+            hp: aktuelleHP || berechneMaxHP(level), // Fallback auf maxHP, falls aktuelleHP fehlt
+            maxHP: maxHP || berechneMaxHP(level)
         })
         .then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
@@ -152,7 +152,6 @@ function speichereFortschritte() {
     }
 }
 
-
 // Benutzerfortschritte aus Firebase laden
 function ladeFortschritte() {
     if (currentUser) {
@@ -162,12 +161,16 @@ function ladeFortschritte() {
                 const data = snapshot.val();
                 xp = data.xp || 0;
                 level = data.level || 1;
-                aktuelleHP = data.hp || berechneMaxHP(level);
-                maxHP = data.maxHP || berechneMaxHP(level);
+                aktuelleHP = data.hp || berechneMaxHP(level); // Fallback
+                maxHP = data.maxHP || berechneMaxHP(level); // Fallback
                 aktualisiereXPAnzeige();
-                aktualisiereHPLeiste(aktuelleHP, maxHP);
+                aktualisiereHPLeiste(aktuelleHP, level);
             } else {
                 console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
+                // Standardwerte setzen
+                aktuelleHP = berechneMaxHP(1);
+                maxHP = berechneMaxHP(1);
+                aktualisiereHPLeiste(aktuelleHP, 1);
             }
         })
         .catch((error) => {
