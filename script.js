@@ -692,19 +692,15 @@ function berechneMaxHP(level) {
 }
 
 function aktualisiereHPLeiste(aktuelleHP, level) {
-    const maxHP = berechneMaxHP(level);
+    const maxHP = berechneMaxHP(level); // Berechnet das maximale HP basierend auf dem Level
     const hpProgress = document.getElementById("hp-progress");
-    const hpText = hpProgress.querySelector("span");
 
     if (hpProgress) {
         const prozent = (aktuelleHP / maxHP) * 100;
         hpProgress.style.width = `${prozent}%`;
+        hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`; // Zeigt sowohl aktuelle als auch maximale HP an
 
-        if (hpText) {
-            hpText.textContent = `${aktuelleHP} / ${maxHP} HP`;
-        }
-
-        // Dynamische Farbänderung
+        // Dynamische Farbänderung der Leiste
         if (prozent > 75) {
             hpProgress.style.backgroundColor = "green";
         } else if (prozent > 50) {
@@ -716,6 +712,7 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
+
 function aktualisiereLayout() {
     const hpContainer = document.getElementById("hp-bar-container");
     const questsSection = document.getElementById("quests-section");
