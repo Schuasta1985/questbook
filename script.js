@@ -63,9 +63,15 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
      document.getElementById("welcome-text").style.display = "none";
+    document.getElementById("hp-bar-container").style.display = "block";
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
+    
+    // Beispielhafte Werte für die HP-Leiste
+    const aktuelleHP = 80; // Hier echte Werte einfügen
+    const maxHP = 100; // Hier echte Werte einfügen
+    aktualisiereHPLeiste(aktuelleHP, maxHP);
 
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
