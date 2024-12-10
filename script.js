@@ -18,21 +18,22 @@ function zeigeStartseite() {
     const loginSection = document.getElementById("login-section");
 
     if (loginSection) {
-loginSection.innerHTML = `
-    <label for="spielerDropdown">Spieler auswählen:</label>
-    <select id="spielerDropdown">
-        <option value="">-- Bitte wählen --</option>
-        <option value="Thomas">Thomas</option>
-        <option value="Elke">Elke</option>
-        <option value="Jamie">Jamie</option>
-        <option value="Massel">Massel</option>
-    </select>
-    <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-    <button onclick="benutzerAnmeldung()">Anmelden</button>
-
+        loginSection.innerHTML = `
+            <label for="spielerDropdown">Spieler auswählen:</label>
+            <select id="spielerDropdown">
+                <option value="">-- Bitte wählen --</option>
+                <option value="Thomas">Thomas</option>
+                <option value="Elke">Elke</option>
+                <option value="Jamie">Jamie</option>
+                 </select>
+            <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+            <button onclick="benutzerAnmeldung()">Anmelden</button>
         `;
         loginSection.style.display = "block";
     }
+
+    // Benutzerinformationen laden und anzeigen
+    ladeBenutzerdaten();
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
@@ -73,8 +74,7 @@ function benutzerAnmeldung() {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
-        Massel: "1234",
-    };
+          };
 
     if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
         currentUser = benutzername;
@@ -552,6 +552,69 @@ function ausloggen() {
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
+// Globale Variable für alle Benutzer
+let benutzerDaten = [];
+
+// Funktion zum Laden der Benutzerdaten
+function ladeBenutzerdaten() {
+    console.log("ladeBenutzerdaten() aufgerufen");
+    firebase.database().ref('benutzer').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            benutzerDaten = snapshot.val();
+            zeigeBenutzerAufStartseite();
+        } else {
+            console.log("Keine Benutzerdaten gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Benutzerdaten:", error);
+    });
+}
+
+// Benutzer auf der Startseite anzeigen
+function zeigeBenutzerAufStartseite() {
+    console.log("zeigeBenutzerAufStartseite() aufgerufen");
+    const benutzerContainer = document.getElementById("benutzer-container");
+    benutzerContainer.innerHTML = ""; // Vorherige Inhalte löschen
+
+    for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
+        const benutzerElement = document.createElement("div");
+        benutzerElement.className = "benutzer-item";
+
+        // Avatar (Video)
+        const avatarElement = document.createElement("video");
+        avatarElement.src = getAvatarForUser(benutzername);
+        avatarElement.autoplay = true;
+        avatarElement.loop = true;
+        avatarElement.muted = true;
+        avatarElement.style.width = "100px"; // Anpassbare Größe
+
+        // Benutzername
+        const nameElement = document.createElement("h3");
+        nameElement.textContent = benutzername;
+
+        // Level
+        const levelElement = document.createElement("div");
+        levelElement.textContent = `Level: ${daten.fortschritte?.level || 1}`;
+        levelElement.style.border = "2px solid gold";
+        levelElement.style.padding = "5px";
+        levelElement.style.borderRadius = "5px";
+        levelElement.style.textAlign = "center";
+
+        // Platzhalter für aktive Zauber
+        const zauberElement = document.createElement("div");
+        zauberElement.textContent = "Aktiver Zauber: (keiner)";
+        zauberElement.style.fontStyle = "italic";
+
+        // Alles zusammenfügen
+        benutzerElement.appendChild(avatarElement);
+        benutzerElement.appendChild(nameElement);
+        benutzerElement.appendChild(levelElement);
+        benutzerElement.appendChild(zauberElement);
+
+        benutzerContainer.appendChild(benutzerElement);
+    }
+}
+
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
