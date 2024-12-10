@@ -548,7 +548,6 @@ function ausloggen() {
         avatarContainer.style.display = "none"; // Avatar ausblenden
         avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
     }
-}
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
