@@ -61,6 +61,11 @@ function benutzerAnmeldung() {
 
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
+    // Benutzerübersicht ausblenden
+    const benutzerContainer = document.getElementById("benutzer-container");
+        if (benutzerContainer) {
+        benutzerContainer.style.display = "none"; // Benutzerübersicht ausblenden
+}
 
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
@@ -548,6 +553,12 @@ function ausloggen() {
     if (adminButtonsContainer) {
         adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
     }
+    // Benutzerübersicht einblenden
+    const benutzerContainer = document.getElementById("benutzer-container");
+    if (benutzerContainer) {
+    benutzerContainer.style.display = "flex"; // Benutzerübersicht anzeigen
+}
+
 
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
