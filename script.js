@@ -680,3 +680,42 @@ function getAvatarForUser(user) {
     }
     return "https://via.placeholder.com/100?text=Avatar";
 }
+// Funktion zur Berechnung der maximalen HP basierend auf dem Level
+function berechneMaxHP(level) {
+    return 100 + Math.floor((level - 1) / 10) * 200;
+}
+
+// Funktion zur Aktualisierung der HP-Leiste
+function aktualisiereHPLeiste(aktuelleHP, level) {
+    const maxHP = berechneMaxHP(level);
+    const hpProgress = document.getElementById("hp-progress");
+
+    if (hpProgress) {
+        const prozent = (aktuelleHP / maxHP) * 100;
+        hpProgress.style.width = `${prozent}%`;
+        hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`;
+
+        // Dynamische Farbänderung
+        if (prozent > 75) {
+            hpProgress.style.backgroundColor = "green";
+        } else if (prozent > 50) {
+            hpProgress.style.backgroundColor = "yellow";
+        } else if (prozent > 25) {
+            hpProgress.style.backgroundColor = "orange";
+        } else {
+            hpProgress.style.backgroundColor = "red";
+        }
+    }
+}
+
+// Beispielhafter Aufruf beim Login
+function benutzerAnmeldung() {
+    console.log("benutzerAnmeldung() aufgerufen");
+    document.getElementById("welcome-text").style.display = "none";
+    document.getElementById("hp-bar-container").style.display = "flex";
+
+    const aktuelleHP = 80; // Beispielwert für aktuelle HP
+    const level = 1; // Beispielwert für Level
+    aktualisiereHPLeiste(aktuelleHP, level);
+}
+
