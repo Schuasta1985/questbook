@@ -58,6 +58,15 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
+    // Avatar nach oben verschieben und anzeigen
+    const avatarContainer = document.getElementById("avatar-container");
+    if (avatarContainer) {
+    avatarContainer.style.position = "absolute";
+    avatarContainer.style.top = "10px"; // Abstand von oben
+    avatarContainer.style.left = "50%"; // Zentriert horizontal
+    avatarContainer.style.transform = "translateX(-50%)";
+    avatarContainer.style.display = "flex"; // Sicherstellen, dass es sichtbar ist
+}
 
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
@@ -529,6 +538,12 @@ function ausloggen() {
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
+    // Avatar-Container zurücksetzen
+    if (avatarContainer) {
+    avatarContainer.style.position = "static";
+    avatarContainer.style.display = "none"; // Ausblenden auf der Startseite
+}
+
 
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
