@@ -194,10 +194,10 @@ button:hover {
 }
 
 #quests-section h2 {
-    margin-bottom: 20px;
     text-align: center;
     font-size: 1.5em;
     font-weight: bold;
+    margin-bottom: 15px; /* Platz zwischen Überschrift und Quests */
 }
 
 /* Quests-Container anpassen */
@@ -294,4 +294,6 @@ button:hover {
     color: white;
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
-
+#hp-progress {
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+}
