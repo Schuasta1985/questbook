@@ -306,6 +306,6 @@ button:hover {
 }
 
 #avatar-container .avatar-general {
-    width: 100px; /* Standardgröße für andere Avatare */
+    width: 200px; /* Standardgröße für andere Avatare */
     height: auto;
 }
