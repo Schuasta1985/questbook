@@ -193,10 +193,11 @@ button:hover {
     padding: 5px 10px; /* Kleinere Buttons */
 }
 
-/* Überschrift für Quests zentrieren */
 #quests-section h2 {
-    text-align: center;  /* Zentriert den Text */
-    margin-bottom: 10px;  /* Abstand zum nächsten Element */
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
 }
 
 /* Quests-Container anpassen */
