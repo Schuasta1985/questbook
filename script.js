@@ -9,7 +9,10 @@ window.onload = function () {
     console.log("window.onload aufgerufen");
     zeigeStartseite();
 
-    document.getElementById("npcLoginButton").onclick = npcLogin;
+    const npcLoginButton = document.getElementById("npcLoginButton");
+    if (npcLoginButton) {
+        npcLoginButton.onclick = npcLogin;
+    }
 };
 
 // Startseite anzeigen
@@ -25,11 +28,16 @@ function zeigeStartseite() {
                 <option value="Thomas">Thomas</option>
                 <option value="Elke">Elke</option>
                 <option value="Jamie">Jamie</option>
-                 </select>
+            </select>
             <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
-            <button onclick="benutzerAnmeldung()">Anmelden</button>
+            <button id="benutzerLoginButton">Anmelden</button>
         `;
         loginSection.style.display = "block";
+
+        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
+        if (benutzerLoginButton) {
+            benutzerLoginButton.onclick = benutzerAnmeldung;
+        }
     }
 
     // Benutzerinformationen laden und anzeigen
@@ -42,49 +50,38 @@ function zeigeStartseite() {
     document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
 }
 
-
 // Questbuch anzeigen
 function zeigeQuestbook() {
     console.log("zeigeQuestbook() aufgerufen");
-    // Sichtbarkeit der relevanten Elemente aktivieren
-    document.getElementById('quests-section').style.display = 'block';
-    document.getElementById('xp-counter').style.display = 'block';
-    document.getElementById('logout-button').style.display = 'block';
-    
-    // Die Login-Sektion ausblenden, sobald der Benutzer angemeldet ist
-    document.getElementById('login-section').style.display = 'none';
+    document.getElementById("quests-section").style.display = "block";
+    document.getElementById("xp-counter").style.display = "block";
+    document.getElementById("logout-button").style.display = "block";
+    document.getElementById("login-section").style.display = "none";
 }
 
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    // Elemente holen
-    const questsSection = document.getElementById("quests-section");
-    const avatarContainer = document.getElementById("avatar-container");
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
-    const loginSection = document.getElementById("login-section");
 
-    // Validierung der Eingabefelder
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
         alert("Es gab ein Problem beim Laden der Seite. Bitte versuche es später erneut.");
         return;
     }
 
-    const benutzername = benutzernameInput.value.trim(); // Eingabe bereinigen
+    const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
-    // Benutzer-Passwort-Daten
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
-    // Benutzerüberprüfung
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -95,49 +92,31 @@ function benutzerAnmeldung() {
         return;
     }
 
-    // Anmeldung erfolgreich
     currentUser = benutzername;
     isAdmin = false;
+
     console.log(`${benutzername} erfolgreich angemeldet`);
 
-    // UI-Anpassungen
     if (benutzerContainer) {
-        benutzerContainer.style.display = "none"; // Benutzerübersicht ausblenden
+        benutzerContainer.style.display = "none";
     }
 
-    if (loginSection) {
-        loginSection.style.display = "none"; // Login-Sektion ausblenden
-    }
-
-    if (questsSection) {
-        questsSection.style.marginTop = "250px"; // Platz unter dem Avatar schaffen
-        questsSection.style.display = "block"; // Quests sichtbar machen
-    }
-
-    if (avatarContainer) {
-        avatarContainer.style.position = "relative";
-        avatarContainer.style.marginTop = "20px"; // Platz nach oben
-        avatarContainer.style.display = "flex"; // Avatar sichtbar machen
-    }
-
-    // Quests und Daten laden
     zeigeQuestbook();
     ladeFortschritte();
     zeigeAvatar();
     ladeGlobaleQuests();
 }
 
-
 // NPC Login
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
-    const username = document.getElementById("npcBenutzername").value;
-    const password = document.getElementById("npcPasswort").value;
+    const username = document.getElementById("npcBenutzername")?.value;
+    const password = document.getElementById("npcPasswort")?.value;
 
     if (username === "npc" && password === "1234") {
         console.log("NPC erfolgreich eingeloggt!");
-        isAdmin = true; // Admin-Status aktivieren
-        currentUser = null; // Kein regulärer Benutzer
+        isAdmin = true;
+        currentUser = null;
 
         document.getElementById("npc-login-section").style.display = "none";
         zeigeQuestbook();
