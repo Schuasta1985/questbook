@@ -541,7 +541,7 @@ function zeigeAvatar() {
 
         // Avatar-Video einfügen
         avatarContainer.innerHTML = `
-            <video autoplay loop muted>
+            <video autoplay loop muted class="${currentUser === 'Jamie' ? 'avatar-jamie' : 'avatar-general'}">
                 <source src="${avatarPath}" type="video/mp4">
                 Dein Browser unterstützt das Video-Tag nicht.
             </video>
@@ -553,6 +553,7 @@ function zeigeAvatar() {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
+
 
 
 // Ausloggen
