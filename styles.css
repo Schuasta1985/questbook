@@ -340,3 +340,23 @@ button:hover {
     text-shadow: 1px 1px 2px black;
     z-index: 2; /* Text sichtbar über dem Balken */
 }
+#mp-bar-container {
+    width: 80%;
+    height: 20px;
+    margin: 5px auto;
+    background-color: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+#mp-progress {
+    width: 100%;
+    height: 100%;
+    background-color: #0000FF; /* Blau für die MP-Leiste */
+    border-radius: 10px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-weight: bold;
+}
