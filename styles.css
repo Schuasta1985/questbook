@@ -281,23 +281,23 @@ button:hover {
     justify-content: center;
     align-items: center;
     margin: 10px auto;
-    width: 200px; /* Gleiche Breite wie der Avatar */
-    position: relative; /* Verhindert Überlappung */
-    z-index: 1; /* Sicherstellen, dass die Leiste sichtbar bleibt */
+    width: 100%; /* Gleiche Breite wie der Avatar */
+    max-width: 220px; /* Maximalbreite leicht größer als Avatar */
+    height: 30px; /* Höhe der Leiste erhöhen */
+    background-color: rgba(0, 0, 0, 0.5); /* Halbtransparenter Hintergrund */
+    border-radius: 8px; /* Abgerundete Ecken */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
 }
 
 #hp-progress {
-    height: 15px;
-    width: 100%; /* Breite des Containers */
+    height: 100%;
     border-radius: 8px;
     text-align: center;
-    line-height: 15px;
+    line-height: 30px; /* An Textgröße anpassen */
     font-weight: bold;
+    font-size: 14px;
     color: white;
-    background: green; /* Standardfarbe */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Schatteneffekt */
-    border: 1px solid #FFD700; /* Goldener Rahmen */
-    position: relative; /* Für Text im Balken */
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
 
 #hp-progress span {
