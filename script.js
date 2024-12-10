@@ -59,58 +59,72 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    // Platz für den Avatar schaffen
+    // Elemente holen
     const questsSection = document.getElementById("quests-section");
-    if (questsSection) {
-    questsSection.style.marginTop = "250px"; // Platz unter dem Avatar
-}
-    // Avatar nach oben verschieben und anzeigen
     const avatarContainer = document.getElementById("avatar-container");
-    if (avatarContainer) {
-avatarContainer.style.position = "relative";
-avatarContainer.style.marginTop = "20px"; // Platz nach oben
-avatarContainer.style.display = "flex"; // Sichtbar machen
-}
-
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
-    // Benutzerübersicht ausblenden
     const benutzerContainer = document.getElementById("benutzer-container");
-        if (benutzerContainer) {
-        benutzerContainer.style.display = "none"; // Benutzerübersicht ausblenden
-}
+    const loginSection = document.getElementById("login-section");
 
+    // Validierung der Eingabefelder
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
+        alert("Es gab ein Problem beim Laden der Seite. Bitte versuche es später erneut.");
         return;
     }
 
-    const benutzername = benutzernameInput.value;
-    const passwort = passwortInput.value;
+    const benutzername = benutzernameInput.value.trim(); // Eingabe bereinigen
+    const passwort = passwortInput.value.trim();
 
+    // Benutzer-Passwort-Daten
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
-          };
+    };
 
-    if (benutzername && benutzerPasswoerter[benutzername] && passwort === benutzerPasswoerter[benutzername]) {
-        currentUser = benutzername;
-        isAdmin = false;
-
-        // Login-Bereich ausblenden
-        console.log("Verstecke login-section");
-        const loginSection = document.getElementById("login-section");
-        loginSection.style.display = "none";
-
-        // Quests und XP-Bereich anzeigen
-        zeigeQuestbook();
-        ladeFortschritte();
-        zeigeAvatar();
-        ladeGlobaleQuests();
-    } else {
-        alert("Bitte wähle einen Spieler und gib das richtige Passwort ein.");
+    // Benutzerüberprüfung
+    if (!benutzername || !benutzerPasswoerter[benutzername]) {
+        alert("Bitte wähle einen gültigen Benutzer aus.");
+        return;
     }
+
+    if (passwort !== benutzerPasswoerter[benutzername]) {
+        alert("Das eingegebene Passwort ist falsch.");
+        return;
+    }
+
+    // Anmeldung erfolgreich
+    currentUser = benutzername;
+    isAdmin = false;
+    console.log(`${benutzername} erfolgreich angemeldet`);
+
+    // UI-Anpassungen
+    if (benutzerContainer) {
+        benutzerContainer.style.display = "none"; // Benutzerübersicht ausblenden
+    }
+
+    if (loginSection) {
+        loginSection.style.display = "none"; // Login-Sektion ausblenden
+    }
+
+    if (questsSection) {
+        questsSection.style.marginTop = "250px"; // Platz unter dem Avatar schaffen
+        questsSection.style.display = "block"; // Quests sichtbar machen
+    }
+
+    if (avatarContainer) {
+        avatarContainer.style.position = "relative";
+        avatarContainer.style.marginTop = "20px"; // Platz nach oben
+        avatarContainer.style.display = "flex"; // Avatar sichtbar machen
+    }
+
+    // Quests und Daten laden
+    zeigeQuestbook();
+    ladeFortschritte();
+    zeigeAvatar();
+    ladeGlobaleQuests();
 }
 
 
