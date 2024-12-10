@@ -552,11 +552,10 @@ function ausloggen() {
     // Avatar-Container zurücksetzen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
-        avatarContainer.style.position = "static";
-        avatarContainer.style.display = "none"; // Ausblenden auf der Startseite
-        avatarContainer.innerHTML = ""; // Inhalt leeren
+        avatarContainer.style.display = "none"; // Avatar ausblenden
+        avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
     }
-
+}
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
