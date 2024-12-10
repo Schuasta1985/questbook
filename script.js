@@ -140,8 +140,10 @@ function speichereFortschritte() {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
             level: level,
-            hp: aktuelleHP || berechneMaxHP(level), // Fallback auf maxHP, falls aktuelleHP fehlt
-            maxHP: maxHP || berechneMaxHP(level)
+            hp: aktuelleHP || berechneMaxHP(level),
+            maxHP: maxHP || berechneMaxHP(level),
+            mp: aktuelleMP || berechneMaxMP(level), // Ergänzung
+            maxMP: maxMP || berechneMaxMP(level) // Ergänzung
         })
         .then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
@@ -156,28 +158,40 @@ function speichereFortschritte() {
 function ladeFortschritte() {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                xp = data.xp || 0;
-                level = data.level || 1;
-                aktuelleHP = data.hp || berechneMaxHP(level); // Fallback
-                maxHP = data.maxHP || berechneMaxHP(level); // Fallback
-                aktualisiereXPAnzeige();
-                aktualisiereHPLeiste(aktuelleHP, level);
-            } else {
-                console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
-                // Standardwerte setzen
-                aktuelleHP = berechneMaxHP(1);
-                maxHP = berechneMaxHP(1);
-                aktualisiereHPLeiste(aktuelleHP, 1);
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Fortschritte:", error);
-        });
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    xp = data.xp || 0; // XP-Wert
+                    level = data.level || 1; // Level
+                    aktuelleHP = data.hp || berechneMaxHP(level); // Aktuelle HP
+                    maxHP = data.maxHP || berechneMaxHP(level); // Maximale HP
+                    aktuelleMP = data.mp || berechneMaxMP(level); // Aktuelle MP
+                    maxMP = data.maxMP || berechneMaxMP(level); // Maximale MP
+
+                    // Aktualisiere die Anzeigen
+                    aktualisiereXPAnzeige();
+                    aktualisiereHPLeiste(aktuelleHP, level);
+                    aktualisiereMPLeiste(aktuelleMP, level);
+                } else {
+                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
+
+                    // Standardwerte setzen, falls keine Daten vorhanden
+                    aktuelleHP = berechneMaxHP(1);
+                    maxHP = berechneMaxHP(1);
+                    aktuelleMP = berechneMaxMP(1);
+                    maxMP = berechneMaxMP(1);
+
+                    // Anzeigen aktualisieren
+                    aktualisiereHPLeiste(aktuelleHP, 1);
+                    aktualisiereMPLeiste(aktuelleMP, 1);
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+            });
     }
 }
+
 
 // Quests speichern in Firebase
 function speichereQuestsInFirebase(quests) {
@@ -742,6 +756,48 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
+// Funktion zur Berechnung der maximalen MP basierend auf dem Level
+function berechneMaxMP(level) {
+    return 50 + Math.floor((level - 1) / 10) * 25; // Beispiel: Start mit 50 MP, +25 MP alle 10 Level
+}
+
+// Funktion zur Aktualisierung der MP-Leiste
+function aktualisiereMPLeiste(aktuelleMP, level) {
+    const maxMP = berechneMaxMP(level); // Berechnet das maximale MP basierend auf dem Level
+    const mpProgress = document.getElementById("mp-progress");
+
+    if (mpProgress) {
+        const prozent = (aktuelleMP / maxMP) * 100;
+        mpProgress.style.width = `${prozent}%`;
+        mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`; // Zeigt sowohl aktuelle als auch maximale MP an
+    }
+}
+
+// Ergänze die MP-Leiste in ladeFortschritte()
+function ladeFortschritte() {
+    if (currentUser) {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    xp = data.xp || 0;
+                    level = data.level || 1;
+                    aktuelleHP = data.hp || berechneMaxHP(level);
+                    maxHP = data.maxHP || berechneMaxHP(level);
+                    aktuelleMP = data.mp || berechneMaxMP(level); // Ergänzung
+                    maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
+                    aktualisiereXPAnzeige();
+                    aktualisiereHPLeiste(aktuelleHP, level);
+                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+            });
+    }
+}
+
+
 function berechneHPFarbe(prozent) {
     if (prozent > 75) return "green";
     if (prozent > 50) return "yellow";
