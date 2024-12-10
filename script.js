@@ -707,15 +707,3 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
-
-// Beispielhafter Aufruf beim Login
-function benutzerAnmeldung() {
-    console.log("benutzerAnmeldung() aufgerufen");
-    document.getElementById("welcome-text").style.display = "none";
-    document.getElementById("hp-bar-container").style.display = "flex";
-
-    const aktuelleHP = 80; // Beispielwert für aktuelle HP
-    const level = 1; // Beispielwert für Level
-    aktualisiereHPLeiste(aktuelleHP, level);
-}
-
