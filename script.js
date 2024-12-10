@@ -58,6 +58,12 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
+
+    // Platz für den Avatar schaffen
+    const questsSection = document.getElementById("quests-section");
+    if (questsSection) {
+    questsSection.style.marginTop = "250px"; // Platz unter dem Avatar
+}
     // Avatar nach oben verschieben und anzeigen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
@@ -533,17 +539,25 @@ function ausloggen() {
     currentUser = null;
     isAdmin = false; // Admin-Status zurücksetzen
 
+    // Platz für den Avatar zurücksetzen
+    const questsSection = document.getElementById("quests-section");
+    if (questsSection) {
+        questsSection.style.marginTop = "0px";
+    }
+
     // Level-Set-Container verstecken
     const levelSetContainer = document.getElementById("level-set-container");
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
-    // Avatar-Container zurücksetzen
-    if (avatarContainer) {
-    avatarContainer.style.position = "static";
-    avatarContainer.style.display = "none"; // Ausblenden auf der Startseite
-}
 
+    // Avatar-Container zurücksetzen
+    const avatarContainer = document.getElementById("avatar-container");
+    if (avatarContainer) {
+        avatarContainer.style.position = "static";
+        avatarContainer.style.display = "none"; // Ausblenden auf der Startseite
+        avatarContainer.innerHTML = ""; // Inhalt leeren
+    }
 
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
@@ -552,32 +566,33 @@ function ausloggen() {
 
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) npcLoginSection.style.display = "block";
-
-    // Avatar entfernen
-    const avatarContainer = document.getElementById("avatar-container");
-    if (avatarContainer) avatarContainer.innerHTML = "";
+    if (npcLoginSection) {
+        npcLoginSection.style.display = "block";
+    }
 
     // Quests zurücksetzen (leeren)
     const questList = document.getElementById("quests");
     if (questList) {
         questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
     }
-        // Admin-Bereich entfernen
+
+    // Admin-Bereich entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
         adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
     }
+
     // Benutzerübersicht einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
     if (benutzerContainer) {
-    benutzerContainer.style.display = "flex"; // Benutzerübersicht anzeigen
-}
+        benutzerContainer.style.display = "flex"; // Benutzerübersicht anzeigen
+    }
 
-
-    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
-    zeigeStartseite();
+    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen
+        zeigeStartseite();
 }
+    
+
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
 
