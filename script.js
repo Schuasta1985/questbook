@@ -139,7 +139,9 @@ function speichereFortschritte() {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
-            level: level
+            level: level,
+            hp: aktuelleHP, // Füge HP hinzu
+            maxHP: maxHP    // Optional, falls benötigt
         })
         .then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
@@ -150,6 +152,7 @@ function speichereFortschritte() {
     }
 }
 
+
 // Benutzerfortschritte aus Firebase laden
 function ladeFortschritte() {
     if (currentUser) {
@@ -159,7 +162,10 @@ function ladeFortschritte() {
                 const data = snapshot.val();
                 xp = data.xp || 0;
                 level = data.level || 1;
+                aktuelleHP = data.hp || berechneMaxHP(level);
+                maxHP = data.maxHP || berechneMaxHP(level);
                 aktualisiereXPAnzeige();
+                aktualisiereHPLeiste(aktuelleHP, maxHP);
             } else {
                 console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
             }
@@ -710,3 +716,15 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
+function aktualisiereLayout() {
+    const hpContainer = document.getElementById("hp-bar-container");
+    const questsSection = document.getElementById("quests-section");
+
+    if (hpContainer && questsSection) {
+        // Abstand zwischen HP-Leiste und Quests anpassen
+        questsSection.style.marginTop = "20px"; // Mehr Platz oberhalb der Quests
+    }
+}
+aktualisiereLayout();
+
+
