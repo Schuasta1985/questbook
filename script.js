@@ -62,16 +62,15 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-     document.getElementById("welcome-text").style.display = "none";
+    // Verstecke Begrüßungstext
+    document.getElementById("welcome-text").style.display = "none";
+    // Blende die HP- und MP-Bereiche ein
     document.getElementById("hp-bar-container").style.display = "block";
+    document.getElementById("mp-bar-container").style.display = "block"; // MP-Leiste einblenden
+
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
-    
-    // Beispielhafte Werte für die HP-Leiste
-    const aktuelleHP = 80; // Hier echte Werte einfügen
-    const maxHP = 100; // Hier echte Werte einfügen
-    aktualisiereHPLeiste(aktuelleHP, maxHP);
 
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
@@ -82,12 +81,14 @@ function benutzerAnmeldung() {
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
+    // Benutzername-Passwort-Paar
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
+    // Überprüfen, ob Benutzername und Passwort korrekt sind
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -98,20 +99,27 @@ function benutzerAnmeldung() {
         return;
     }
 
+    // Benutzer erfolgreich angemeldet
     currentUser = benutzername;
     isAdmin = false;
 
     console.log(`${benutzername} erfolgreich angemeldet`);
 
+    // Verstecke Benutzerübersicht
     if (benutzerContainer) {
         benutzerContainer.style.display = "none";
     }
 
-    zeigeQuestbook();
-    ladeFortschritte();
-    zeigeAvatar();
-    ladeGlobaleQuests();
+    // Lade Benutzerinformationen
+    zeigeQuestbook();          // Quests anzeigen
+    ladeFortschritte();        // HP und MP laden
+    zeigeAvatar();             // Avatar anzeigen
+    ladeGlobaleQuests();       // Globale Quests laden
+
+    // Optional: Animation oder Feedback hinzufügen
+    console.log("Benutzeranmeldung abgeschlossen!");
 }
+
 
 // NPC Login
 function npcLogin() {
