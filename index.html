@@ -47,10 +47,15 @@
     </div>
 
     <div id="benutzer-container" class="benutzer-grid"></div>
+    
     <div id="avatar-container"></div>
+    <!-- HP-Leiste -->
+    <div id="hp-bar-container" style="display: none; margin-top: 10px;">
+        <div id="hp-progress" style="height: 20px; border-radius: 5px; text-align: center; line-height: 20px; font-weight: bold; color: white;">100 / 100 HP</div>
+    </div>
     <div id="quests"></div>
     
-
+    
     <!-- XP und Level Anzeige -->
     <div id="xp-counter" style="display: none;">
         <div id="xp-level-container">
@@ -70,6 +75,9 @@
 
     <!-- Avatar-Container -->
     <div id="avatar-container"></div>
+
+    <!-- Schadensmeldung -->
+    <div id="damage-message" style="display: none; background: rgba(255, 0, 0, 0.7); color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">Schaden erhalten: -20 HP (Du warst heute nicht brav!)</div>
 
     <!-- Canvas für Level-Up Animation -->
     <div id="level-up-container">
@@ -121,11 +129,37 @@
             document.getElementById("xp-counter").style.display = "none";
             document.getElementById("logout-button").style.display = "none";
             document.getElementById("welcome-text").style.display = "block";
+            document.getElementById("hp-bar-container").style.display = "none";
+            document.getElementById("damage-message").style.display = "none";
         }
 
         function benutzerAnmeldung() {
             console.log("benutzerAnmeldung() aufgerufen");
             document.getElementById("welcome-text").style.display = "none";
+            document.getElementById("hp-bar-container").style.display = "block";
+
+            // Beispielhaftes Aktualisieren der HP-Leiste
+            aktualisiereHPLeiste(80, 100); // Aktuelle HP: 80, Max HP: 100
+        }
+
+        function aktualisiereHPLeiste(aktuelleHP, maxHP) {
+            const hpProgress = document.getElementById("hp-progress");
+            if (hpProgress) {
+                const prozent = (aktuelleHP / maxHP) * 100;
+                hpProgress.style.width = `${prozent}%`;
+                hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`;
+
+                // Farbe ändern basierend auf dem Prozentwert
+                if (prozent > 75) {
+                    hpProgress.style.backgroundColor = "green";
+                } else if (prozent > 50) {
+                    hpProgress.style.backgroundColor = "yellow";
+                } else if (prozent > 25) {
+                    hpProgress.style.backgroundColor = "orange";
+                } else {
+                    hpProgress.style.backgroundColor = "red";
+                }
+            }
         }
     </script>
     <script src="script.js"></script>
