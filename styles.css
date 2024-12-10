@@ -86,13 +86,22 @@ h1 {
 
 /* Avatar-Container anpassen */
 #avatar-container {
-    position: relative; /* Positionierung für flexible Anpassung */
+    position: relative; /* Behalte relative Positionierung */
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px auto; /* Zentriere den Avatar */
-    width: 200px; /* Breite anpassen */
-    height: 200px; /* Höhe anpassen */
+    margin: 20px auto; /* Abstand oben und unten */
+    width: 200px;
+    height: 200px;
+    z-index: 1; /* Sicherstellen, dass der Avatar über anderen Elementen bleibt */
+}
+
+body.logged-in #quests-section {
+    margin-top: 250px; /* Platz unter dem Avatar schaffen */
+}
+#quests-section {
+    position: relative;
+    z-index: 0; /* Inhalte bleiben unterhalb des Avatars */
 }
 
 #avatar-container video {
