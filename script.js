@@ -689,11 +689,15 @@ function berechneMaxHP(level) {
 function aktualisiereHPLeiste(aktuelleHP, level) {
     const maxHP = berechneMaxHP(level);
     const hpProgress = document.getElementById("hp-progress");
+    const hpText = hpProgress.querySelector("span");
 
     if (hpProgress) {
         const prozent = (aktuelleHP / maxHP) * 100;
         hpProgress.style.width = `${prozent}%`;
-        hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`;
+
+        if (hpText) {
+            hpText.textContent = `${aktuelleHP} / ${maxHP} HP`;
+        }
 
         // Dynamische Farbänderung
         if (prozent > 75) {
