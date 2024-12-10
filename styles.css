@@ -93,11 +93,12 @@ h1 {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.7); /* Optional: Hintergrund für Kontrast */
+    background-color: transparent; /* Hintergrund entfernen */
     z-index: 1; /* Sicherstellen, dass der Avatar sichtbar bleibt */
     position: relative; /* Verhindert Überschneidungen */
     margin-bottom: 50px; /* Platz unter dem Avatar schaffen */
 }
+
 
 body.logged-in #quests-section {
     margin-top: 300px; /* Platz unter dem Avatar schaffen */
