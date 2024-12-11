@@ -634,9 +634,14 @@ function zeigeBenutzerAufStartseite() {
     const benutzerContainer = document.getElementById("benutzer-container");
     benutzerContainer.innerHTML = ""; // Vorherige Inhalte löschen
 
-    for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
-        const benutzerElement = document.createElement("div");
-        benutzerElement.className = "benutzer-item";
+for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
+    if (!daten || !daten.fortschritte) {
+        console.warn(`Keine Fortschrittsdaten für Benutzer ${benutzername}`);
+        continue; // Überspringe Benutzer ohne Daten
+    }
+    // Rest des Codes unverändert
+}
+
 
         // Avatar (Video)
         const avatarElement = document.createElement("video");
@@ -795,7 +800,13 @@ function ladeFortschritte() {
                     maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
+                    aktualisiereMPLeiste(aktuelleMP, maxMP); // Ergänzung
+                } else {
+                    console.warn("Keine Fortschrittsdaten gefunden, Standardwerte werden verwendet.");
+                    aktuelleHP = berechneMaxHP(level);
+                    maxHP = berechneMaxHP(level);
+                    aktuelleMP = berechneMaxMP(level);
+                    maxMP = berechneMaxMP(level);
                 }
             })
             .catch((error) => {
@@ -803,7 +814,6 @@ function ladeFortschritte() {
             });
     }
 }
-
 
 function berechneHPFarbe(prozent) {
     if (prozent > 75) return "green";
