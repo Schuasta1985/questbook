@@ -66,7 +66,8 @@ function benutzerAnmeldung() {
     document.getElementById("welcome-text").style.display = "none";
     // Blende die HP- und MP-Bereiche ein
     document.getElementById("hp-bar-container").style.display = "block";
-    document.getElementById("mp-bar-container").style.display = "block"; // MP-Leiste einblenden
+    document.getElementById("mp-bar-container").style.display = "flex";
+
 
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
@@ -582,6 +583,7 @@ function zeigeAvatar() {
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     document.getElementById("welcome-text").style.display = "block";
+    document.getElementById("mp-bar-container").style.display = "none";
     currentUser = null;
     isAdmin = false; // Admin-Status zurücksetzen
 
@@ -770,14 +772,12 @@ function berechneMaxMP(level) {
 }
 
 // Funktion zur Aktualisierung der MP-Leiste
-function aktualisiereMPLeiste(aktuelleMP, level) {
-    const maxMP = berechneMaxMP(level); // Berechnet das maximale MP basierend auf dem Level
+function aktualisiereMPLeiste(aktuelleMP, maxMP) {
     const mpProgress = document.getElementById("mp-progress");
-
     if (mpProgress) {
         const prozent = (aktuelleMP / maxMP) * 100;
         mpProgress.style.width = `${prozent}%`;
-        mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`; // Zeigt sowohl aktuelle als auch maximale MP an
+        mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`;
     }
 }
 
