@@ -709,9 +709,6 @@ mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
 
         benutzerContainer.appendChild(benutzerElement);
     }
-}
-
-
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
