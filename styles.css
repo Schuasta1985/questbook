@@ -317,22 +317,24 @@ button:hover {
 
 /* Container für Fortschrittsbalken */
 .hp-bar, .mp-bar {
-    width: 95%; /* Etwas schmaler, um Platz zu schaffen */
-    height: 20px; /* Beibehaltung der Höhe */
-    margin: 5px auto; /* Automatische Zentrierung und Abstand */
-    background-color: rgba(0, 0, 0, 0.2); /* Halbtransparenter Hintergrund */
-    border-radius: 5px; /* Abgerundete Ecken */
+    width: 100%;
+    height: 25px; /* Etwas höhere Leiste für bessere Lesbarkeit */
+    margin: 5px 0;
+    background-color: rgba(0, 0, 0, 0.1); /* Minimale Transparenz für die Fläche dahinter */
+    border-radius: 15px; /* Vollständig abgerundet */
     overflow: hidden;
     position: relative;
     text-align: center;
-    font-size: 12px;
-    line-height: 20px;
+    font-size: 14px; /* Etwas größere Schrift für bessere Lesbarkeit */
+    line-height: 25px; /* Zentriert den Text vertikal */
     color: white;
     font-weight: bold;
-    padding: 2px; /* Zusätzlicher Innenabstand */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Minimaler Schatten */
 }
+
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
+    border-radius: 15px; /* Abgerundete Balken innerhalb der Leiste */
     transition: width 0.3s ease-in-out;
 }
 
@@ -341,9 +343,9 @@ button:hover {
     width: 100%;
     top: 0;
     left: 0;
-    color: white;
-    text-shadow: 1px 1px 2px black;
     z-index: 2; /* Text sichtbar über dem Balken */
+    color: white;
+    text-shadow: none; /* Kein Textschatten */
 }
 #mp-bar-container {
     display: flex;
@@ -370,5 +372,12 @@ button:hover {
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Subtilerer Schatten */
     margin: 2px; /* Zusätzlicher Abstand innerhalb des Containers */
+}
+.hp-bar .progress {
+    background: green;
+}
+
+.mp-bar .progress {
+    background: blue;
 }
 
