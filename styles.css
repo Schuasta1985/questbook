@@ -318,33 +318,34 @@ button:hover {
 /* Container für Fortschrittsbalken */
 .hp-bar, .mp-bar {
     width: 100%;
-    height: 25px; /* Etwas höhere Leiste für bessere Lesbarkeit */
+    height: 20px; /* Leicht reduzierte Höhe für eine elegantere Optik */
     margin: 5px 0;
-    background-color: rgba(0, 0, 0, 0.1); /* Minimale Transparenz für die Fläche dahinter */
+    background-color: rgba(255, 255, 255, 0.15); /* Dezenter Hintergrund */
     border-radius: 15px; /* Vollständig abgerundet */
     overflow: hidden;
     position: relative;
     text-align: center;
-    font-size: 14px; /* Etwas größere Schrift für bessere Lesbarkeit */
-    line-height: 25px; /* Zentriert den Text vertikal */
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Minimaler Schatten */
+    font-size: 12px; /* Kleinere, stilvolle Schriftgröße */
+    line-height: 20px; /* Vertikale Zentrierung des Texts */
+    color: white; /* Weiße Schriftfarbe für Kontrast */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtiler Rand */
 }
 
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
-    border-radius: 15px; /* Abgerundete Balken innerhalb der Leiste */
+    border-radius: 15px; /* Abgerundete Leiste */
     transition: width 0.3s ease-in-out;
 }
 
 .hp-bar .hp-text, .mp-bar .mp-text {
     position: absolute;
-    width: 100%;
+    width: 100%; /* Text nimmt die gesamte Breite ein */
     top: 0;
     left: 0;
-    z-index: 2; /* Text sichtbar über dem Balken */
+    z-index: 2; /* Text bleibt über dem Balken sichtbar */
     color: white;
+    font-size: 12px; /* Konsistente, kleinere Schrift */
+    line-height: 20px; /* Perfekte vertikale Zentrierung */
     text-shadow: none; /* Kein Textschatten */
 }
 #mp-bar-container {
