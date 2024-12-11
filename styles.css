@@ -315,42 +315,41 @@ button:hover {
     height: auto;
 }
 
-/* Container für Fortschrittsbalken */
+/* Fortschrittsbalken für HP und MP */
 .hp-bar, .mp-bar {
     display: flex;
     align-items: center; /* Vertikale Zentrierung */
     justify-content: center; /* Horizontale Zentrierung */
-    width: 90%; /* Breite reduziert, um Platz zu schaffen */
-    height: 20px;
-    margin: 5px auto;
-    background-color: rgba(255, 255, 255, 0.15); /* Dezenter Hintergrund */
-    border-radius: 15px; /* Vollständig abgerundet */
-    overflow: hidden;
-    text-align: center;
-    font-size: 12px; /* Kleinere Schriftgröße */
-    line-height: 20px; /* Vertikale Zentrierung des Textes */
-    color: white;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: none; /* Entferne den Schatten komplett */
+    width: 100%; /* Volle Breite des Containers */
+    max-width: 220px; /* Maximale Breite */
+    height: 15px; /* Höhe des Balkens reduziert */
+    margin: 5px auto; /* Zentriert mit gleichmäßigen Abständen */
+    background-color: transparent; /* Kein Hintergrund */
+    overflow: hidden; /* Überflüssigen Inhalt ausblenden */
+    border: none; /* Kein Rand */
+    box-shadow: none; /* Kein Schatten */
 }
 
+/* Fortschrittsanzeige innerhalb der Balken */
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
-    width: 100%; /* Fortschrittsbalken passt sich an */
-    border-radius: 15px;
+    width: 50%; /* DUMMY-Wert: Passe dies dynamisch per JavaScript an */
+    background: green; /* Hintergrundfarbe für HP */
     transition: width 0.3s ease-in-out;
 }
 
+
+/* Text über dem Fortschrittsbalken */
 .hp-bar .hp-text, .mp-bar .mp-text {
     position: absolute;
     z-index: 1; /* Sicherstellen, dass der Text sichtbar bleibt */
-    width: 100%; /* Zentriert über den Balken */
-    font-size: 12px;
+    width: 100%; /* Text breitet sich über die gesamte Breite aus */
+    font-size: 12px; /* Angemessene Schriftgröße */
     color: white;
     text-shadow: none; /* Kein Textschatten */
+    line-height: 15px; /* Vertikale Zentrierung innerhalb des Balkens */
+    text-align: center; /* Zentrierung */
 }
-
 
 #mp-bar-container {
     display: flex;
