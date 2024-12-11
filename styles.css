@@ -341,21 +341,27 @@ button:hover {
     z-index: 2; /* Text sichtbar über dem Balken */
 }
 #mp-bar-container {
-    width: 80%;
-    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 5px auto;
-    background-color: #333;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
+    width: 100%; /* Gleiche Breite wie die HP-Leiste */
+    max-width: 220px; /* Maximalbreite gleich wie bei der HP-Leiste */
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.5); /* Halbtransparenter Hintergrund */
+    border-radius: 8px; /* Abgerundete Ecken */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
 }
 
 #mp-progress {
-    height: 20px;
-    background-color: blue; /* Blau für die MP-Leiste */
-    border-radius: 5px;
+    position: relative;
     text-align: center;
-    color: white;
+    line-height: 20px; /* Höhe der Leiste */
     font-weight: bold;
+    color: white;
+    background: blue; /* Blau für die MP-Leiste */
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
+
 
