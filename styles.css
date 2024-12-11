@@ -318,16 +318,16 @@ button:hover {
 /* Container für Fortschrittsbalken */
 .hp-bar, .mp-bar {
     width: 100%;
-    height: 20px; /* Leicht reduzierte Höhe für eine elegantere Optik */
+    height: 20px; /* Höhe des Balkens */
     margin: 5px 0;
     background-color: rgba(255, 255, 255, 0.15); /* Dezenter Hintergrund */
     border-radius: 15px; /* Vollständig abgerundet */
     overflow: hidden;
     position: relative;
     text-align: center;
-    font-size: 12px; /* Kleinere, stilvolle Schriftgröße */
-    line-height: 20px; /* Vertikale Zentrierung des Texts */
-    color: white; /* Weiße Schriftfarbe für Kontrast */
+    font-size: 12px; /* Stilvolle Schriftgröße */
+    line-height: 20px; /* Vertikale Zentrierung des Textes */
+    color: white; /* Weiße Schriftfarbe */
     border: 1px solid rgba(255, 255, 255, 0.3); /* Subtiler Rand */
 }
 
@@ -340,14 +340,17 @@ button:hover {
 .hp-bar .hp-text, .mp-bar .mp-text {
     position: absolute;
     width: 100%; /* Text nimmt die gesamte Breite ein */
-    top: 0;
+    height: 20px; /* Höhe des Textcontainers entspricht der Leiste */
+    top: 0; /* Textcontainer startet oben */
     left: 0;
-    z-index: 2; /* Text bleibt über dem Balken sichtbar */
+    z-index: 2; /* Text bleibt sichtbar über dem Balken */
     color: white;
-    font-size: 12px; /* Konsistente, kleinere Schrift */
-    line-height: 20px; /* Perfekte vertikale Zentrierung */
+    text-align: center; /* Horizontale Zentrierung */
+    line-height: 20px; /* Exakte vertikale Zentrierung */
     text-shadow: none; /* Kein Textschatten */
+    font-size: 12px; /* Konsistente Schriftgröße */
 }
+
 #mp-bar-container {
     display: flex;
     justify-content: center;
