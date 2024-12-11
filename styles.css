@@ -322,7 +322,7 @@ button:hover {
     justify-content: center; /* Horizontale Zentrierung */
     width: 100%; /* Volle Breite des Containers */
     max-width: 220px; /* Maximale Breite */
-    height: 15px; /* Höhe des Balkens reduziert */
+    height: 12px; /* Höhe des Balkens reduziert */
     margin: 5px auto; /* Zentriert mit gleichmäßigen Abständen */
     background-color: transparent; /* Kein Hintergrund */
     overflow: hidden; /* Überflüssigen Inhalt ausblenden */
