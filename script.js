@@ -22,17 +22,17 @@ function ladeBenutzerdaten() {
             if (snapshot.exists()) {
                 benutzerDaten = snapshot.val();
                 console.log("Benutzerdaten geladen:", benutzerDaten);
-                // Zeige die Benutzer erst, wenn die Daten vollständig geladen sind
                 zeigeBenutzerAufStartseite();
             } else {
                 console.warn("Keine Benutzerdaten gefunden.");
-                benutzerDaten = {}; // Setze auf ein leeres Objekt, um Fehler zu vermeiden
+                benutzerDaten = {};
             }
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Benutzerdaten:", error);
         });
 }
+
 
 // Startseite anzeigen
 function zeigeStartseite() {
@@ -51,7 +51,6 @@ function zeigeStartseite() {
             <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
             <button id="benutzerLoginButton">Anmelden</button>
         `;
-        loginSection.style.display = "block";
 
         const benutzerLoginButton = document.getElementById("benutzerLoginButton");
         if (benutzerLoginButton) {
@@ -59,14 +58,13 @@ function zeigeStartseite() {
         }
     }
 
-    // Benutzerinformationen laden und anzeigen
     ladeBenutzerdaten();
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
-    document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
+    document.getElementById("npc-login-section").style.display = "block";
 }
 
 // Questbuch anzeigen
@@ -632,12 +630,18 @@ let benutzerDaten = [];
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
     const benutzerContainer = document.getElementById("benutzer-container");
+
+    if (!benutzerContainer) {
+        console.error("Fehler: Benutzer-Container nicht gefunden!");
+        return;
+    }
+
     benutzerContainer.innerHTML = ""; // Vorherige Inhalte löschen
 
     for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
         if (!daten || !daten.fortschritte) {
             console.warn(`Keine Fortschrittsdaten für Benutzer ${benutzername}`);
-            continue; // Überspringe Benutzer ohne Daten
+            continue;
         }
 
         const benutzerElement = document.createElement("div");
@@ -649,7 +653,7 @@ function zeigeBenutzerAufStartseite() {
         avatarElement.autoplay = true;
         avatarElement.loop = true;
         avatarElement.muted = true;
-        avatarElement.style.width = "100px"; // Anpassbare Größe
+        avatarElement.style.width = "100px";
 
         // Benutzername
         const nameElement = document.createElement("h3");
@@ -657,37 +661,19 @@ function zeigeBenutzerAufStartseite() {
 
         // Level
         const levelElement = document.createElement("div");
-        levelElement.textContent = `Level: ${daten.fortschritte?.level || 1}`;
+        levelElement.textContent = `Level: ${daten.fortschritte.level || 1}`;
         levelElement.style.border = "2px solid gold";
         levelElement.style.padding = "5px";
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
-        // HP-Leiste mit Farbverlauf und Anzeige
-        const hpElement = document.createElement("div");
-        hpElement.className = "hp-bar";
-        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
-        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
-        const hpProzent = (aktuelleHP / maxHP) * 100;
-        hpElement.innerHTML = `
-            <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
-            <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
-        `;
-        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
+        // HP-Leiste
+        const hpElement = erstelleHPElement(daten.fortschritte);
 
-        // MP-Leiste mit Anzeige
-        const mpElement = document.createElement("div");
-        mpElement.className = "mp-bar";
-        const aktuelleMP = daten.fortschritte?.mp || 0;
-        const maxMP = berechneMaxMP(daten.fortschritte?.level || 1);
-        const mpProzent = (aktuelleMP / maxMP) * 100;
-        mpElement.innerHTML = `
-            <div class="progress" style="width: ${mpProzent}%;"></div>
-            <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
-        `;
-        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
+        // MP-Leiste
+        const mpElement = erstelleMPElement(daten.fortschritte);
 
-        // Alles zusammenfügen
+        // Zusammenfügen
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
@@ -697,6 +683,38 @@ function zeigeBenutzerAufStartseite() {
         benutzerContainer.appendChild(benutzerElement);
     }
 }
+function erstelleHPElement(fortschritte) {
+    const hpElement = document.createElement("div");
+    hpElement.className = "hp-bar";
+
+    const aktuelleHP = fortschritte.hp || berechneMaxHP(fortschritte.level || 1);
+    const maxHP = berechneMaxHP(fortschritte.level || 1);
+    const hpProzent = (aktuelleHP / maxHP) * 100;
+
+    hpElement.innerHTML = `
+        <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
+        <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
+    `;
+
+    return hpElement;
+}
+function erstelleMPElement(fortschritte) {
+    const mpElement = document.createElement("div");
+    mpElement.className = "mp-bar";
+
+    const aktuelleMP = fortschritte.mp || berechneMaxMP(fortschritte.level || 1);
+    const maxMP = berechneMaxMP(fortschritte.level || 1);
+    const mpProzent = (aktuelleMP / maxMP) * 100;
+
+    mpElement.innerHTML = `
+        <div class="progress" style="width: ${mpProzent}%;"></div>
+        <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
+    `;
+
+    return mpElement;
+}
+
+
 
 // HP-Leiste mit Farbverlauf und Anzeige
 const hpElement = document.createElement("div");
@@ -747,6 +765,7 @@ function berechneMaxHP(level) {
     return 100 + Math.floor((level - 1) / 10) * 200;
 }
 
+
 function aktualisiereHPLeiste(aktuelleHP, level) {
     const maxHP = berechneMaxHP(level); // Berechnet das maximale HP basierend auf dem Level
     const hpProgress = document.getElementById("hp-progress");
@@ -770,7 +789,7 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
 }
 // Funktion zur Berechnung der maximalen MP basierend auf dem Level
 function berechneMaxMP(level) {
-    return 50 + (level * 10); // Beispiel: 50 Basis + 10 pro Level
+    return 50 + level * 10;
 }
 
 // Funktion zur Aktualisierung der MP-Leiste
@@ -820,7 +839,6 @@ function berechneHPFarbe(prozent) {
     if (prozent > 25) return "orange";
     return "red";
 }
-
 
 function aktualisiereLayout() {
     const hpContainer = document.getElementById("hp-bar-container");
