@@ -603,6 +603,7 @@ function ausloggen() {
         avatarContainer.style.display = "none"; // Avatar ausblenden
         avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
     }
+    
     // Alle nicht benötigten Bereiche ausblenden
     document.getElementById('quests-section').style.display = 'none';
     document.getElementById('xp-counter').style.display = 'none';
@@ -625,10 +626,17 @@ function ausloggen() {
     if (adminButtonsContainer) {
         adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
     }
+
     // HP-Anzeige ausblenden
     const hpContainer = document.getElementById("hp-bar-container");
     if (hpContainer) {
         hpContainer.style.display = "none";
+    }
+
+    // **MP-Anzeige ausblenden**
+    const mpContainer = document.getElementById("mp-bar-container");
+    if (mpContainer) {
+        mpContainer.style.display = "none";
     }
 
     // Benutzerübersicht einblenden
@@ -637,10 +645,10 @@ function ausloggen() {
         benutzerContainer.style.display = "flex"; // Benutzerübersicht anzeigen
     }
 
-    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen
-        zeigeStartseite();
+    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
+    zeigeStartseite();
 }
-    
+
 
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
