@@ -290,16 +290,20 @@ button:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
 }
 
+/* Fortschrittsbalken für HP */
 #hp-progress {
     position: relative;
     text-align: center;
     line-height: 20px; /* Höhe der Leiste */
     font-weight: bold;
     color: white;
-    background: green;
-    border-radius: 5px;
+    background: green; /* Hintergrundfarbe bleibt gleich */
+    border-radius: 5px; /* Abgerundete Ecken */
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Subtilerer Schatten */
+    margin: 2px; /* Zusätzlicher Abstand innerhalb des Containers */
 }
+
 #avatar-container .avatar-jamie {
     width: 150px; /* oder jede gewünschte Größe */
     height: auto;
@@ -311,12 +315,13 @@ button:hover {
     height: auto;
 }
 
+/* Container für Fortschrittsbalken */
 .hp-bar, .mp-bar {
-    width: 100%;
-    height: 20px;
-    margin: 5px 0;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
+    width: 95%; /* Etwas schmaler, um Platz zu schaffen */
+    height: 20px; /* Beibehaltung der Höhe */
+    margin: 5px auto; /* Automatische Zentrierung und Abstand */
+    background-color: rgba(0, 0, 0, 0.2); /* Halbtransparenter Hintergrund */
+    border-radius: 5px; /* Abgerundete Ecken */
     overflow: hidden;
     position: relative;
     text-align: center;
@@ -324,8 +329,8 @@ button:hover {
     line-height: 20px;
     color: white;
     font-weight: bold;
+    padding: 2px; /* Zusätzlicher Innenabstand */
 }
-
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
     transition: width 0.3s ease-in-out;
@@ -353,6 +358,7 @@ button:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
 }
 
+/* Fortschrittsbalken für MP */
 #mp-progress {
     position: relative;
     text-align: center;
@@ -360,8 +366,9 @@ button:hover {
     font-weight: bold;
     color: white;
     background: blue; /* Blau für die MP-Leiste */
-    border-radius: 5px;
+    border-radius: 5px; /* Abgerundete Ecken */
     transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Subtilerer Schatten */
+    margin: 2px; /* Zusätzlicher Abstand innerhalb des Containers */
 }
-
 
