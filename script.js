@@ -624,6 +624,7 @@ function ladeBenutzerdaten() {
 }
 
 // Benutzer auf der Startseite anzeigen
+// Benutzer auf der Startseite anzeigen
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
     const benutzerContainer = document.getElementById("benutzer-container");
@@ -653,11 +654,23 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
-        // MP-Leiste
-        const maxMP = berechneMaxMP(daten.fortschritte?.level || 1); // Max MP basierend auf Level berechnen
-        const aktuelleMP = daten.fortschritte?.mp || maxMP; // Aktuelle MP aus Daten oder Max MP verwenden
+        // HP-Leiste mit Farbverlauf und Anzeige
+        const hpElement = document.createElement("div");
+        hpElement.className = "hp-bar";
+        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
+        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
+        const hpProzent = (aktuelleHP / maxHP) * 100;
+        hpElement.innerHTML = `
+            <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
+            <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
+        `;
+        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
+
+        // MP-Leiste mit Anzeige
         const mpElement = document.createElement("div");
         mpElement.className = "mp-bar";
+        const aktuelleMP = daten.fortschritte?.mp || 0;
+        const maxMP = berechneMaxMP(daten.fortschritte?.level || 1);
         const mpProzent = (aktuelleMP / maxMP) * 100;
         mpElement.innerHTML = `
             <div class="progress" style="width: ${mpProzent}%;"></div>
@@ -669,6 +682,7 @@ function zeigeBenutzerAufStartseite() {
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
+        benutzerElement.appendChild(hpElement);
         benutzerElement.appendChild(mpElement);
 
         benutzerContainer.appendChild(benutzerElement);
@@ -708,7 +722,6 @@ mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
         benutzerElement.appendChild(mpElement);
 
         benutzerContainer.appendChild(benutzerElement);
-    }
 
 // Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
