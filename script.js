@@ -634,14 +634,14 @@ function zeigeBenutzerAufStartseite() {
     const benutzerContainer = document.getElementById("benutzer-container");
     benutzerContainer.innerHTML = ""; // Vorherige Inhalte löschen
 
-for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
-    if (!daten || !daten.fortschritte) {
-        console.warn(`Keine Fortschrittsdaten für Benutzer ${benutzername}`);
-        continue; // Überspringe Benutzer ohne Daten
-    }
-    // Rest des Codes unverändert
-}
+    for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
+        if (!daten || !daten.fortschritte) {
+            console.warn(`Keine Fortschrittsdaten für Benutzer ${benutzername}`);
+            continue; // Überspringe Benutzer ohne Daten
+        }
 
+        const benutzerElement = document.createElement("div");
+        benutzerElement.className = "benutzer-item";
 
         // Avatar (Video)
         const avatarElement = document.createElement("video");
@@ -697,7 +697,6 @@ for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
         benutzerContainer.appendChild(benutzerElement);
     }
 }
-
 
 // HP-Leiste mit Farbverlauf und Anzeige
 const hpElement = document.createElement("div");
