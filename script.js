@@ -692,6 +692,29 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
+        // MP-Leiste
+        const maxMP = berechneMaxMP(daten.fortschritte?.level || 1); // Max MP basierend auf Level berechnen
+        const aktuelleMP = daten.fortschritte?.mp || maxMP; // Aktuelle MP aus Daten oder Max MP verwenden
+        const mpElement = document.createElement("div");
+        mpElement.className = "mp-bar";
+        const mpProzent = (aktuelleMP / maxMP) * 100;
+        mpElement.innerHTML = `
+            <div class="progress" style="width: ${mpProzent}%;"></div>
+            <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
+        `;
+        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
+
+        // Alles zusammenfügen
+        benutzerElement.appendChild(avatarElement);
+        benutzerElement.appendChild(nameElement);
+        benutzerElement.appendChild(levelElement);
+        benutzerElement.appendChild(mpElement);
+
+        benutzerContainer.appendChild(benutzerElement);
+    }
+}
+
+
 // HP-Leiste mit Farbverlauf und Anzeige
 const hpElement = document.createElement("div");
 hpElement.className = "hp-bar";
