@@ -14,6 +14,25 @@ window.onload = function () {
         npcLoginButton.onclick = npcLogin;
     }
 };
+// Funktion zum Laden der Benutzerdaten
+function ladeBenutzerdaten() {
+    console.log("ladeBenutzerdaten() aufgerufen");
+    firebase.database().ref('benutzer').get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                benutzerDaten = snapshot.val();
+                console.log("Benutzerdaten geladen:", benutzerDaten);
+                // Zeige die Benutzer erst, wenn die Daten vollständig geladen sind
+                zeigeBenutzerAufStartseite();
+            } else {
+                console.warn("Keine Benutzerdaten gefunden.");
+                benutzerDaten = {}; // Setze auf ein leeres Objekt, um Fehler zu vermeiden
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Benutzerdaten:", error);
+        });
+}
 
 // Startseite anzeigen
 function zeigeStartseite() {
@@ -608,22 +627,7 @@ function ausloggen() {
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
 
-// Funktion zum Laden der Benutzerdaten
-function ladeBenutzerdaten() {
-    console.log("ladeBenutzerdaten() aufgerufen");
-    firebase.database().ref('benutzer').get().then((snapshot) => {
-        if (snapshot.exists()) {
-            benutzerDaten = snapshot.val();
-            zeigeBenutzerAufStartseite();
-        } else {
-            console.log("Keine Benutzerdaten gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Benutzerdaten:", error);
-    });
-}
 
-// Benutzer auf der Startseite anzeigen
 // Benutzer auf der Startseite anzeigen
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
