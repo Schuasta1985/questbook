@@ -768,7 +768,7 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
 }
 // Funktion zur Berechnung der maximalen MP basierend auf dem Level
 function berechneMaxMP(level) {
-    return 50 + Math.floor((level - 1) / 10) * 25; // Beispiel: Start mit 50 MP, +25 MP alle 10 Level
+    return 50 + (level * 10); // Beispiel: 50 Basis + 10 pro Level
 }
 
 // Funktion zur Aktualisierung der MP-Leiste
@@ -780,6 +780,7 @@ function aktualisiereMPLeiste(aktuelleMP, maxMP) {
         mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`;
     }
 }
+
 
 // Ergänze die MP-Leiste in ladeFortschritte()
 function ladeFortschritte() {
