@@ -398,20 +398,30 @@ function ladeGlobaleQuests() {
                 questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
                 gespeicherteQuests.forEach((quest, index) => {
-                    const listItem = document.createElement("li");
                     const istErledigt = quest.alleBenutzer
                         ? quest.erledigtVon && quest.erledigtVon[currentUser]
                         : quest.erledigt;
 
-                    const abgeschlosseneBenutzer = quest.erledigtVon
-                        ? Object.keys(quest.erledigtVon).join(", ")
-                        : "Niemand";
+                    const xpAnzeigen = quest.xpProEinheit
+                        ? `${quest.xpProEinheit} XP je Einheit`
+                        : `${quest.xp || 0} XP`;
 
+                    const verbleibend = quest.maximaleMenge
+                        ? ` (${quest.aktuelleMenge || 0}/${quest.maximaleMenge} erledigt)`
+                        : "";
+
+                    const listItem = document.createElement("li");
                     listItem.innerHTML = `
                         <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
                             <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} 
-                            <span class="xp-display">( ${quest.xp} XP )</span>
-                            ${istErledigt ? `<br><small>Erledigt von: ${abgeschlosseneBenutzer}</small>` : ""}
+                            <span class="xp-display">( ${xpAnzeigen}${verbleibend} )</span>
+                            ${
+                                istErledigt
+                                    ? `<br><small>Erledigt von: ${
+                                        quest.erledigtVon ? Object.keys(quest.erledigtVon).join(", ") : "Unbekannt"
+                                    }</small>`
+                                    : ""
+                            }
                         </span>
                         ${
                             !istErledigt && !isAdmin
@@ -420,7 +430,7 @@ function ladeGlobaleQuests() {
                         }
                     `;
 
-                    listItem.setAttribute("data-xp", quest.xp);
+                    listItem.setAttribute("data-xp", quest.xp || 0);
                     questList.appendChild(listItem);
                 });
 
