@@ -517,7 +517,7 @@ function questErledigt(questNummer) {
                 let quest = quests[questNummer];
 
                 if (quest) {
-                    const verbleibendeMenge = quest.maximaleMenge - quest.aktuelleMenge;
+                    const verbleibendeMenge = quest.maximaleMenge - (quest.aktuelleMenge || 0);
 
                     if (verbleibendeMenge <= 0) {
                         alert("Diese Quest wurde bereits vollständig abgeschlossen.");
@@ -531,11 +531,14 @@ function questErledigt(questNummer) {
                         return;
                     }
 
-                    const xpGutschrift = erledigteMenge * quest.xpProEinheit;
+                    const xpGutschrift = erledigteMenge * (quest.xpProEinheit || 0);
                     xp += xpGutschrift;
 
                     // Aktualisiere die Quest-Daten
-                    quest.aktuelleMenge += erledigteMenge;
+                    quest.aktuelleMenge = (quest.aktuelleMenge || 0) + erledigteMenge;
+                    if (!quest.erledigtVon) {
+                        quest.erledigtVon = {};
+                    }
                     if (!quest.erledigtVon[currentUser]) {
                         quest.erledigtVon[currentUser] = 0;
                     }
@@ -556,13 +559,18 @@ function questErledigt(questNummer) {
                         .catch((error) => {
                             console.error("Fehler beim Speichern der Quest als erledigt:", error);
                         });
+                } else {
+                    alert("Quest konnte nicht gefunden werden.");
                 }
+            } else {
+                alert("Keine Quests vorhanden.");
             }
         })
         .catch((error) => {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
+
 
 function aktualisiereQuestImDOM(questNummer, quest) {
     const questList = document.getElementById("quests");
