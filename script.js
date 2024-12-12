@@ -545,14 +545,18 @@ function questErledigt(questNummer) {
                     // Aktualisierte Quests in Firebase speichern
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
+                            console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
-                            console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der Quest als erledigt:", error);
                         });
+                } else {
+                    console.error(`Quest ${questNummer} existiert nicht.`);
                 }
+            } else {
+                console.log("Keine Quests vorhanden.");
             }
         })
         .catch((error) => {
