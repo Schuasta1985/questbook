@@ -200,6 +200,11 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
+    
+    // Verstecke NPC-Login-Bereich
+    const npcLoginSection = document.getElementById("npc-login-section");
+    if (npcLoginSection) {
+        npcLoginSection.style.display = "none";
     steuerungLogbuch(false); // Logbuch-Button ausblenden
     // Verstecke Begrüßungstext
     document.getElementById("welcome-text").style.display = "none";
@@ -920,6 +925,11 @@ function ausloggen() {
     const mpContainer = document.getElementById("mp-bar-container");
     if (mpContainer) {
         mpContainer.style.display = "none";
+    }
+    // Logbuch sicher schließen
+    const logbuchContainer = document.getElementById("logbuch-container");
+    if (logbuchContainer) {
+        logbuchContainer.style.display = "none"; // Logbuch ausblenden
     }
 
     // Benutzerübersicht einblenden
