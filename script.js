@@ -32,11 +32,16 @@ window.onload = function () {
 // Logbuch nur auf der Startseite sichtbar machen
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
+    const logbuchContainer = document.getElementById("logbuch-container");
+
     if (logbuchButton) {
-        logbuchButton.style.display = anzeigen ? "block" : "none";
+        logbuchButton.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt den Button
+    }
+
+    if (logbuchContainer) {
+        logbuchContainer.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt das Logbuch selbst
     }
 }
-
 
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
@@ -152,6 +157,7 @@ function ladeLogbuch() {
 }
 // Startseite anzeigen
 function zeigeStartseite() {
+    steuerungLogbuch(true);
         const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button einblenden
     console.log("zeigeStartseite() aufgerufen");
