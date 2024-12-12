@@ -22,12 +22,21 @@ window.onload = function () {
     zeigeStartseite();
      erstelleLogbuch();
     ladeLogbuch(); // Optional: Falls serverseitige Speicherung genutzt wird
+    steuerungLogbuch(true); // Logbuch-Button auf der Startseite anzeigen
 
     const npcLoginButton = document.getElementById("npcLoginButton");
     if (npcLoginButton) {
         npcLoginButton.onclick = npcLogin;
     }
 };
+// Logbuch nur auf der Startseite sichtbar machen
+function steuerungLogbuch(anzeigen) {
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = anzeigen ? "block" : "none";
+    }
+}
+
 
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
@@ -192,6 +201,7 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
+    steuerungLogbuch(false); // Logbuch-Button ausblenden
     // Verstecke Begrüßungstext
     document.getElementById("welcome-text").style.display = "none";
     // Blende die HP- und MP-Bereiche ein
@@ -498,18 +508,17 @@ function questErledigt(questNummer) {
                 let quests = snapshot.val() || [];
                 if (quests[questNummer]) {
                     quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                    let xp = quests[questNummer].xp; // XP der Quest
-                    let beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
+                    quests[questNummer].erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
+                    const xp = quests[questNummer].xp; // XP der Quest
+                    const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
 
-                    // XP hinzufügen
-                    xp += quests[questNummer].xp;
+                    xp += xp; // XP hinzufügen
                     speichereFortschritte(); // Fortschritte speichern
 
                     // Ins Logbuch eintragen
                     logbuchEintrag(beschreibung, currentUser, xp);
 
-                    // Speichere die aktualisierten Quests
-                    firebase.database().ref('quests').set(quests)
+                    firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
                         .then(() => {
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
@@ -525,6 +534,7 @@ function questErledigt(questNummer) {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
+
 
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
@@ -775,6 +785,7 @@ function zeigeAvatar() {
 
 // Ausloggen
 function ausloggen() {
+        steuerungLogbuch(true); // Logbuch-Button wieder anzeigen
     console.log("ausloggen() aufgerufen");
     document.getElementById("welcome-text").style.display = "block";
     currentUser = null;
