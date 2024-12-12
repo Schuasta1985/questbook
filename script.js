@@ -398,10 +398,12 @@ function ladeGlobaleQuests() {
                 questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
                 gespeicherteQuests.forEach((quest, index) => {
+                    // Prüfen, ob die Quest als erledigt markiert ist
                     const istErledigt = quest.alleBenutzer
                         ? quest.erledigtVon && quest.erledigtVon[currentUser]
                         : quest.erledigt;
 
+                    // Erstelle Listeneintrag für die Quest
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
                         <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
@@ -422,6 +424,12 @@ function ladeGlobaleQuests() {
                         }
                     `;
 
+                    // Füge visuelle Markierung für erledigte Quests hinzu
+                    if (istErledigt) {
+                        listItem.style.textDecoration = "line-through"; // Durchstreichen
+                        listItem.style.color = "gray"; // Optional: Farbe ändern für erledigte Quests
+                    }
+
                     listItem.setAttribute("data-xp", quest.xp);
                     questList.appendChild(listItem);
                 });
@@ -437,7 +445,6 @@ function ladeGlobaleQuests() {
             console.error("Fehler beim Laden der globalen Quests:", error);
         });
 }
-
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
 
