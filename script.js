@@ -398,18 +398,20 @@ function ladeGlobaleQuests() {
                 questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
                 gespeicherteQuests.forEach((quest, index) => {
-                    const listItem = document.createElement("li");
                     const istErledigt = quest.alleBenutzer
                         ? quest.erledigtVon && quest.erledigtVon[currentUser]
                         : quest.erledigt;
 
+                    const listItem = document.createElement("li");
                     listItem.innerHTML = `
                         <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
                             <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} 
                             <span class="xp-display">( ${quest.xp} XP )</span>
                             ${
                                 istErledigt
-                                    ? `<br><small>Erledigt von: ${quest.alleBenutzer ? currentUser : quest.erledigtVon || 'Unbekannt'}</small>`
+                                    ? `<br><small>Erledigt von: ${
+                                        quest.alleBenutzer ? currentUser : quest.erledigtVon || 'Unbekannt'
+                                    }</small>`
                                     : ""
                             }
                         </span>
@@ -545,27 +547,20 @@ function questErledigt(questNummer) {
                     // Aktualisierte Quests in Firebase speichern
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
-                            console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
-
-                            // Aktualisiere die Quest im DOM
-                            aktualisiereQuestImDOM(questNummer, quest);
-
-                            aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                            console.log(`Quest ${questNummer} wurde erfolgreich aktualisiert.`);
+                            ladeGlobaleQuests(); // Quests neu laden
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der Quest als erledigt:", error);
                         });
-                } else {
-                    console.error(`Quest ${questNummer} existiert nicht.`);
                 }
-            } else {
-                console.log("Keine Quests vorhanden.");
             }
         })
         .catch((error) => {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
+
 
 function aktualisiereQuestImDOM(questNummer, quest) {
     const questList = document.getElementById("quests");
