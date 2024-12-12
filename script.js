@@ -123,10 +123,10 @@ function benutzerAnmeldung() {
     // Lade Benutzerinformationen
     zeigeQuestbook();          // Quests anzeigen
     ladeFortschritte();        // HP und MP laden
+    täglicheHPRegeneration();  // Regeneration nach Anmeldung ausführen
     zeigeAvatar();             // Avatar anzeigen
     ladeGlobaleQuests();       // Globale Quests laden
 
-    // Optional: Animation oder Feedback hinzufügen
     console.log("Benutzeranmeldung abgeschlossen!");
 }
 
