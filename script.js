@@ -257,45 +257,45 @@ function speichereQuestsInFirebase(quests) {
 }
 
 // Quests aus Firebase laden
-// Globale Quests aus Firebase laden
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
-    firebase.database().ref('quests').get()  // Ändere den Pfad zu 'quests' für globale Quests
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            const gespeicherteQuests = snapshot.val();
-            console.log("Globale Quests:", gespeicherteQuests);
+    firebase.database().ref('quests').get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const gespeicherteQuests = snapshot.val();
+                console.log("Globale Quests:", gespeicherteQuests);
 
-            const questList = document.getElementById("quests");
-            questList.innerHTML = ""; // Liste der Quests zurücksetzen
+                const questList = document.getElementById("quests");
+                questList.innerHTML = ""; // Liste der Quests zurücksetzen
 
-            gespeicherteQuests.forEach((quest, index) => {
-                const listItem = document.createElement("li");
-                const istErledigt = quest.erledigt || false;
+                gespeicherteQuests.forEach((quest, index) => {
+                    const listItem = document.createElement("li");
+                    const istErledigt = quest.erledigt || false;
 
-                listItem.innerHTML = `
-                    <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
-                        <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} <span class="xp-display">( ${quest.xp} XP )</span>
-                    </span>
-                    ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
-                `;
+                    listItem.innerHTML = `
+                        <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
+                            <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} 
+                            <span class="xp-display">( ${quest.xp} XP )</span>
+                            ${istErledigt ? `<br><small>Erledigt von: ${quest.erledigtVon || 'Unbekannt'}</small>` : ""}
+                        </span>
+                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                    `;
 
-                listItem.setAttribute("data-xp", quest.xp);
-                questList.appendChild(listItem);
-            });
+                    listItem.setAttribute("data-xp", quest.xp);
+                    questList.appendChild(listItem);
+                });
 
-            if (isAdmin) {
-                zeigeAdminFunktionen();
+                if (isAdmin) {
+                    zeigeAdminFunktionen();
+                }
+            } else {
+                console.log("Keine globalen Quests gefunden.");
             }
-        } else {
-            console.log("Keine globalen Quests gefunden.");
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Laden der globalen Quests:", error);
-    });
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der globalen Quests:", error);
+        });
 }
-
 
 
 // Restliche Funktionen bleiben unverändert wie im letzten Beitrag
@@ -369,32 +369,44 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
+// Quest erledigt 
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            let quests = snapshot.val() || [];
-            if (quests[questNummer]) {
-                quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                xp += quests[questNummer].xp; // XP hinzufügen
-                speichereFortschritte(); // Fortschritte speichern
-                firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
-                    .then(() => {
-                        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                        ladeGlobaleQuests(); // Quests neu laden
-                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der Quest als erledigt:", error);
-                    });
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                let quests = snapshot.val() || [];
+                if (quests[questNummer]) {
+                    const quest = quests[questNummer];
+
+                    if (!quest.erledigt) {
+                        quest.erledigt = true; // Markiere die Quest als erledigt
+                        quest.erledigtVon = currentUser; // Speichere den aktuellen Benutzer
+                        xp += quest.xp; // XP hinzufügen
+
+                        speichereFortschritte(); // Fortschritte speichern
+
+                        firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
+                            .then(() => {
+                                aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                                ladeGlobaleQuests(); // Quests neu laden
+                                console.log(`Quest ${questNummer} wurde von ${currentUser} als erledigt markiert.`);
+                            })
+                            .catch((error) => {
+                                console.error("Fehler beim Speichern der Quest als erledigt:", error);
+                            });
+                    } else {
+                        console.log(`Quest ${questNummer} ist bereits erledigt.`);
+                    }
+                }
             }
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Markieren der Quest als erledigt:", error);
-    });
+        })
+        .catch((error) => {
+            console.error("Fehler beim Markieren der Quest als erledigt:", error);
+        });
 }
+
+// Neue quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
