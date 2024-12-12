@@ -6,6 +6,7 @@ let isAdmin = false;
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
+    erstelleLogbuchSchaltfläche();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
     const heutigesDatum = new Date().toDateString();
    
@@ -142,6 +143,8 @@ function ladeLogbuch() {
 }
 // Startseite anzeigen
 function zeigeStartseite() {
+        const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button einblenden
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
@@ -177,6 +180,8 @@ function zeigeStartseite() {
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
+        const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button ausblenden
     console.log("zeigeQuestbook() aufgerufen");
     document.getElementById("quests-section").style.display = "block";
     document.getElementById("xp-counter").style.display = "block";
@@ -488,37 +493,60 @@ function zeigeLevelUpAnimation() {
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
-    .then((snapshot) => {
-        if (snapshot.exists()) {
-            let quests = snapshot.val() || [];
-            if (quests[questNummer]) {
-                quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                const xp = quests[questNummer].xp; // XP der Quest
-                const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                let quests = snapshot.val() || [];
+                if (quests[questNummer]) {
+                    quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
+                    let xp = quests[questNummer].xp; // XP der Quest
+                    let beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
 
-                xp += xp; // XP hinzufügen
-                speichereFortschritte(); // Fortschritte speichern
+                    // XP hinzufügen
+                    xp += quests[questNummer].xp;
+                    speichereFortschritte(); // Fortschritte speichern
 
-                // Ins Logbuch eintragen
-                logbuchEintrag(beschreibung, currentUser, xp);
+                    // Ins Logbuch eintragen
+                    logbuchEintrag(beschreibung, currentUser, xp);
 
-                firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
-                    .then(() => {
-                        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                        ladeGlobaleQuests(); // Quests neu laden
-                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der Quest als erledigt:", error);
-                    });
+                    // Speichere die aktualisierten Quests
+                    firebase.database().ref('quests').set(quests)
+                        .then(() => {
+                            aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                            ladeGlobaleQuests(); // Quests neu laden
+                            console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der Quest als erledigt:", error);
+                        });
+                }
             }
-        }
-    })
-    .catch((error) => {
-        console.error("Fehler beim Markieren der Quest als erledigt:", error);
-    });
+        })
+        .catch((error) => {
+            console.error("Fehler beim Markieren der Quest als erledigt:", error);
+        });
 }
 
+// Funktion zur Steuerung des Logbuch-Buttons
+function erstelleLogbuchSchaltfläche() {
+    const logbuchButton = document.createElement("button");
+    logbuchButton.id = "logbuch-button";
+    logbuchButton.textContent = "Logbuch";
+    logbuchButton.style.position = "fixed";
+    logbuchButton.style.bottom = "10px";
+    logbuchButton.style.left = "10px";
+    logbuchButton.style.padding = "10px";
+    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    logbuchButton.style.color = "white";
+    logbuchButton.style.border = "none";
+    logbuchButton.style.borderRadius = "5px";
+    logbuchButton.style.cursor = "pointer";
+    logbuchButton.onclick = () => {
+        const logbuchContainer = document.getElementById("logbuch-container");
+        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+    };
+
+    document.body.appendChild(logbuchButton);
+}
 // Neue quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
