@@ -34,8 +34,10 @@ function steuerungLogbuch(anzeigen) {
     if (logbuchContainer) {
         if (!anzeigen) {
             logbuchContainer.style.display = "none"; // Versteckt das Logbuch bei Bedarf
+        }
     }
 }
+
 
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
@@ -865,18 +867,16 @@ function zeigeAvatar() {
     }
 }
 
-
-
 // Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     steuerungLogbuch(true); // Zeigt nur den Logbuch-Button an
+
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) {
         logbuchContainer.style.display = "none"; // Versteckt das Logbuch
-         }
-    console.log("ausloggen() aufgerufen");
-    document.getElementById("welcome-text").style.display = "block";
+    }
+
     currentUser = null;
     isAdmin = false; // Admin-Status zurücksetzen
 
@@ -898,11 +898,11 @@ function ausloggen() {
         avatarContainer.style.display = "none"; // Avatar ausblenden
         avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
     }
-    
+
     // Alle nicht benötigten Bereiche ausblenden
-    document.getElementById('quests-section').style.display = 'none';
-    document.getElementById('xp-counter').style.display = 'none';
-    document.getElementById('logout-button').style.display = 'none';
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
 
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
@@ -928,15 +928,10 @@ function ausloggen() {
         hpContainer.style.display = "none";
     }
 
-    // **MP-Anzeige ausblenden**
+    // MP-Anzeige ausblenden
     const mpContainer = document.getElementById("mp-bar-container");
     if (mpContainer) {
         mpContainer.style.display = "none";
-    }
-    // Logbuch sicher schließen
-    const logbuchContainer = document.getElementById("logbuch-container");
-    if (logbuchContainer) {
-        logbuchContainer.style.display = "none"; // Logbuch ausblenden
     }
 
     // Benutzerübersicht einblenden
