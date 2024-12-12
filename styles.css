@@ -315,40 +315,39 @@ button:hover {
     height: auto;
 }
 
-/* Fortschrittsbalken für HP und MP */
+/* Fortschrittsbalken Container */
 .hp-bar, .mp-bar {
     display: flex;
-    align-items: center; /* Vertikale Zentrierung */
-    justify-content: center; /* Horizontale Zentrierung */
-    width: 100%; /* Volle Breite des Containers */
-    max-width: 220px; /* Maximale Breite */
-    height: 12px; /* Höhe des Balkens reduziert */
-    margin: 5px auto; /* Zentriert mit gleichmäßigen Abständen */
+    justify-content: center;
+    align-items: center;
+    width: 90%; /* Breite reduziert für einen sauberen Look */
+    height: 16px; /* Reduzierte Höhe für kompakteres Design */
+    margin: 5px auto; /* Zentrierung */
     background-color: transparent; /* Kein Hintergrund */
-    overflow: hidden; /* Überflüssigen Inhalt ausblenden */
-    border: none; /* Kein Rand */
-    box-shadow: none; /* Kein Schatten */
+    border-radius: 0; /* Ecken entfernt */
+    overflow: hidden;
+    position: relative;
+    border: none; /* Keine Umrandung */
 }
 
-/* Fortschrittsanzeige innerhalb der Balken */
+/* Fortschrittsbalken Fortschritt */
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
-    width: 50%; /* DUMMY-Wert: Passe dies dynamisch per JavaScript an */
-    background: green; /* Hintergrundfarbe für HP */
+    border-radius: 0; /* Keine Rundungen */
     transition: width 0.3s ease-in-out;
+    z-index: 1; /* Text bleibt sichtbar */
 }
 
-
-/* Text über dem Fortschrittsbalken */
+/* Fortschrittsbalken Text */
 .hp-bar .hp-text, .mp-bar .mp-text {
     position: absolute;
-    z-index: 1; /* Sicherstellen, dass der Text sichtbar bleibt */
-    width: 100%; /* Text breitet sich über die gesamte Breite aus */
-    font-size: 12px; /* Angemessene Schriftgröße */
+    z-index: 2; /* Sicherstellen, dass der Text über dem Balken bleibt */
+    width: 100%;
+    text-align: center;
+    line-height: 16px; /* Exakte Zentrierung des Textes */
     color: white;
     text-shadow: none; /* Kein Textschatten */
-    line-height: 15px; /* Vertikale Zentrierung innerhalb des Balkens */
-    text-align: center; /* Zentrierung */
+    font-size: 12px; /* Angepasste Schriftgröße */
 }
 
 #mp-bar-container {
