@@ -28,7 +28,7 @@ window.onload = function () {
     }
 };
 
-// Logbuch erstellen und Datenstruktur anpassen
+// Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
 
@@ -36,7 +36,7 @@ function erstelleLogbuch() {
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
     logbuchContainer.style.position = "fixed";
-    logbuchContainer.style.bottom = "10px";
+    logbuchContainer.style.bottom = "50px"; // Abstand zum Button
     logbuchContainer.style.left = "10px";
     logbuchContainer.style.width = "300px";
     logbuchContainer.style.maxHeight = "400px";
@@ -46,10 +46,38 @@ function erstelleLogbuch() {
     logbuchContainer.style.padding = "10px";
     logbuchContainer.style.borderRadius = "10px";
     logbuchContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+    logbuchContainer.style.display = "none"; // Zunächst versteckt
     logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
 
     document.body.appendChild(logbuchContainer);
+
+    // Button für das Öffnen/Schließen des Logbuchs
+    const logbuchButton = document.createElement("button");
+    logbuchButton.id = "logbuch-button";
+    logbuchButton.textContent = "Logbuch";
+    logbuchButton.style.position = "fixed";
+    logbuchButton.style.bottom = "10px";
+    logbuchButton.style.left = "10px";
+    logbuchButton.style.backgroundColor = "black";
+    logbuchButton.style.color = "white";
+    logbuchButton.style.border = "none";
+    logbuchButton.style.borderRadius = "5px";
+    logbuchButton.style.padding = "10px";
+    logbuchButton.style.cursor = "pointer";
+    logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+
+    document.body.appendChild(logbuchButton);
+
+    // Event Listener für das Öffnen/Schließen des Logbuchs
+    logbuchButton.addEventListener("click", () => {
+        if (logbuchContainer.style.display === "none") {
+            logbuchContainer.style.display = "block";
+        } else {
+            logbuchContainer.style.display = "none";
+        }
+    });
 }
+
 
 // Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
