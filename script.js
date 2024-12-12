@@ -506,21 +506,12 @@ function questErledigt(questNummer) {
             if (snapshot.exists()) {
                 let quests = snapshot.val() || [];
                 if (quests[questNummer]) {
-                    const quest = quests[questNummer];
+                    quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
+                    quests[questNummer].erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
+                    let xp = quests[questNummer].xp; // XP der Quest
+                    const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
 
-                    // Prüfe, ob die Quest für alle Benutzer abschließbar ist
-                    if (!quest.alleBenutzer && quest.erledigt) {
-                        alert("Diese Quest wurde bereits abgeschlossen.");
-                        return;
-                    }
-
-                    quest.erledigt = true; // Markiere die Quest als erledigt
-                    quest.erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
-                    const xp = quest.xp; // XP der Quest
-                    const beschreibung = quest.beschreibung; // Beschreibung der Quest
-
-                    // XP hinzufügen
-                    xp += xp;
+                    xp += xp; // XP hinzufügen
                     speichereFortschritte(); // Fortschritte speichern
 
                     // Ins Logbuch eintragen
@@ -542,6 +533,7 @@ function questErledigt(questNummer) {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
+
 
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
