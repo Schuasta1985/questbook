@@ -8,6 +8,7 @@ let isAdmin = false;
 window.onload = function () {
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
     const heutigesDatum = new Date().toDateString();
+   
 
     if (letzterTag !== heutigesDatum) {
         // HP nur einmal am Tag regenerieren
@@ -18,6 +19,8 @@ window.onload = function () {
     // Bestehender Code in window.onload
     console.log("window.onload aufgerufen");
     zeigeStartseite();
+     erstelleLogbuch();
+    ladeLogbuch(); // Optional: Falls serverseitige Speicherung genutzt wird
 
     const npcLoginButton = document.getElementById("npcLoginButton");
     if (npcLoginButton) {
@@ -25,6 +28,90 @@ window.onload = function () {
     }
 };
 
+// Logbuch erstellen und Datenstruktur anpassen
+function erstelleLogbuch() {
+    console.log("Logbuch wird erstellt...");
+
+    // Container für das Logbuch
+    const logbuchContainer = document.createElement("div");
+    logbuchContainer.id = "logbuch-container";
+    logbuchContainer.style.position = "fixed";
+    logbuchContainer.style.bottom = "10px";
+    logbuchContainer.style.left = "10px";
+    logbuchContainer.style.width = "300px";
+    logbuchContainer.style.maxHeight = "400px";
+    logbuchContainer.style.overflowY = "auto";
+    logbuchContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    logbuchContainer.style.color = "white";
+    logbuchContainer.style.padding = "10px";
+    logbuchContainer.style.borderRadius = "10px";
+    logbuchContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
+
+    document.body.appendChild(logbuchContainer);
+}
+
+// Quest ins Logbuch eintragen
+function logbuchEintrag(questBeschreibung, benutzername, xp) {
+    console.log("Neuer Logbuch-Eintrag wird erstellt...");
+    const logbuchListe = document.getElementById("logbuch-list");
+
+    const datum = new Date();
+    const zeitstempel = datum.toLocaleString();
+
+    const eintrag = document.createElement("li");
+    eintrag.style.marginBottom = "10px";
+    eintrag.innerHTML = `
+        <strong>${questBeschreibung}</strong><br>
+        Erledigt von: ${benutzername}<br>
+        XP: ${xp}<br>
+        Am: ${zeitstempel}
+    `;
+
+    // Füge den neuen Eintrag oben hinzu (chronologisch absteigend)
+    logbuchListe.prepend(eintrag);
+
+    // Optional: Eintrag in Firebase speichern (falls benötigt)
+    if (currentUser) {
+        firebase.database().ref("logbuch").push({
+            quest: questBeschreibung,
+            benutzer: benutzername,
+            xp: xp,
+            zeit: zeitstempel
+        }).then(() => {
+            console.log("Logbuch-Eintrag erfolgreich gespeichert.");
+        }).catch((error) => {
+            console.error("Fehler beim Speichern des Logbuch-Eintrags:", error);
+        });
+    }
+}
+
+// Lade Logbuch aus Firebase (optional, falls serverseitige Speicherung genutzt wird)
+function ladeLogbuch() {
+    firebase.database().ref("logbuch").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const daten = snapshot.val();
+            const logbuchListe = document.getElementById("logbuch-list");
+            logbuchListe.innerHTML = ""; // Liste zurücksetzen
+
+            Object.values(daten).forEach((eintrag) => {
+                const listItem = document.createElement("li");
+                listItem.style.marginBottom = "10px";
+                listItem.innerHTML = `
+                    <strong>${eintrag.quest}</strong><br>
+                    Erledigt von: ${eintrag.benutzer}<br>
+                    XP: ${eintrag.xp}<br>
+                    Am: ${eintrag.zeit}
+                `;
+                logbuchListe.prepend(listItem); // Chronologisch absteigend
+            });
+        } else {
+            console.log("Keine Logbuch-Einträge gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden des Logbuchs:", error);
+    });
+}
 // Startseite anzeigen
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
@@ -369,41 +456,39 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
-// Quest erledigt 
+// Integration mit Quest-Abschluss
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                let quests = snapshot.val() || [];
-                if (quests[questNummer]) {
-                    const quest = quests[questNummer];
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            let quests = snapshot.val() || [];
+            if (quests[questNummer]) {
+                quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
+                const xp = quests[questNummer].xp; // XP der Quest
+                const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
 
-                    if (!quest.erledigt) {
-                        quest.erledigt = true; // Markiere die Quest als erledigt
-                        quest.erledigtVon = currentUser; // Speichere den aktuellen Benutzer
-                        xp += quest.xp; // XP hinzufügen
+                xp += xp; // XP hinzufügen
+                speichereFortschritte(); // Fortschritte speichern
 
-                        speichereFortschritte(); // Fortschritte speichern
+                // Ins Logbuch eintragen
+                logbuchEintrag(beschreibung, currentUser, xp);
 
-                        firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
-                            .then(() => {
-                                aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                                ladeGlobaleQuests(); // Quests neu laden
-                                console.log(`Quest ${questNummer} wurde von ${currentUser} als erledigt markiert.`);
-                            })
-                            .catch((error) => {
-                                console.error("Fehler beim Speichern der Quest als erledigt:", error);
-                            });
-                    } else {
-                        console.log(`Quest ${questNummer} ist bereits erledigt.`);
-                    }
-                }
+                firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
+                    .then(() => {
+                        aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
+                        ladeGlobaleQuests(); // Quests neu laden
+                        console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der Quest als erledigt:", error);
+                    });
             }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Markieren der Quest als erledigt:", error);
-        });
+        }
+    })
+    .catch((error) => {
+        console.error("Fehler beim Markieren der Quest als erledigt:", error);
+    });
 }
 
 // Neue quest erstellen
