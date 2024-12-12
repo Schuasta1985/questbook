@@ -399,15 +399,25 @@ function ladeGlobaleQuests() {
 
                 gespeicherteQuests.forEach((quest, index) => {
                     const listItem = document.createElement("li");
-                    const istErledigt = quest.erledigt || false;
+                    const istErledigt = quest.alleBenutzer
+                        ? quest.erledigtVon && quest.erledigtVon[currentUser]
+                        : quest.erledigt;
 
                     listItem.innerHTML = `
                         <span class="quest-text" style="text-decoration: ${istErledigt ? 'line-through' : 'none'};">
                             <strong>Quest ${index + 1}:</strong> ${quest.beschreibung} 
                             <span class="xp-display">( ${quest.xp} XP )</span>
-                            ${istErledigt ? `<br><small>Erledigt von: ${quest.erledigtVon || 'Unbekannt'}</small>` : ""}
+                            ${
+                                istErledigt
+                                    ? `<br><small>Erledigt von: ${quest.alleBenutzer ? currentUser : quest.erledigtVon || 'Unbekannt'}</small>`
+                                    : ""
+                            }
                         </span>
-                        ${!istErledigt && !isAdmin ? `<button onclick="questErledigt(${index})">Erledigt</button>` : ""}
+                        ${
+                            !istErledigt && !isAdmin
+                                ? `<button onclick="questErledigt(${index})">Erledigt</button>`
+                                : ""
+                        }
                     `;
 
                     listItem.setAttribute("data-xp", quest.xp);
@@ -505,19 +515,35 @@ function questErledigt(questNummer) {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 let quests = snapshot.val() || [];
-                if (quests[questNummer]) {
-                    quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                    quests[questNummer].erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
-                    let xp = quests[questNummer].xp; // XP der Quest
-                    const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
+                let quest = quests[questNummer];
 
-                    xp += xp; // XP hinzufügen
-                    speichereFortschritte(); // Fortschritte speichern
+                if (quest) {
+                    // Prüfe, ob die Quest für alle Benutzer verfügbar ist
+                    if (quest.alleBenutzer) {
+                        if (!quest.erledigtVon) quest.erledigtVon = {};
+                        if (quest.erledigtVon[currentUser]) {
+                            alert("Diese Quest wurde von dir bereits abgeschlossen.");
+                            return;
+                        }
+                        quest.erledigtVon[currentUser] = true; // Markiere nur für aktuellen Benutzer
+                    } else {
+                        if (quest.erledigt) {
+                            alert("Diese Quest wurde bereits abgeschlossen.");
+                            return;
+                        }
+                        quest.erledigt = true; // Markiere global als erledigt
+                        quest.erledigtVon = currentUser; // Speichere Benutzername
+                    }
+
+                    // XP hinzufügen und Fortschritte speichern
+                    xp += quest.xp;
+                    speichereFortschritte();
 
                     // Ins Logbuch eintragen
-                    logbuchEintrag(beschreibung, currentUser, xp);
+                    logbuchEintrag(quest.beschreibung, currentUser, quest.xp);
 
-                    firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
+                    // Aktualisierte Quests in Firebase speichern
+                    firebase.database().ref('quests').set(quests)
                         .then(() => {
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
