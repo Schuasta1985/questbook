@@ -6,6 +6,16 @@ let isAdmin = false;
 
 // Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
+    const letzterTag = localStorage.getItem("letzteHPRegeneration");
+    const heutigesDatum = new Date().toDateString();
+
+    if (letzterTag !== heutigesDatum) {
+        // HP nur einmal am Tag regenerieren
+        täglicheHPRegeneration();
+        localStorage.setItem("letzteHPRegeneration", heutigesDatum);
+    }
+
+    // Bestehender Code in window.onload
     console.log("window.onload aufgerufen");
     zeigeStartseite();
 
@@ -193,6 +203,37 @@ function ladeFortschritte() {
                     // Anzeigen aktualisieren
                     aktualisiereHPLeiste(aktuelleHP, 1);
                     aktualisiereMPLeiste(aktuelleMP, 1);
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+            });
+    }
+}
+
+
+// Füge die tägliche Regeneration hier ein
+function täglicheHPRegeneration() {
+    if (currentUser) {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const daten = snapshot.val();
+                    const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
+                    const maxHP = berechneMaxHP(daten.level);
+
+                    // Erhöhe HP um 100, aber nicht über das Maximum
+                    const neueHP = Math.min(aktuelleHP + 100, maxHP);
+
+                    // Speichere die aktualisierten HP in Firebase
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
+                        .then(() => {
+                            console.log(`Tägliche HP-Regeneration abgeschlossen: ${aktuelleHP} -> ${neueHP}`);
+                            aktualisiereHPLeiste(neueHP, daten.level); // HP-Anzeige aktualisieren
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der regenerierten HP:", error);
+                        });
                 }
             })
             .catch((error) => {
@@ -787,31 +828,6 @@ function aktualisiereMPLeiste(aktuelleMP, level) {
         mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`; // Zeigt sowohl aktuelle als auch maximale MP an
     }
 }
-
-// Ergänze die MP-Leiste in ladeFortschritte()
-function ladeFortschritte() {
-    if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    xp = data.xp || 0;
-                    level = data.level || 1;
-                    aktuelleHP = data.hp || berechneMaxHP(level);
-                    maxHP = data.maxHP || berechneMaxHP(level);
-                    aktuelleMP = data.mp || berechneMaxMP(level); // Ergänzung
-                    maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
-                    aktualisiereXPAnzeige();
-                    aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
-            });
-    }
-}
-
 
 function berechneHPFarbe(prozent) {
     if (prozent > 75) return "green";
