@@ -28,11 +28,12 @@ function steuerungLogbuch(anzeigen) {
     const logbuchContainer = document.getElementById("logbuch-container");
 
     if (logbuchButton) {
-        logbuchButton.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt den Button
+        logbuchButton.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt nur den Button
     }
 
     if (logbuchContainer) {
-        logbuchContainer.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt das Logbuch selbst
+        if (!anzeigen) {
+            logbuchContainer.style.display = "none"; // Versteckt das Logbuch bei Bedarf
     }
 }
 
@@ -868,7 +869,12 @@ function zeigeAvatar() {
 
 // Ausloggen
 function ausloggen() {
-        steuerungLogbuch(true); // Logbuch-Button wieder anzeigen
+    console.log("ausloggen() aufgerufen");
+    steuerungLogbuch(true); // Zeigt nur den Logbuch-Button an
+    const logbuchContainer = document.getElementById("logbuch-container");
+    if (logbuchContainer) {
+        logbuchContainer.style.display = "none"; // Versteckt das Logbuch
+         }
     console.log("ausloggen() aufgerufen");
     document.getElementById("welcome-text").style.display = "block";
     currentUser = null;
