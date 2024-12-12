@@ -517,35 +517,41 @@ function questErledigt(questNummer) {
                 let quest = quests[questNummer];
 
                 if (quest) {
-                    // Prüfe, ob die Quest für alle Benutzer verfügbar ist
-                    if (quest.alleBenutzer) {
-                        if (!quest.erledigtVon) quest.erledigtVon = {};
-                        if (quest.erledigtVon[currentUser]) {
-                            alert("Diese Quest wurde von dir bereits abgeschlossen.");
-                            return;
-                        }
-                        quest.erledigtVon[currentUser] = true; // Markiere nur für aktuellen Benutzer
-                    } else {
-                        if (quest.erledigt) {
-                            alert("Diese Quest wurde bereits abgeschlossen.");
-                            return;
-                        }
-                        quest.erledigt = true; // Markiere global als erledigt
-                        quest.erledigtVon = currentUser; // Speichere Benutzername
+                    const verbleibendeMenge = quest.maximaleMenge - quest.aktuelleMenge;
+
+                    if (verbleibendeMenge <= 0) {
+                        alert("Diese Quest wurde bereits vollständig abgeschlossen.");
+                        return;
                     }
 
-                    // XP hinzufügen und Fortschritte speichern
-                    xp += quest.xp;
+                    const erledigteMenge = parseInt(prompt(`Wie viele Einheiten möchtest du erledigen? (Verfügbar: ${verbleibendeMenge})`), 10);
+
+                    if (isNaN(erledigteMenge) || erledigteMenge <= 0 || erledigteMenge > verbleibendeMenge) {
+                        alert("Ungültige Eingabe. Bitte gib eine gültige Menge ein.");
+                        return;
+                    }
+
+                    const xpGutschrift = erledigteMenge * quest.xpProEinheit;
+                    xp += xpGutschrift;
+
+                    // Aktualisiere die Quest-Daten
+                    quest.aktuelleMenge += erledigteMenge;
+                    if (!quest.erledigtVon[currentUser]) {
+                        quest.erledigtVon[currentUser] = 0;
+                    }
+                    quest.erledigtVon[currentUser] += erledigteMenge;
+
                     speichereFortschritte();
 
                     // Ins Logbuch eintragen
-                    logbuchEintrag(quest.beschreibung, currentUser, quest.xp);
+                    logbuchEintrag(quest.beschreibung, currentUser, xpGutschrift);
 
                     // Aktualisierte Quests in Firebase speichern
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
-                            console.log(`Quest ${questNummer} wurde erfolgreich aktualisiert.`);
+                            aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
+                            console.log(`Quest ${questNummer} wurde um ${erledigteMenge} Einheiten ergänzt.`);
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der Quest als erledigt:", error);
@@ -557,7 +563,6 @@ function questErledigt(questNummer) {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
-
 
 function aktualisiereQuestImDOM(questNummer, quest) {
     const questList = document.getElementById("quests");
@@ -609,15 +614,18 @@ function erstelleLogbuchSchaltfläche() {
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
-    const neueQuestXP = parseInt(prompt("Wie viele XP soll diese Quest geben?"), 10);
+    const xpProEinheit = parseInt(prompt("Wie viele XP soll jede Einheit dieser Quest geben?"), 10);
+    const maximaleMenge = parseInt(prompt("Wie viele Einheiten sind maximal zu erledigen?"), 10);
     const alleBenutzer = confirm("Kann diese Quest von allen Benutzern abgeschlossen werden? (OK = Ja, Abbrechen = Nein)");
 
-    if (neueQuestBeschreibung && !isNaN(neueQuestXP)) {
+    if (neueQuestBeschreibung && !isNaN(xpProEinheit) && !isNaN(maximaleMenge)) {
         const neueQuest = {
             beschreibung: neueQuestBeschreibung,
-            xp: neueQuestXP,
-            erledigt: false,
-            alleBenutzer: alleBenutzer // Speichere die Checkbox-Einstellung
+            xpProEinheit: xpProEinheit,
+            maximaleMenge: maximaleMenge,
+            aktuelleMenge: 0,
+            erledigtVon: {},
+            alleBenutzer: alleBenutzer
         };
 
         // Speichern der neuen Quest in der globalen Quests-Liste
@@ -643,9 +651,10 @@ function neueQuestErstellen() {
                 console.error("Fehler beim Speichern der neuen Quest:", error);
             });
     } else {
-        alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung und XP ein.");
+        alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung, XP pro Einheit und maximale Menge ein.");
     }
 }
+
 
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
