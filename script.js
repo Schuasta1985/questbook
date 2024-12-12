@@ -546,8 +546,11 @@ function questErledigt(questNummer) {
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
                             console.log(`Quest ${questNummer} wurde als erledigt markiert.`);
+
+                            // Aktualisiere die Quest im DOM
+                            aktualisiereQuestImDOM(questNummer, quest);
+
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                            ladeGlobaleQuests(); // Quests neu laden
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der Quest als erledigt:", error);
@@ -562,6 +565,30 @@ function questErledigt(questNummer) {
         .catch((error) => {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
+}
+
+function aktualisiereQuestImDOM(questNummer, quest) {
+    const questList = document.getElementById("quests");
+    const questElement = questList.children[questNummer];
+
+    if (questElement) {
+        const questText = questElement.querySelector(".quest-text");
+
+        if (questText) {
+            // Setze die Quest als durchgestrichen und füge Erledigt-Info hinzu
+            questText.style.textDecoration = "line-through";
+            const erledigtInfo = quest.alleBenutzer
+                ? `<br><small>Erledigt von: ${currentUser}</small>`
+                : `<br><small>Erledigt von: ${quest.erledigtVon || 'Unbekannt'}</small>`;
+            questText.innerHTML += erledigtInfo;
+        }
+
+        // Entferne den "Erledigt"-Button
+        const erledigtButton = questElement.querySelector("button");
+        if (erledigtButton) {
+            erledigtButton.remove();
+        }
+    }
 }
 
 
