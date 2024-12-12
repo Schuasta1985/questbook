@@ -4,31 +4,24 @@ let level = 1;
 let currentUser = null;
 let isAdmin = false;
 
-// Fortschritte beim Laden der Seite wiederherstellen
 window.onload = function () {
-    erstelleLogbuchSchaltfläche();
-    const letzterTag = localStorage.getItem("letzteHPRegeneration");
     const heutigesDatum = new Date().toDateString();
-   
+    const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
+    // HP einmal am Tag regenerieren
     if (letzterTag !== heutigesDatum) {
-        // HP nur einmal am Tag regenerieren
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
 
-    // Bestehender Code in window.onload
+    // Startseite anzeigen und Logbuch erstellen
     console.log("window.onload aufgerufen");
     zeigeStartseite();
-     erstelleLogbuch();
-    ladeLogbuch(); // Optional: Falls serverseitige Speicherung genutzt wird
-    steuerungLogbuch(true); // Logbuch-Button auf der Startseite anzeigen
-
-    const npcLoginButton = document.getElementById("npcLoginButton");
-    if (npcLoginButton) {
-        npcLoginButton.onclick = npcLogin;
-    }
+    erstelleLogbuch(); // Logbuch-Container erstellen
+    ladeLogbuch(); // Optionale Daten aus Firebase laden
 };
+
+
 // Logbuch nur auf der Startseite sichtbar machen
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
@@ -515,16 +508,14 @@ function questErledigt(questNummer) {
                 if (quests[questNummer]) {
                     quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
                     quests[questNummer].erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
-                    const xp = quests[questNummer].xp; // XP der Quest
-                    const beschreibung = quests[questNummer].beschreibung; // Beschreibung der Quest
 
-                    xp += xp; // XP hinzufügen
+                    // Richtiges Hinzufügen der XP
+                    xp += quests[questNummer].xp;
+
                     speichereFortschritte(); // Fortschritte speichern
+                    logbuchEintrag(quests[questNummer].beschreibung, currentUser, quests[questNummer].xp);
 
-                    // Ins Logbuch eintragen
-                    logbuchEintrag(beschreibung, currentUser, xp);
-
-                    firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
+                    firebase.database().ref('quests').set(quests)
                         .then(() => {
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
