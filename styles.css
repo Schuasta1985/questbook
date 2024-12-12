@@ -383,4 +383,45 @@ button:hover {
 .mp-bar .progress {
     background: blue;
 }
+#logbuch-container {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 300px;
+    max-height: 400px; /* Begrenzung der Höhe */
+    overflow-y: auto; /* Scrollbar, falls der Inhalt die maximale Höhe überschreitet */
+    background-color: rgba(0, 0, 0, 0.8); /* Schwarzer, halbtransparenter Hintergrund */
+    color: white; /* Weiße Schriftfarbe */
+    padding: 10px; /* Abstand innerhalb des Containers */
+    border-radius: 10px; /* Abgerundete Ecken */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
+    z-index: 1000; /* Stellt sicher, dass das Logbuch über anderen Elementen liegt */
+}
+
+#logbuch-container h3 {
+    margin: 0 0 10px; /* Abstand zum unteren Rand */
+    font-size: 1.2em; /* Größere Schrift für den Titel */
+    color: #FFD700; /* Goldene Schriftfarbe für den Titel */
+}
+
+#logbuch-list {
+    list-style: none; /* Entfernt Aufzählungspunkte */
+    padding: 0; /* Kein Innenabstand */
+    margin: 0; /* Kein Außenabstand */
+}
+
+#logbuch-list li {
+    margin-bottom: 10px; /* Abstand zwischen den Einträgen */
+    padding: 5px; /* Innerer Abstand für bessere Lesbarkeit */
+    border-bottom: 1px solid #FFD700; /* Unterstrich für Abgrenzung */
+}
+
+#logbuch-list li:last-child {
+    border-bottom: none; /* Entfernt die Linie beim letzten Eintrag */
+}
+
+#logbuch-list strong {
+    color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
+}
+
 
