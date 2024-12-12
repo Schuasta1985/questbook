@@ -205,6 +205,7 @@ function benutzerAnmeldung() {
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
         npcLoginSection.style.display = "none";
+        }
     steuerungLogbuch(false); // Logbuch-Button ausblenden
     // Verstecke Begrüßungstext
     document.getElementById("welcome-text").style.display = "none";
