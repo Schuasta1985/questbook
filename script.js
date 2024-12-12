@@ -506,16 +506,27 @@ function questErledigt(questNummer) {
             if (snapshot.exists()) {
                 let quests = snapshot.val() || [];
                 if (quests[questNummer]) {
-                    quests[questNummer].erledigt = true; // Markiere die Quest als erledigt
-                    quests[questNummer].erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
+                    const quest = quests[questNummer];
 
-                    // Richtiges Hinzufügen der XP
-                    xp += quests[questNummer].xp;
+                    // Prüfe, ob die Quest für alle Benutzer abschließbar ist
+                    if (!quest.alleBenutzer && quest.erledigt) {
+                        alert("Diese Quest wurde bereits abgeschlossen.");
+                        return;
+                    }
 
+                    quest.erledigt = true; // Markiere die Quest als erledigt
+                    quest.erledigtVon = currentUser || "Unbekannt"; // Speichere Benutzername
+                    const xp = quest.xp; // XP der Quest
+                    const beschreibung = quest.beschreibung; // Beschreibung der Quest
+
+                    // XP hinzufügen
+                    xp += xp;
                     speichereFortschritte(); // Fortschritte speichern
-                    logbuchEintrag(quests[questNummer].beschreibung, currentUser, quests[questNummer].xp);
 
-                    firebase.database().ref('quests').set(quests)
+                    // Ins Logbuch eintragen
+                    logbuchEintrag(beschreibung, currentUser, xp);
+
+                    firebase.database().ref('quests').set(quests) // Speichere die aktualisierten Quests
                         .then(() => {
                             aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
                             ladeGlobaleQuests(); // Quests neu laden
@@ -531,7 +542,6 @@ function questErledigt(questNummer) {
             console.error("Fehler beim Markieren der Quest als erledigt:", error);
         });
 }
-
 
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
@@ -559,12 +569,14 @@ function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
     const neueQuestXP = parseInt(prompt("Wie viele XP soll diese Quest geben?"), 10);
+    const alleBenutzer = confirm("Kann diese Quest von allen Benutzern abgeschlossen werden? (OK = Ja, Abbrechen = Nein)");
 
     if (neueQuestBeschreibung && !isNaN(neueQuestXP)) {
         const neueQuest = {
             beschreibung: neueQuestBeschreibung,
             xp: neueQuestXP,
-            erledigt: false
+            erledigt: false,
+            alleBenutzer: alleBenutzer // Speichere die Checkbox-Einstellung
         };
 
         // Speichern der neuen Quest in der globalen Quests-Liste
