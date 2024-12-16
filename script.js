@@ -74,6 +74,8 @@ function erstelleLogbuch() {
     logbuchButton.style.cursor = "pointer";
     logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
     logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
+    logbuchButton.style.display = "block";
+
 
 
     logbuchButton.addEventListener("click", () => {
