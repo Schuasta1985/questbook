@@ -840,50 +840,54 @@ function questBearbeiten(questNummer) {
     });
 }
 
-
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
     if (currentUser) {
         const avatarContainer = document.getElementById("avatar-container");
+        const hpContainer = document.getElementById("hp-bar-container");
+        const mpContainer = document.getElementById("mp-bar-container");
+        const questsSection = document.getElementById("quests-section");
+        const levelSetContainer = document.getElementById("level-set-container");
 
+        // Fehlerprüfung
         if (!avatarContainer) {
             console.error("Avatar-Container wurde nicht gefunden!");
             return;
         }
 
+        // Avatar-Video Pfad laden
         const avatarPath = getAvatarForUser(currentUser);
-
         if (!avatarPath) {
             console.error(`Kein Avatar gefunden für Benutzer: ${currentUser}`);
             return;
         }
 
-        // Avatar-Video einfügen
+        // Avatar einfügen
         avatarContainer.innerHTML = `
             <video autoplay loop muted class="${currentUser === 'Jamie' ? 'avatar-jamie' : 'avatar-general'}">
                 <source src="${avatarPath}" type="video/mp4">
                 Dein Browser unterstützt das Video-Tag nicht.
             </video>
         `;
-
         avatarContainer.style.display = "flex"; // Avatar sichtbar machen
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
+
+        // HP- und MP-Leisten sichtbar machen
+        if (hpContainer) hpContainer.style.display = "flex";
+        if (mpContainer) mpContainer.style.display = "flex";
+
+        // Quests-Sektion anpassen
+        if (questsSection) questsSection.style.marginTop = "0px";
+
+        // Level-Set-Container verstecken
+        if (levelSetContainer) levelSetContainer.style.display = "none";
+
+        console.log("Avatar und Leisten wurden erfolgreich angezeigt.");
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
-    // Platz für den Avatar zurücksetzen
-    const questsSection = document.getElementById("quests-section");
-    if (questsSection) {
-        questsSection.style.marginTop = "0px";
-    }
-
-    // Level-Set-Container verstecken
-    const levelSetContainer = document.getElementById("level-set-container");
-    if (levelSetContainer) {
-        levelSetContainer.style.display = "none";
-    }
 
 // Ausloggen
 function ausloggen() {
