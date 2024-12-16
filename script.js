@@ -5,6 +5,8 @@ let currentUser = null;
 let isAdmin = false;
 
 window.onload = function () {
+    erstelleLogbuch(); // Logbuch-Container erstellen
+    console.log("Logbuch-Button vorhanden?", document.getElementById("logbuch-button"));
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
@@ -13,7 +15,6 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-    erstelleLogbuch(); // Logbuch-Container erstellen
     steuerungLogbuch(false); // Logbuch zu Beginn verstecken
 
     // Startseite anzeigen und Logbuch erstellen
