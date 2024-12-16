@@ -423,5 +423,20 @@ button:hover {
 #logbuch-list strong {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
+#logbuch-button {
+    display: block !important;
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
 
 
