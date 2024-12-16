@@ -886,13 +886,11 @@ function ausloggen() {
     console.log("ausloggen() aufgerufen");
 
     // Logbuch-Button ausblenden
-
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) logbuchButton.style.display = "none";
 
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
-    }
 
     // Globale Variablen zurücksetzen
     currentUser = null;
@@ -948,6 +946,7 @@ function ausloggen() {
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
+
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
 
