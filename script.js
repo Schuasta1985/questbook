@@ -73,6 +73,8 @@ function erstelleLogbuch() {
     logbuchButton.style.padding = "10px";
     logbuchButton.style.cursor = "pointer";
     logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+    logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
+
 
     logbuchButton.addEventListener("click", () => {
         logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
@@ -80,6 +82,8 @@ function erstelleLogbuch() {
 
     document.body.appendChild(logbuchButton); // Button anhängen
     console.log("Logbuch-Button und Container erstellt.");
+    console.log("Logbuch-Button:", document.getElementById("logbuch-button"));
+
 }
 
 // Quest ins Logbuch eintragen
