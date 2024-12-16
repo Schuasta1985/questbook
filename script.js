@@ -25,11 +25,12 @@ window.onload = function () {
 
 
 // Logbuch nur auf der Startseite ausblenden
-// Logbuch-Button steuern
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
         logbuchButton.style.display = anzeigen ? "block" : "none";
+    } else {
+        console.warn("Logbuch-Button wurde noch nicht erstellt.");
     }
 }
 
@@ -72,6 +73,14 @@ function erstelleLogbuch() {
     logbuchButton.style.padding = "10px";
     logbuchButton.style.cursor = "pointer";
     logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+
+    logbuchButton.addEventListener("click", () => {
+        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+    });
+
+    document.body.appendChild(logbuchButton); // Button anhängen
+    console.log("Logbuch-Button und Container erstellt.");
+}
 
     // Button-Klick-Event: Container ein- oder ausblenden
     logbuchButton.addEventListener("click", () => {
