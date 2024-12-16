@@ -13,10 +13,11 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-        // Logbuch-Button explizit verstecken
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "none";
+    // Logbuch-Button explizit verstecken
+    steuerungLogbuch(false);
+    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
 
+    
     // Startseite anzeigen und Logbuch erstellen
     console.log("window.onload aufgerufen");
     zeigeStartseite();
@@ -149,7 +150,8 @@ function ladeLogbuch() {
 // Startseite anzeigen
 function zeigeStartseite() {
     steuerungLogbuch(false);
-        const logbuchButton = document.getElementById("logbuch-button");
+    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
+
     if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button verstecken
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
@@ -199,6 +201,8 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
     steuerungLogbuch(true); // Logbuch-Button einblenden
+    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
+
     // Verstecke NPC-Login-Bereich
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
@@ -616,6 +620,7 @@ function aktualisiereQuestImDOM(questNummer, quest) {
 
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
+    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
@@ -879,11 +884,11 @@ function zeigeAvatar() {
 // Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
-
+    
     // Logbuch-Button ausblenden
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "none";
-
+    steuerungLogbuch(false);
+    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
+   
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
 
