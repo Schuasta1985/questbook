@@ -13,6 +13,9 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
+        // Logbuch-Button explizit verstecken
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "none";
 
     // Startseite anzeigen und Logbuch erstellen
     console.log("window.onload aufgerufen");
@@ -207,6 +210,9 @@ function benutzerAnmeldung() {
     if (npcLoginSection) {
         npcLoginSection.style.display = "none";
         }
+    // Logbuch-Button einblenden
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "block";
     steuerungLogbuch(true); // Logbuch-Button einblenden
    
     document.getElementById("welcome-text").style.display = "none";
@@ -864,20 +870,6 @@ function zeigeAvatar() {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
-
-// Ausloggen
-function ausloggen() {
-    console.log("ausloggen() aufgerufen");
-    steuerungLogbuch(true); // Zeigt nur den Logbuch-Button an
-
-    const logbuchContainer = document.getElementById("logbuch-container");
-    if (logbuchContainer) {
-        logbuchContainer.style.display = "none"; // Versteckt das Logbuch
-    }
-
-    currentUser = null;
-    isAdmin = false; // Admin-Status zurücksetzen
-
     // Platz für den Avatar zurücksetzen
     const questsSection = document.getElementById("quests-section");
     if (questsSection) {
@@ -889,6 +881,27 @@ function ausloggen() {
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
+
+// Ausloggen
+function ausloggen() {
+    console.log("ausloggen() aufgerufen");
+
+    // Logbuch-Button ausblenden
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = "none";
+        console.log("Logbuch-Button ausgeblendet.");
+    }
+
+    // Logbuch-Container sicher ausblenden
+    const logbuchContainer = document.getElementById("logbuch-container");
+    if (logbuchContainer) {
+        logbuchContainer.style.display = "none";
+    }
+
+    // Globale Variablen zurücksetzen
+    currentUser = null;
+    isAdmin = false; // Admin-Status zurücksetzen
 
     // Avatar-Container zurücksetzen
     const avatarContainer = document.getElementById("avatar-container");
@@ -917,16 +930,15 @@ function ausloggen() {
     // Admin-Bereich entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
-        adminButtonsContainer.remove(); // Löscht den Admin-Bereich vollständig
+        adminButtonsContainer.remove();
     }
 
-    // HP-Anzeige ausblenden
+    // HP- und MP-Anzeige ausblenden
     const hpContainer = document.getElementById("hp-bar-container");
     if (hpContainer) {
         hpContainer.style.display = "none";
     }
 
-    // MP-Anzeige ausblenden
     const mpContainer = document.getElementById("mp-bar-container");
     if (mpContainer) {
         mpContainer.style.display = "none";
@@ -935,14 +947,12 @@ function ausloggen() {
     // Benutzerübersicht einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
     if (benutzerContainer) {
-        benutzerContainer.style.display = "flex"; // Benutzerübersicht anzeigen
+        benutzerContainer.style.display = "flex";
     }
 
     // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
-
-
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
 
