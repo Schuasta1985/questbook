@@ -147,9 +147,7 @@ function ladeLogbuch() {
 // Startseite anzeigen
 function zeigeStartseite() {
     steuerungLogbuch(false);
-    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
-
-    if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button verstecken
+       if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button verstecken
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
@@ -198,9 +196,7 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
     steuerungLogbuch(true); // Logbuch-Button einblenden
-    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
-
-    // Verstecke NPC-Login-Bereich
+      // Verstecke NPC-Login-Bereich
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
         npcLoginSection.style.display = "none";
@@ -884,8 +880,7 @@ function ausloggen() {
     
     // Logbuch-Button ausblenden
     steuerungLogbuch(false);
-    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
-   
+     
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
 
