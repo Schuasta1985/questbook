@@ -360,8 +360,8 @@ button:hover {
 
 /* Logbuch-Container */
 .logbuch-container {
-    position: absolute; /* Ändere von fixed auf absolute */
-    bottom: 60px; /* Höher, um Kollision zu vermeiden */
+    position: fixed; /* Statt absolute */
+    bottom: 60px; /* Abstand vom unteren Rand */
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
@@ -371,7 +371,8 @@ button:hover {
     padding: 10px;
     color: white;
     border-radius: 8px;
-    z-index: 5; /* Noch niedrigerer Z-Index */
+    z-index: 5; /* Sicherstellen, dass es nicht über allem liegt */
+    display: none; /* Unsichtbar beim Start */
 }
 
 
@@ -400,53 +401,52 @@ button:hover {
 #logbuch-list strong {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
-/* Logbuch-Button */
+
 .logbuch-button {
     position: fixed;
-    bottom: 60px; /* Button-Position anpassen */
-    left: 50%; /* Zentriert horizontal */
-    transform: translateX(-50%);
+    bottom: 10px;
+    left: 10px;
     background-color: black;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 5; /* Niedrig halten */
 }
+
 .logbuch-button:hover {
-    background-color: #333; /* Leichter Hover-Effekt */
+    background-color: #333; /* Hover-Farbe */
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .logbuch-button {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 /* NPC Login */
 #npc-login-section {
-    position: absolute; /* Ändere von fixed auf absolute */
-    bottom: 10px;
+    position: fixed;
+    bottom: 10px; /* Abstand vom unteren Rand */
     right: 10px;
     background-color: rgba(0, 0, 0, 0.7);
     padding: 10px;
     border-radius: 8px;
-    z-index: 10; /* Geringer Z-Index, damit es nicht überlappt */
+    z-index: 5; /* Sicherstellen, dass es nicht über anderen Elementen liegt */
 }
 
-/* Mobile Ansicht */
 @media (max-width: 768px) {
     #npc-login-section {
-        bottom: 0; /* Direkt am unteren Bildschirmrand */
+        bottom: 0;
         left: 0;
-        width: 100%; /* Ganze Breite */
-        padding: 5px;
-        border-radius: 0;
+        right: 0;
+        width: 100%;
         text-align: center;
-        position: relative; /* In den normalen Layoutfluss integrieren */
-        z-index: 1;
-    }
-
-    .logbuch-container {
-        bottom: 80px;
-        width: 95%;
-        left: 2.5%;
-        position: relative; /* Für mobile Ansicht statisch ausrichten */
+        border-radius: 0;
+        z-index: 5; /* Anpassen für mobile Geräte */
     }
 }
