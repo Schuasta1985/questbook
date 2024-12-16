@@ -13,12 +13,12 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
+    erstelleLogbuch(); // Logbuch-Container erstellen
     steuerungLogbuch(false); // Logbuch zu Beginn verstecken
 
     // Startseite anzeigen und Logbuch erstellen
     console.log("window.onload aufgerufen");
     zeigeStartseite();
-    erstelleLogbuch(); // Logbuch-Container erstellen
     ladeLogbuch(); // Optionale Daten aus Firebase laden
 };
 
@@ -144,11 +144,21 @@ function ladeLogbuch() {
         console.error("Fehler beim Laden des Logbuchs:", error);
     });
 }
+
 // Startseite anzeigen
 function zeigeStartseite() {
-    steuerungLogbuch(false);
-       if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button verstecken
     console.log("zeigeStartseite() aufgerufen");
+
+    // Logbuch-Button ausblenden (nach Erstellung)
+    steuerungLogbuch(false);
+
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = "none"; // Logbuch-Button verstecken
+    } else {
+        console.warn("logbuchButton wurde nicht gefunden.");
+    }
+
     const loginSection = document.getElementById("login-section");
 
     if (loginSection) {
@@ -170,6 +180,8 @@ function zeigeStartseite() {
             benutzerLoginButton.onclick = benutzerAnmeldung;
         }
     }
+}
+
 
     // Benutzerinformationen laden und anzeigen
     ladeBenutzerdaten();
