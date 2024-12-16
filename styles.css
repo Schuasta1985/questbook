@@ -386,17 +386,19 @@ button:hover {
 #logbuch-container {
     position: fixed;
     bottom: 10px;
-    left: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 300px;
-    max-height: 400px; /* Begrenzung der Höhe */
-    overflow-y: auto; /* Scrollbar, falls der Inhalt die maximale Höhe überschreitet */
-    background-color: rgba(0, 0, 0, 0.8); /* Schwarzer, halbtransparenter Hintergrund */
-    color: white; /* Weiße Schriftfarbe */
-    padding: 10px; /* Abstand innerhalb des Containers */
-    border-radius: 10px; /* Abgerundete Ecken */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
-    z-index: 1000; /* Stellt sicher, dass das Logbuch über anderen Elementen liegt */
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
+
 
 #logbuch-container h3 {
     margin: 0 0 10px; /* Abstand zum unteren Rand */
@@ -438,5 +440,29 @@ button:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     z-index: 1000;
 }
+
+#npc-login-section {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Stelle sicher, dass es über anderen Elementen bleibt */
+}
+
+@media (max-width: 768px) {
+    #npc-login-section {
+        bottom: 0; /* Direkt am unteren Bildschirmrand */
+        right: 0;
+        left: 0;
+        width: 100%; /* Ganze Breite */
+        padding: 5px;
+        border-radius: 0;
+        text-align: center;
+    }
+}
+
 
 
