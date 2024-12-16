@@ -25,7 +25,6 @@ window.onload = function () {
 
 
 // Logbuch nur auf der Startseite ausblenden
-// Logbuch-Button ein- oder ausblenden
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
@@ -154,16 +153,9 @@ function ladeLogbuch() {
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
 
-    // Logbuch-Button ausblenden (nach Erstellung)
-    steuerungLogbuch(false);
-
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) {
-        console.warn("logbuchButton wurde nicht gefunden.");
-    }
+    steuerungLogbuch(false); // Logbuch auf der Startseite verstecken
 
     const loginSection = document.getElementById("login-section");
-
     if (loginSection) {
         loginSection.innerHTML = `
             <label for="spielerDropdown">Spieler auswählen:</label>
@@ -184,7 +176,6 @@ function zeigeStartseite() {
         }
     }
 }
-
 
     // Benutzerinformationen laden und anzeigen
     ladeBenutzerdaten();
