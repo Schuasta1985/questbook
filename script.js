@@ -888,75 +888,66 @@ function zeigeAvatar() {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
-
-// Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
-    
-    // Logbuch-Button ausblenden
-       const logbuchButton = document.getElementById("logbuch-button");
-        if (logbuchButton) {
-        logbuchButton.style.display = "none"; // Nur ausblenden, nicht löschen
-}
 
-     
+    // Level-Set-Container ausblenden
+    const levelSetContainer = document.getElementById("level-set-container");
+    if (levelSetContainer) {
+        levelSetContainer.style.display = "none";
+    }
+
+    // Logbuch-Button ausblenden
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "none";
+
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
-
-    // Globale Variablen zurücksetzen
-    currentUser = null;
-    isAdmin = false; // Admin-Status zurücksetzen
 
     // Avatar-Container zurücksetzen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
-        avatarContainer.style.display = "none"; // Avatar ausblenden
-        avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
-    }
-
-    // Alle nicht benötigten Bereiche ausblenden
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
-
-    // NPC-Login-Bereich sichtbar machen
-    const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "block";
-    }
-
-    // Quests zurücksetzen (leeren)
-    const questList = document.getElementById("quests");
-    if (questList) {
-        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
-    }
-
-    // Admin-Bereich entfernen
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (adminButtonsContainer) {
-        adminButtonsContainer.remove();
+        avatarContainer.style.display = "none";
+        avatarContainer.innerHTML = "";
     }
 
     // HP- und MP-Anzeige ausblenden
     const hpContainer = document.getElementById("hp-bar-container");
-    if (hpContainer) {
-        hpContainer.style.display = "none";
-    }
+    if (hpContainer) hpContainer.style.display = "none";
 
     const mpContainer = document.getElementById("mp-bar-container");
-    if (mpContainer) {
-        mpContainer.style.display = "none";
-    }
+    if (mpContainer) mpContainer.style.display = "none";
 
-    // Benutzerübersicht einblenden
+    // NPC-Login-Bereich wieder einblenden
+    const npcLoginSection = document.getElementById("npc-login-section");
+    if (npcLoginSection) npcLoginSection.style.display = "block";
+
+    // Quests zurücksetzen (leeren)
+    const questList = document.getElementById("quests");
+    if (questList) questList.innerHTML = "";
+
+    // XP- und Questbereich ausblenden
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("xp-counter").style.display = "none";
+
+    // Admin-Bereich entfernen
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (adminButtonsContainer) adminButtonsContainer.remove();
+
+    // Benutzerübersicht wieder einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
-    if (benutzerContainer) {
-        benutzerContainer.style.display = "flex";
-    }
+    if (benutzerContainer) benutzerContainer.style.display = "flex";
 
-    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
+    // Globale Variablen zurücksetzen
+    currentUser = null;
+    isAdmin = false;
+
+    // Zurück zur Startseite
     zeigeStartseite();
+
+    console.log("Benutzer erfolgreich ausgeloggt.");
 }
+
 
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
