@@ -34,11 +34,10 @@ function steuerungLogbuch(anzeigen) {
         logbuchButton.style.display = anzeigen ? "block" : "none";
     }
 
-    if (logbuchContainer) {
-        logbuchContainer.style.display = "none"; // Logbuch bleibt zunächst versteckt
+    if (logbuchContainer && anzeigen) {
+        logbuchContainer.style.display = "none"; // Logbuch bleibt zu Beginn versteckt
     }
 }
-
 
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
@@ -204,7 +203,7 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-    
+    steuerungLogbuch(true); // Logbuch-Button einblenden
     // Verstecke NPC-Login-Bereich
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
@@ -213,7 +212,7 @@ function benutzerAnmeldung() {
     // Logbuch-Button einblenden
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) logbuchButton.style.display = "block";
-    steuerungLogbuch(true); // Logbuch-Button einblenden
+    
    
     document.getElementById("welcome-text").style.display = "none";
     // Blende die HP- und MP-Bereiche ein
@@ -887,16 +886,12 @@ function ausloggen() {
     console.log("ausloggen() aufgerufen");
 
     // Logbuch-Button ausblenden
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) {
-        logbuchButton.style.display = "none";
-        console.log("Logbuch-Button ausgeblendet.");
-    }
 
-    // Logbuch-Container sicher ausblenden
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) logbuchButton.style.display = "none";
+
     const logbuchContainer = document.getElementById("logbuch-container");
-    if (logbuchContainer) {
-        logbuchContainer.style.display = "none";
+    if (logbuchContainer) logbuchContainer.style.display = "none";
     }
 
     // Globale Variablen zurücksetzen
