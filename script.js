@@ -14,9 +14,7 @@ window.onload = function () {
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
     steuerungLogbuch(false); // Logbuch zu Beginn verstecken
-    console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
 
-    
     // Startseite anzeigen und Logbuch erstellen
     console.log("window.onload aufgerufen");
     zeigeStartseite();
