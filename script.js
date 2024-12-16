@@ -153,7 +153,7 @@ function ladeLogbuch() {
 function zeigeStartseite() {
     steuerungLogbuch(false);
         const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button einblenden
+    if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button verstecken
     console.log("zeigeStartseite() aufgerufen");
     const loginSection = document.getElementById("login-section");
 
@@ -208,7 +208,7 @@ function benutzerAnmeldung() {
         npcLoginSection.style.display = "none";
         }
     steuerungLogbuch(true); // Logbuch-Button einblenden
-    // Verstecke Begrüßungstext
+   
     document.getElementById("welcome-text").style.display = "none";
     // Blende die HP- und MP-Bereiche ein
     document.getElementById("hp-bar-container").style.display = "block";
