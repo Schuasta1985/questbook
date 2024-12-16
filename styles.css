@@ -360,20 +360,18 @@ button:hover {
 
 /* Logbuch-Container */
 .logbuch-container {
-    position: fixed;
-    bottom: 120px; /* Höher positioniert, um nicht mit dem Button zu kollidieren */
+    position: absolute; /* Ändere von fixed auf absolute */
+    bottom: 60px; /* Höher, um Kollision zu vermeiden */
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
     max-height: 400px;
     overflow-y: auto;
     background-color: rgba(0, 0, 0, 0.8);
-    color: white;
     padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    display: none; /* Startet unsichtbar */
-    z-index: 1000;
+    color: white;
+    border-radius: 8px;
+    z-index: 5; /* Noch niedrigerer Z-Index */
 }
 
 
@@ -421,27 +419,34 @@ button:hover {
     background-color: #333; /* Leichter Hover-Effekt */
 }
 
+/* NPC Login */
 #npc-login-section {
-    position: fixed;
+    position: absolute; /* Ändere von fixed auf absolute */
     bottom: 10px;
     right: 10px;
     background-color: rgba(0, 0, 0, 0.7);
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000; /* Stelle sicher, dass es über anderen Elementen bleibt */
+    z-index: 10; /* Geringer Z-Index, damit es nicht überlappt */
 }
 
+/* Mobile Ansicht */
 @media (max-width: 768px) {
     #npc-login-section {
         bottom: 0; /* Direkt am unteren Bildschirmrand */
-        right: 0;
         left: 0;
         width: 100%; /* Ganze Breite */
         padding: 5px;
         border-radius: 0;
         text-align: center;
+        position: relative; /* In den normalen Layoutfluss integrieren */
+        z-index: 1;
+    }
+
+    .logbuch-container {
+        bottom: 80px;
+        width: 95%;
+        left: 2.5%;
+        position: relative; /* Für mobile Ansicht statisch ausrichten */
     }
 }
-
-
