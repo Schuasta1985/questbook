@@ -168,32 +168,6 @@ button:hover {
     background-color: #B22222; /* Sattes Rot */
 }
 
-/* Admin Login */
-.admin-login {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 180px; /* Reduzierte Breite */
-}
-
-.admin-login input {
-    margin: 5px 0;
-    padding: 5px;
-    width: calc(100% - 20px);
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-}
-
-.admin-login button {
-    width: 100%;
-    margin-top: 10px;
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-    padding: 5px 10px; /* Kleinere Buttons */
-}
-
 #quests-section h2 {
     text-align: center;
     font-size: 1.5em;
@@ -386,19 +360,18 @@ button:hover {
 /* Logbuch-Container fixieren */
 #logbuch-container {
     position: fixed;
-    bottom: 10px;
-    left: 10px;
+    bottom: 20px; /* Abstand zum unteren Rand */
+    left: 20px; /* Abstand zum linken Rand */
+    z-index: 5; /* Unterhalb wichtiger Buttons */
+    background-color: rgba(0, 0, 0, 0.9); /* Dunkler Hintergrund */
+    color: white;
     width: 300px;
     max-height: 400px;
-    overflow-y: auto; /* Scrollbar bei zu viel Inhalt */
-    background-color: rgba(0, 0, 0, 0.8); /* Schwarzer, transparenter Hintergrund */
-    color: white;
+    overflow-y: auto;
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Oberste Ebene */
 }
-
 #logbuch-container h3 {
     margin: 0 0 10px; /* Abstand zum unteren Rand */
     font-size: 1.2em; /* Größere Schrift für den Titel */
@@ -428,35 +401,55 @@ button:hover {
     position: fixed;
     bottom: 20px;
     left: 50%;
-    transform: translateX(-50%); /* Exakte Zentrierung */
+    transform: translateX(-50%);
+    z-index: 10; /* Nicht überlagern */
     background-color: black;
     color: white;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
-    padding: 10px 20px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Priorität über anderen Elementen */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
 }
 
-/* NPC Login fixieren */
-.npc-login {
+/* NPC-Login fixieren, aber nicht überdecken */
+#npc-login-section {
     position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(255, 255, 255, 0.8); /* Hintergrundfarbe mit Transparenz */
-    padding: 10px;
+    bottom: 20px; /* Abstand zum unteren Rand */
+    right: 20px; /* Abstand zum rechten Rand */
+    z-index: 10; /* Stelle sicher, dass er unter anderen wichtigen Elementen bleibt */
+    background: rgba(255, 255, 255, 0.95); /* Transparenter Hintergrund */
+    border: 2px solid #FFD700; /* Goldener Rahmen */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000; /* Stellt sicher, dass die Box über anderen Inhalten bleibt */
-    width: 180px; /* Breite für eine saubere Anzeige */
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Schattierung */
+    width: 220px;
+    text-align: center;
 }
 
-.npc-login input, .npc-login button {
-    margin: 5px 0;
-    width: 100%; /* Volle Breite */
-    padding: 5px;
-    font-size: 14px; /* Kleinere Schriftgröße */
+#npc-login-section input {
+    margin-bottom: 10px;
+    width: 90%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Verhindert Überlauf */
+}
+
+#npc-login-section button {
+    background-color: #808000; /* Olivgrün */
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#npc-login-section button:hover {
+    background-color: #B22222; /* Rot beim Hovern */
 }
 
 
