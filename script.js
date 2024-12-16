@@ -3,12 +3,6 @@ let xp = 0;
 let level = 1;
 let currentUser = null;
 let isAdmin = false;
-// Globale Variablen für HP und MP
-let aktuelleHP = 100;
-let aktuelleMP = 50;
-let maxHP = 100;
-let maxMP = 50;
-
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
@@ -332,26 +326,25 @@ function ladeFortschritte() {
                     const data = snapshot.val();
                     xp = data.xp || 0;
                     level = data.level || 1;
-
-                    // HP und MP laden oder berechnen
                     aktuelleHP = data.hp || berechneMaxHP(level);
-                    maxHP = berechneMaxHP(level);
-                    aktuelleMP = data.mp || berechneMaxMP(level);
-                    maxMP = berechneMaxMP(level);
+                    maxHP = data.maxHP || berechneMaxHP(level);
+                    aktuelleMP = data.mp || berechneMaxMP(level); // Ergänzung
+                    maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
 
                     // Anzeigen aktualisieren
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level);
+                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
                 } else {
-                    console.log("Keine Fortschrittsdaten gefunden. Standardwerte werden gesetzt.");
+                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
+
+                    // Standardwerte setzen, falls keine Daten vorhanden
                     aktuelleHP = berechneMaxHP(1);
                     maxHP = berechneMaxHP(1);
                     aktuelleMP = berechneMaxMP(1);
                     maxMP = berechneMaxMP(1);
 
                     // Anzeigen aktualisieren
-                    aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, 1);
                     aktualisiereMPLeiste(aktuelleMP, 1);
                 }
@@ -847,15 +840,12 @@ function questBearbeiten(questNummer) {
     });
 }
 
+
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
     if (currentUser) {
-        ladeFortschritte(); // ZUERST Fortschritte laden
-
         const avatarContainer = document.getElementById("avatar-container");
-        const hpContainer = document.getElementById("hp-bar-container");
-        const mpContainer = document.getElementById("mp-bar-container");
 
         if (!avatarContainer) {
             console.error("Avatar-Container wurde nicht gefunden!");
@@ -876,30 +866,24 @@ function zeigeAvatar() {
                 Dein Browser unterstützt das Video-Tag nicht.
             </video>
         `;
+
         avatarContainer.style.display = "flex"; // Avatar sichtbar machen
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
-
-        // HP- und MP-Leisten anzeigen
-        setTimeout(() => { // Warte kurz, bis ladeFortschritte abgeschlossen ist
-            if (hpContainer) {
-                hpContainer.style.display = "block";
-                hpContainer.innerHTML = `<div id="hp-progress" style="background-color: green; height: 20px; line-height: 20px; color: white; text-align: center;">
-                    ${aktuelleHP} / ${berechneMaxHP(level)} HP
-                </div>`;
-            }
-
-            if (mpContainer) {
-                mpContainer.style.display = "block";
-                mpContainer.innerHTML = `<div id="mp-progress" style="background-color: blue; height: 20px; line-height: 20px; color: white; text-align: center;">
-                    ${aktuelleMP} / ${berechneMaxMP(level)} MP
-                </div>`;
-            }
-        }, 100); // Kleine Verzögerung, um sicherzustellen, dass Firebase-Daten geladen sind
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
+    // Platz für den Avatar zurücksetzen
+    const questsSection = document.getElementById("quests-section");
+    if (questsSection) {
+        questsSection.style.marginTop = "0px";
+    }
 
+    // Level-Set-Container verstecken
+    const levelSetContainer = document.getElementById("level-set-container");
+    if (levelSetContainer) {
+        levelSetContainer.style.display = "none";
+    }
 
 // Ausloggen
 function ausloggen() {
