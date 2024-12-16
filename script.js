@@ -82,17 +82,6 @@ function erstelleLogbuch() {
     console.log("Logbuch-Button und Container erstellt.");
 }
 
-    // Button-Klick-Event: Container ein- oder ausblenden
-    logbuchButton.addEventListener("click", () => {
-        if (logbuchContainer.style.display === "none") {
-            logbuchContainer.style.display = "block";
-        } else {
-            logbuchContainer.style.display = "none";
-        }
-    });
-}
-
-
 // Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
     console.log("Neuer Logbuch-Eintrag wird erstellt...");
