@@ -207,22 +207,9 @@ function zeigeQuestbook() {
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
-    steuerungLogbuch(true); // Logbuch-Button einblenden
-      // Verstecke NPC-Login-Bereich
-    const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "none";
-        }
-    // Logbuch-Button einblenden
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "block";
-    
-   
-    document.getElementById("welcome-text").style.display = "none";
-    // Blende die HP- und MP-Bereiche ein
-    document.getElementById("hp-bar-container").style.display = "block";
-    document.getElementById("mp-bar-container").style.display = "block"; // MP-Leiste einblenden
 
+    const npcLoginSection = document.getElementById("npc-login-section");
+    const logbuchButton = document.getElementById("logbuch-button");
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
@@ -233,6 +220,7 @@ function benutzerAnmeldung() {
         return;
     }
 
+    // Benutzername und Passwort auslesen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
@@ -243,7 +231,7 @@ function benutzerAnmeldung() {
         Jamie: "602060",
     };
 
-    // Überprüfen, ob Benutzername und Passwort korrekt sind
+    // Validierung der Benutzerdaten
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -260,20 +248,21 @@ function benutzerAnmeldung() {
 
     console.log(`${benutzername} erfolgreich angemeldet`);
 
-    // Verstecke Benutzerübersicht
-    if (benutzerContainer) {
-        benutzerContainer.style.display = "none";
-    }
+    // Verstecke unnötige Bereiche
+    if (npcLoginSection) npcLoginSection.style.display = "none";
+    if (benutzerContainer) benutzerContainer.style.display = "none";
+    if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button anzeigen
 
-    // Lade Benutzerinformationen
+    // Starte die Benutzeroberfläche
     zeigeQuestbook();          // Quests anzeigen
-    ladeFortschritte();        // HP und MP laden
-    täglicheHPRegeneration();  // Regeneration nach Anmeldung ausführen
+    ladeFortschritte();        // Fortschritte (HP, MP) laden
+    täglicheHPRegeneration();  // Tägliche Regeneration ausführen
     zeigeAvatar();             // Avatar anzeigen
-    ladeGlobaleQuests();       // Globale Quests laden
+    ladeGlobaleQuests();       // Quests laden
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
+
 
 
 // NPC Login
