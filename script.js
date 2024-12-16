@@ -28,8 +28,6 @@ window.onload = function () {
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
-        logbuchButton.style.display = anzeigen ? "block" : "none";
-    } else {
         console.warn("Logbuch-Button wurde noch nicht erstellt.");
     }
 }
@@ -74,15 +72,13 @@ function erstelleLogbuch() {
     logbuchButton.style.cursor = "pointer";
     logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
     logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
-    logbuchButton.style.display = "block";
     logbuchButton.addEventListener("click", () => {
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+    logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
     });
 
     document.body.appendChild(logbuchButton); // Button anhängen
     setTimeout(() => {
-    console.log("Logbuch-Button Stil nach 1 Sekunde:", logbuchButton.style.display);
-    }, 1000);
+
 
     console.log("Logbuch-Button und Container erstellt.");
     console.log("Logbuch-Button:", document.getElementById("logbuch-button"));
@@ -160,8 +156,6 @@ function zeigeStartseite() {
 
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
-        logbuchButton.style.display = "none"; // Logbuch-Button verstecken
-    } else {
         console.warn("logbuchButton wurde nicht gefunden.");
     }
 
@@ -202,8 +196,6 @@ function zeigeStartseite() {
 // Questbuch anzeigen
 function zeigeQuestbook() {
         const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "none"; // Logbuch-Button ausblenden
-    console.log("zeigeQuestbook() aufgerufen");
     document.getElementById("quests-section").style.display = "block";
     document.getElementById("xp-counter").style.display = "block";
     document.getElementById("logout-button").style.display = "block";
@@ -257,7 +249,6 @@ function benutzerAnmeldung() {
     // Verstecke unnötige Bereiche
     if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
-    if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button anzeigen
 
     // Starte die Benutzeroberfläche
     zeigeQuestbook();          // Quests anzeigen
