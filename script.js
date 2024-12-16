@@ -5,8 +5,13 @@ let currentUser = null;
 let isAdmin = false;
 
 window.onload = function () {
-    erstelleLogbuch(); // Logbuch-Container erstellen
-    console.log("Logbuch-Button vorhanden?", document.getElementById("logbuch-button"));
+    console.log("window.onload aufgerufen");
+
+    erstelleLogbuch(); // Logbuch erstellen
+    setTimeout(() => {
+        steuerungLogbuch(false); // Logbuch-Button nach Erstellung verstecken
+    }, 0);
+
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
@@ -15,12 +20,9 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-    steuerungLogbuch(false); // Logbuch zu Beginn verstecken
 
-    // Startseite anzeigen und Logbuch erstellen
-    console.log("window.onload aufgerufen");
     zeigeStartseite();
-    ladeLogbuch(); // Optionale Daten aus Firebase laden
+    ladeLogbuch();
 };
 
 
@@ -153,7 +155,7 @@ function ladeLogbuch() {
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
 
-    steuerungLogbuch(false); // Logbuch auf der Startseite verstecken
+    steuerungLogbuch(false); // Logbuch-Button ausblenden
 
     const loginSection = document.getElementById("login-section");
     if (loginSection) {
@@ -175,17 +177,15 @@ function zeigeStartseite() {
             benutzerLoginButton.onclick = benutzerAnmeldung;
         }
     }
-}
-
-    // Benutzerinformationen laden und anzeigen
-    ladeBenutzerdaten();
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
-    document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
+    document.getElementById("npc-login-section").style.display = "block";
 
+    ladeBenutzerdaten();
+}
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
