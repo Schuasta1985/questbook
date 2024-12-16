@@ -191,7 +191,7 @@ function zeigeStartseite() {
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("npc-login-section").style.display = "block"; // Nur auf der Startseite sichtbar
-}
+
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
