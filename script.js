@@ -55,51 +55,22 @@ function erstelleLogbuch() {
     // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
-    logbuchContainer.style.position = "fixed";
-    logbuchContainer.style.bottom = "120px"; // Höher, damit es nicht mit dem Button kollidiert
-    logbuchContainer.style.left = "50%";
-    logbuchContainer.style.transform = "translateX(-50%)";
-    logbuchContainer.style.width = "300px";
-    logbuchContainer.style.maxHeight = "400px";
-    logbuchContainer.style.overflowY = "auto";
-    logbuchContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    logbuchContainer.style.color = "white";
-    logbuchContainer.style.padding = "10px";
-    logbuchContainer.style.borderRadius = "10px";
-    logbuchContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
-    logbuchContainer.style.display = "none"; // Zunächst versteckt
-    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
-
+    logbuchContainer.classList.add("logbuch-container"); // Klasse zuweisen
+    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
     document.body.appendChild(logbuchContainer); // Container anhängen
 
     // Button für das Öffnen/Schließen des Logbuchs
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
+    logbuchButton.classList.add("logbuch-button"); // Klasse zuweisen
     logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "60px"; // Button-Position anpassen
-    logbuchButton.style.left = "50%"; // Zentriert horizontal
-    logbuchButton.style.transform = "translateX(-50%)";
-    logbuchButton.style.backgroundColor = "black";
-    logbuchButton.style.color = "white";
-    logbuchButton.style.border = "none";
-    logbuchButton.style.borderRadius = "5px";
-    logbuchButton.style.padding = "10px";
-    logbuchButton.style.cursor = "pointer";
-    logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
-    logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
     logbuchButton.addEventListener("click", () => {
         logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
     });
 
     document.body.appendChild(logbuchButton); // Button anhängen
-
-    setTimeout(() => {
-        console.log("Logbuch-Button und Container erstellt.");
-        console.log("Logbuch-Button:", document.getElementById("logbuch-button"));
-    }, 0); // Timeout schließen
-} // Funktion schließen
-
+    console.log("Logbuch-Button und Container erstellt.");
+}
 
 // Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
