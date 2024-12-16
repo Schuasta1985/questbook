@@ -424,7 +424,7 @@ button:hover {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
 #logbuch-button {
-    display: block !important;
+    display: none;
     position: fixed;
     bottom: 60px;
     left: 50%;
