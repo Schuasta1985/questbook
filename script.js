@@ -13,8 +13,7 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-    // Logbuch-Button explizit verstecken
-    steuerungLogbuch(false);
+    steuerungLogbuch(false); // Logbuch zu Beginn verstecken
     console.log(`steuerungLogbuch aufgerufen mit anzeigen=${anzeigen}`);
 
     
