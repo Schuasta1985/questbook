@@ -22,19 +22,17 @@ window.onload = function () {
 };
 
 
-// Logbuch nur auf der Startseite sichtbar machen
+// Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
     const logbuchContainer = document.getElementById("logbuch-container");
 
     if (logbuchButton) {
-        logbuchButton.style.display = anzeigen ? "block" : "none"; // Zeigt oder versteckt nur den Button
+        logbuchButton.style.display = anzeigen ? "block" : "none";
     }
 
     if (logbuchContainer) {
-        if (!anzeigen) {
-            logbuchContainer.style.display = "none"; // Versteckt das Logbuch bei Bedarf
-        }
+        logbuchContainer.style.display = "none"; // Logbuch bleibt zunächst versteckt
     }
 }
 
@@ -153,7 +151,7 @@ function ladeLogbuch() {
 }
 // Startseite anzeigen
 function zeigeStartseite() {
-    steuerungLogbuch(true);
+    steuerungLogbuch(false);
         const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) logbuchButton.style.display = "block"; // Logbuch-Button einblenden
     console.log("zeigeStartseite() aufgerufen");
@@ -209,7 +207,7 @@ function benutzerAnmeldung() {
     if (npcLoginSection) {
         npcLoginSection.style.display = "none";
         }
-    steuerungLogbuch(false); // Logbuch-Button ausblenden
+    steuerungLogbuch(true); // Logbuch-Button einblenden
     // Verstecke Begrüßungstext
     document.getElementById("welcome-text").style.display = "none";
     // Blende die HP- und MP-Bereiche ein
