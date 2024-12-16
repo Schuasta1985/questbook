@@ -25,9 +25,12 @@ window.onload = function () {
 
 
 // Logbuch nur auf der Startseite ausblenden
+// Logbuch-Button ein- oder ausblenden
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
+        logbuchButton.style.display = anzeigen ? "block" : "none";
+    } else {
         console.warn("Logbuch-Button wurde noch nicht erstellt.");
     }
 }
