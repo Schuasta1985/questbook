@@ -840,12 +840,13 @@ function questBearbeiten(questNummer) {
     });
 }
 
-
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
     if (currentUser) {
         const avatarContainer = document.getElementById("avatar-container");
+        const hpContainer = document.getElementById("hp-bar-container");
+        const mpContainer = document.getElementById("mp-bar-container");
 
         if (!avatarContainer) {
             console.error("Avatar-Container wurde nicht gefunden!");
@@ -866,24 +867,29 @@ function zeigeAvatar() {
                 Dein Browser unterstützt das Video-Tag nicht.
             </video>
         `;
-
         avatarContainer.style.display = "flex"; // Avatar sichtbar machen
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
+
+        // HP- und MP-Leisten anzeigen
+        if (hpContainer) {
+            hpContainer.style.display = "block";
+            hpContainer.innerHTML = `<div id="hp-progress" style="background-color: green; height: 20px; line-height: 20px; color: white; text-align: center;">
+                ${aktuelleHP || 100} / ${berechneMaxHP(level)} HP
+            </div>`;
+        }
+
+        if (mpContainer) {
+            mpContainer.style.display = "block";
+            mpContainer.innerHTML = `<div id="mp-progress" style="background-color: blue; height: 20px; line-height: 20px; color: white; text-align: center;">
+                ${aktuelleMP || 50} / ${berechneMaxMP(level)} MP
+            </div>`;
+        }
+
+        ladeFortschritte(); // Lädt die aktuellen HP/MP aus Firebase
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
-    // Platz für den Avatar zurücksetzen
-    const questsSection = document.getElementById("quests-section");
-    if (questsSection) {
-        questsSection.style.marginTop = "0px";
-    }
-
-    // Level-Set-Container verstecken
-    const levelSetContainer = document.getElementById("level-set-container");
-    if (levelSetContainer) {
-        levelSetContainer.style.display = "none";
-    }
 
 // Ausloggen
 function ausloggen() {
