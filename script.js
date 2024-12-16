@@ -851,6 +851,8 @@ function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
     if (currentUser) {
+        ladeFortschritte(); // ZUERST Fortschritte laden
+
         const avatarContainer = document.getElementById("avatar-container");
         const hpContainer = document.getElementById("hp-bar-container");
         const mpContainer = document.getElementById("mp-bar-container");
@@ -878,25 +880,26 @@ function zeigeAvatar() {
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
 
         // HP- und MP-Leisten anzeigen
-        if (hpContainer) {
-            hpContainer.style.display = "block";
-            hpContainer.innerHTML = `<div id="hp-progress" style="background-color: green; height: 20px; line-height: 20px; color: white; text-align: center;">
-                ${aktuelleHP || 100} / ${berechneMaxHP(level)} HP
-            </div>`;
-        }
+        setTimeout(() => { // Warte kurz, bis ladeFortschritte abgeschlossen ist
+            if (hpContainer) {
+                hpContainer.style.display = "block";
+                hpContainer.innerHTML = `<div id="hp-progress" style="background-color: green; height: 20px; line-height: 20px; color: white; text-align: center;">
+                    ${aktuelleHP} / ${berechneMaxHP(level)} HP
+                </div>`;
+            }
 
-        if (mpContainer) {
-            mpContainer.style.display = "block";
-            mpContainer.innerHTML = `<div id="mp-progress" style="background-color: blue; height: 20px; line-height: 20px; color: white; text-align: center;">
-                ${aktuelleMP || 50} / ${berechneMaxMP(level)} MP
-            </div>`;
-        }
-
-        ladeFortschritte(); // Lädt die aktuellen HP/MP aus Firebase
+            if (mpContainer) {
+                mpContainer.style.display = "block";
+                mpContainer.innerHTML = `<div id="mp-progress" style="background-color: blue; height: 20px; line-height: 20px; color: white; text-align: center;">
+                    ${aktuelleMP} / ${berechneMaxMP(level)} MP
+                </div>`;
+            }
+        }, 100); // Kleine Verzögerung, um sicherzustellen, dass Firebase-Daten geladen sind
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
+
 
 // Ausloggen
 function ausloggen() {
