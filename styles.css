@@ -166,33 +166,6 @@ button {
 
 button:hover {
     background-color: #B22222; /* Sattes Rot */
-}
-
-/* Admin Login */
-.admin-login {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 180px; /* Reduzierte Breite */
-}
-
-.admin-login input {
-    margin: 5px 0;
-    padding: 5px;
-    width: calc(100% - 20px);
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-}
-
-.admin-login button {
-    width: 100%;
-    margin-top: 10px;
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-    padding: 5px 10px; /* Kleinere Buttons */
-}
 
 #quests-section h2 {
     text-align: center;
@@ -383,9 +356,11 @@ button:hover {
 .mp-bar .progress {
     background: blue;
 }
-#logbuch-container {
+
+/* Logbuch-Container */
+.logbuch-container {
     position: fixed;
-    bottom: 10px;
+    bottom: 120px; /* Höher positioniert, um nicht mit dem Button zu kollidieren */
     left: 50%;
     transform: translateX(-50%);
     width: 300px;
@@ -396,7 +371,8 @@ button:hover {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    display: none; /* Startet unsichtbar */
+    z-index: 1000;
 }
 
 
@@ -425,11 +401,11 @@ button:hover {
 #logbuch-list strong {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
-#logbuch-button {
-    display: none;
+/* Logbuch-Button */
+.logbuch-button {
     position: fixed;
-    bottom: 60px;
-    left: 50%;
+    bottom: 60px; /* Button-Position anpassen */
+    left: 50%; /* Zentriert horizontal */
     transform: translateX(-50%);
     background-color: black;
     color: white;
@@ -439,6 +415,9 @@ button:hover {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     z-index: 1000;
+}
+.logbuch-button:hover {
+    background-color: #333; /* Leichter Hover-Effekt */
 }
 
 #npc-login-section {
