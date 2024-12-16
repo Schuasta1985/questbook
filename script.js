@@ -26,16 +26,11 @@ window.onload = function () {
 
 
 // Logbuch nur auf der Startseite ausblenden
+// Logbuch-Button steuern
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
-    const logbuchContainer = document.getElementById("logbuch-container");
-
     if (logbuchButton) {
         logbuchButton.style.display = anzeigen ? "block" : "none";
-    }
-
-    if (logbuchContainer && anzeigen) {
-        logbuchContainer.style.display = "none"; // Logbuch bleibt zu Beginn versteckt
     }
 }
 
