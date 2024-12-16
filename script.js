@@ -3,6 +3,12 @@ let xp = 0;
 let level = 1;
 let currentUser = null;
 let isAdmin = false;
+// Globale Variablen für HP und MP
+let aktuelleHP = 100;
+let aktuelleMP = 50;
+let maxHP = 100;
+let maxMP = 50;
+
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
@@ -326,25 +332,26 @@ function ladeFortschritte() {
                     const data = snapshot.val();
                     xp = data.xp || 0;
                     level = data.level || 1;
+
+                    // HP und MP laden oder berechnen
                     aktuelleHP = data.hp || berechneMaxHP(level);
-                    maxHP = data.maxHP || berechneMaxHP(level);
-                    aktuelleMP = data.mp || berechneMaxMP(level); // Ergänzung
-                    maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
+                    maxHP = berechneMaxHP(level);
+                    aktuelleMP = data.mp || berechneMaxMP(level);
+                    maxMP = berechneMaxMP(level);
 
                     // Anzeigen aktualisieren
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
+                    aktualisiereMPLeiste(aktuelleMP, level);
                 } else {
-                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
-
-                    // Standardwerte setzen, falls keine Daten vorhanden
+                    console.log("Keine Fortschrittsdaten gefunden. Standardwerte werden gesetzt.");
                     aktuelleHP = berechneMaxHP(1);
                     maxHP = berechneMaxHP(1);
                     aktuelleMP = berechneMaxMP(1);
                     maxMP = berechneMaxMP(1);
 
                     // Anzeigen aktualisieren
+                    aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, 1);
                     aktualisiereMPLeiste(aktuelleMP, 1);
                 }
