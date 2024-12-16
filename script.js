@@ -7,21 +7,27 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    // Logbuch erstellen und sicherstellen, dass der Button angezeigt wird
-    erstelleLogbuch();
+    erstelleLogbuch(); // Logbuch erstellen
+    
+    // Logbuch verstecken
+    const logbuchContainer = document.getElementById("logbuch-container");
+    if (logbuchContainer) {
+        logbuchContainer.style.display = "none";
+    }
+
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = "none"; // Button beim Start ausblenden
+    }
+
     setTimeout(() => {
-        const logbuchButton = document.getElementById("logbuch-button");
-        if (logbuchButton) {
-            console.log("Logbuch-Button erfolgreich erstellt:", logbuchButton);
-            steuerungLogbuch(true); // Sichtbar schalten
-        } else {
-            console.warn("Logbuch-Button konnte nicht erstellt werden.");
-        }
-    }, 100);
+        steuerungLogbuch(false); // Zusätzliche Sicherheit für das Logbuch
+    }, 0);
 
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
+    // HP einmal am Tag regenerieren
     if (letzterTag !== heutigesDatum) {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
@@ -30,6 +36,7 @@ window.onload = function () {
     zeigeStartseite();
     ladeLogbuch();
 };
+
 
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
