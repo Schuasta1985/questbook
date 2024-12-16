@@ -7,17 +7,6 @@ body {
     font-family: 'Poppins', sans-serif;
     color: #F5F5DC; /* Elfenbein-Weiß */
 }
-.xp-display {
-    font-weight: bold;
-    color: black;
-}
-
-.golden-line {
-    width: 350px; /* Die Breite kannst du anpassen */
-    height: 8px;
-    margin: 20px auto;
-    background: linear-gradient(to right, transparent, #FFD700, transparent);
-}
 
 /* Header */
 header {
@@ -28,220 +17,108 @@ header {
 h1 {
     font-size: 3rem;
     font-weight: 600;
-    color: #F5F5DC;
+    color: #FFD700;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
-/* XP-Zähler und Level */
-#xp-counter {
-    margin-top: 20px;
-}
-
-#xp-level-container {
+.golden-line {
+    width: 350px;
+    height: 8px;
     margin: 20px auto;
-    padding: 15px;
-    border: 3px solid gold;  /* Goldene Umrandung */
-    background-color: rgba(0, 0, 0, 0.7);  /* Hintergrundfarbe leicht transparent */
-    color: white;  /* Schriftfarbe für bessere Lesbarkeit */
-    width: fit-content;  /* Automatische Anpassung der Breite */
-    text-align: center;  /* Zentrierte Texte */
-    box-shadow: 0 0 15px gold;  /* Schimmernder Effekt */
+    background: linear-gradient(to right, transparent, #FFD700, transparent);
 }
 
-#level-display {
-    font-size: 1.5em;  /* Vergrößere Schriftgröße */
-    margin: 5px 0;
-}
-
-/* Fortschrittsbalken */
-#xp-bar-container {
-    position: relative;
-    width: 80%;
-    background: #8B4513; /* Holzbraun */
-    margin: 20px auto;
-    height: 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-/* XP-Fortschrittsbalken */
-#xp-progress {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(to right, red, green);
-    border-radius: 15px;
-    transition: width 0.5s ease-in-out;
-}
-
-/* XP-Text im Fortschrittsbalken */
-#xp-label {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: bold;
-    color: white;
-    z-index: 1;  /* XP-Anzeige sichtbar über dem XP-Balken */
-}
-
-#avatar-container {
-    transition: all 0.3s ease-in-out; /* Sanfte Animation bei Größenänderungen */
-    display: none;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto; /* Platz oben und unten */
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background-color: transparent; /* Hintergrund entfernen */
-    z-index: 1; /* Sicherstellen, dass der Avatar sichtbar bleibt */
-    position: relative; /* Verhindert Überschneidungen */
-    margin-bottom: 50px; /* Platz unter dem Avatar schaffen */
-}
-
-
-body.logged-in #quests-section {
-    margin-top: 300px; /* Platz unter dem Avatar schaffen */
-}
-
-#quests-section {
-    position: relative;
-    z-index: 0; /* Inhalte bleiben unterhalb des Avatars */
-}
-
-#avatar-container video {
-    border-radius: 50%; /* Rundes Design */
-    width: 100%; /* Nimmt die gesamte Breite ein */
-    height: auto; /* Automatische Höhe, passend zur Breite */
-    border: 5px solid #FFD700; /* Goldener Rahmen */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
-}
-
-body #login-section {
-    display: flex;
-    flex-direction: column; /* Ordnet die Elemente vertikal an */
-    align-items: center; /* Zentriert die Elemente horizontal */
-    justify-content: center; /* Zentriert die Elemente vertikal */
-    height: auto; /* Höhe passend anpassen */
-    text-align: center; /* Zentriert den Text */
-}
-
-#login-section label {
+p {
     font-size: 1.5em;
-    font-weight: bold;
     color: #FFD700;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
-    margin-bottom: 15px;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* Login-Bereich */
+#login-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    text-align: center;
 }
 
 #login-section select,
 #login-section input,
 #login-section button {
-    margin: 10px 0; /* Abstand zwischen den Elementen */
-    width: 80%; /* Einheitliche Breite */
-    max-width: 300px; /* Maximalbreite */
-    padding: 10px; /* Polsterung */
-    font-size: 16px; /* Einheitliche Schriftgröße */
-    text-align: center; /* Zentrierter Text */
+    margin: 10px 0;
+    width: 80%;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
 }
 
-
-#benutzerDropdown {
-    width: 100%; /* Volle Breite innerhalb des Containers */
-}
-
-#benutzerPasswort {
-    width: 100%; /* Volle Breite innerhalb des Containers */
-}
-/* Buttons */
-button {
-    background-color: #808000; /* Olivgrün */
-    color: #FFD700; /* Goldton */
-    border: none;
-    padding: 10px 15px;
-    font-weight: 600;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #B22222; /* Sattes Rot */
-}
-
-/* Admin Login */
-.admin-login {
+/* NPC-Login fixiert unten rechts */
+#npc-login-section {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 180px; /* Reduzierte Breite */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 999;
 }
 
-.admin-login input {
-    margin: 5px 0;
-    padding: 5px;
-    width: calc(100% - 20px);
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-}
-
-.admin-login button {
+#npc-login-section input,
+#npc-login-section button {
     width: 100%;
-    margin-top: 10px;
-    font-size: 0.9rem; /* Kleinere Schriftgröße */
-    padding: 5px 10px; /* Kleinere Buttons */
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    padding: 5px;
 }
 
-#quests-section h2 {
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 15px; /* Platz zwischen Überschrift und Quests */
-}
-
-/* Quests-Container anpassen */
-#quests {
-    list-style-type: none;  /* Entfernt die Aufzählungszeichen */
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;  /* Quests in der Mitte ausrichten */
-}
-
-#quests li {
-    background: rgba(255, 255, 255, 0.7);  /* Leichter, heller Hintergrund */
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    width: 90%;  /* Damit die Quests gleichmäßig wirken */
-    max-width: 600px;  /* Maximalbreite */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
-    color: #4E3629;  /* Dunkelbraune Schriftfarbe */
-    display: flex;
-    justify-content: space-between; /* Text und Button positionieren */
-    align-items: center;
-}
-
-
-/* Button für "Erledigt" am rechten Rand positionieren */
-button.erledigt-button {
-    background-color: #4CAF50; /* Grün */
+/* Logbuch fixiert unten mittig */
+#logbuch-button {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
+    border-radius: 5px;
     padding: 10px;
     cursor: pointer;
-    border-radius: 5px;
-    align-self: flex-end;  /* Button am rechten Rand ausrichten */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
 
-button:hover {
-    background-color: #DAA520; /* Goldener Ton */
-    color: white; /* Helle Schriftfarbe für besseren Kontrast */
-    transform: scale(1.1); /* Leichte Vergrößerung bei Hover */
+#logbuch-container {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 999;
 }
 
+#logbuch-container h3 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: #FFD700;
+}
+
+#logbuch-list li {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid #FFD700;
+}
+
+/* Benutzerübersicht */
 .benutzer-grid {
     display: flex;
     flex-wrap: wrap;
@@ -251,131 +128,35 @@ button:hover {
 
 .benutzer-item {
     text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.7); /* Goldener Rahmen */
+    border: 1px solid rgba(255, 215, 0, 0.7);
     border-radius: 10px;
     padding: 10px;
     width: 150px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5); /* Dunklerer Schatten */
-    background-color: rgba(0, 0, 0, 0.7); /* Halbtransparenter Hintergrund */
-    color: #FFFFFF; /* Weiße Schriftfarbe */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
 }
 
 .benutzer-item h3 {
-    font-size: 1.2em; /* Größere Schriftgröße für Namen */
-    font-weight: bold;
-    margin: 5px 0;
-    color: #FFD700; /* Goldene Schriftfarbe für Namen */
-    text-shadow: 1px 1px 2px #000000; /* Schwarzer Textschatten */
+    color: #FFD700;
 }
 
-.benutzer-item div {
-    font-size: 1em; /* Einheitliche Schriftgröße für Level und Zauber */
-    margin-top: 5px;
-    padding: 5px;
-    background-color: rgba(255, 255, 255, 0.2); /* Leicht transparenter Hintergrund */
-    border-radius: 5px;
-    color: #FFFFFF; /* Weiße Schriftfarbe */
-    text-shadow: 1px 1px 2px #000000; /* Schwarzer Textschatten */
-}
-#hp-bar-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px auto;
-    width: 100%; /* Gleiche Breite wie der Avatar */
-    max-width: 220px; /* Maximalbreite leicht größer als Avatar */
-    height: 30px; /* Höhe der Leiste erhöhen */
-    background-color: rgba(0, 0, 0, 0.5); /* Halbtransparenter Hintergrund */
-    border-radius: 8px; /* Abgerundete Ecken */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
-}
-
-/* Fortschrittsbalken für HP */
-#hp-progress {
-    position: relative;
-    text-align: center;
-    line-height: 20px; /* Höhe der Leiste */
-    font-weight: bold;
-    color: white;
-    background: green; /* Hintergrundfarbe bleibt gleich */
-    border-radius: 5px; /* Abgerundete Ecken */
-    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Subtilerer Schatten */
-    margin: 2px; /* Zusätzlicher Abstand innerhalb des Containers */
-}
-
-#avatar-container .avatar-jamie {
-    width: 150px; /* oder jede gewünschte Größe */
-    height: auto;
-    border: 3px solid gold; /* Optional: Umrandung */
-}
-
-#avatar-container .avatar-general {
-    width: 200px; /* Standardgröße für andere Avatare */
-    height: auto;
-}
-
-/* Fortschrittsbalken Container */
 .hp-bar, .mp-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 90%; /* Breite reduziert für einen sauberen Look */
-    height: 16px; /* Reduzierte Höhe für kompakteres Design */
-    margin: 5px auto; /* Zentrierung */
-    background-color: transparent; /* Kein Hintergrund */
-    border-radius: 0; /* Ecken entfernt */
-    overflow: hidden;
     position: relative;
-    border: none; /* Keine Umrandung */
+    width: 100%;
+    height: 16px;
+    margin: 5px 0;
+    background-color: transparent;
+    overflow: hidden;
+    border: none;
 }
 
-/* Fortschrittsbalken Fortschritt */
 .hp-bar .progress, .mp-bar .progress {
     height: 100%;
-    border-radius: 0; /* Keine Rundungen */
+    border-radius: 0;
     transition: width 0.3s ease-in-out;
-    z-index: 1; /* Text bleibt sichtbar */
 }
 
-/* Fortschrittsbalken Text */
-.hp-bar .hp-text, .mp-bar .mp-text {
-    position: absolute;
-    z-index: 2; /* Sicherstellen, dass der Text über dem Balken bleibt */
-    width: 100%;
-    text-align: center;
-    line-height: 16px; /* Exakte Zentrierung des Textes */
-    color: white;
-    text-shadow: none; /* Kein Textschatten */
-    font-size: 12px; /* Angepasste Schriftgröße */
-}
-
-#mp-bar-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 5px auto;
-    width: 100%; /* Gleiche Breite wie die HP-Leiste */
-    max-width: 220px; /* Maximalbreite gleich wie bei der HP-Leiste */
-    height: 30px;
-    background-color: rgba(0, 0, 0, 0.5); /* Halbtransparenter Hintergrund */
-    border-radius: 8px; /* Abgerundete Ecken */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten */
-}
-
-/* Fortschrittsbalken für MP */
-#mp-progress {
-    position: relative;
-    text-align: center;
-    line-height: 20px; /* Höhe der Leiste */
-    font-weight: bold;
-    color: white;
-    background: blue; /* Blau für die MP-Leiste */
-    border-radius: 5px; /* Abgerundete Ecken */
-    transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Subtilerer Schatten */
-    margin: 2px; /* Zusätzlicher Abstand innerhalb des Containers */
-}
 .hp-bar .progress {
     background: green;
 }
@@ -383,86 +164,90 @@ button:hover {
 .mp-bar .progress {
     background: blue;
 }
-#logbuch-container {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
-    background-color: rgba(0, 0, 0, 0.8);
+
+.hp-bar .hp-text, .mp-bar .mp-text {
+    position: absolute;
+    text-align: center;
+    line-height: 16px;
     color: white;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    width: 100%;
+    font-size: 12px;
+    z-index: 2;
 }
 
-
-#logbuch-container h3 {
-    margin: 0 0 10px; /* Abstand zum unteren Rand */
-    font-size: 1.2em; /* Größere Schrift für den Titel */
-    color: #FFD700; /* Goldene Schriftfarbe für den Titel */
+/* Avatar-Container */
+#avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid #FFD700;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
-#logbuch-list {
-    list-style: none; /* Entfernt Aufzählungspunkte */
-    padding: 0; /* Kein Innenabstand */
-    margin: 0; /* Kein Außenabstand */
+#avatar-container video {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
 }
 
-#logbuch-list li {
-    margin-bottom: 10px; /* Abstand zwischen den Einträgen */
-    padding: 5px; /* Innerer Abstand für bessere Lesbarkeit */
-    border-bottom: 1px solid #FFD700; /* Unterstrich für Abgrenzung */
-}
-
-#logbuch-list li:last-child {
-    border-bottom: none; /* Entfernt die Linie beim letzten Eintrag */
-}
-
-#logbuch-list strong {
-    color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
-}
-#logbuch-button {
-    display: none;
-    position: fixed;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-
-#npc-login-section {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
+/* XP- und Level-Anzeige */
+#xp-counter {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    border: 3px solid gold;
     background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 1000; /* Stelle sicher, dass es über anderen Elementen bleibt */
+    box-shadow: 0 0 15px gold;
 }
 
+#xp-bar-container {
+    width: 80%;
+    margin: 20px auto;
+    height: 30px;
+    background: #8B4513;
+    border-radius: 15px;
+    position: relative;
+}
+
+#xp-progress {
+    height: 100%;
+    background: linear-gradient(to right, red, green);
+    border-radius: 15px;
+    transition: width 0.5s ease-in-out;
+}
+
+#xp-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     #npc-login-section {
-        bottom: 0; /* Direkt am unteren Bildschirmrand */
-        right: 0;
-        left: 0;
-        width: 100%; /* Ganze Breite */
-        padding: 5px;
-        border-radius: 0;
-        text-align: center;
+        bottom: 5px;
+        right: 5px;
+        padding: 8px;
+    }
+
+    #logbuch-button {
+        bottom: 5px;
+    }
+
+    #logbuch-container {
+        bottom: 50px;
+        width: 90%;
+        max-width: 90%;
+    }
+
+    #xp-bar-container {
+        width: 95%;
     }
 }
-
-
-
