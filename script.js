@@ -202,6 +202,7 @@ function zeigeQuestbook() {
 }
 
 // Benutzeranmeldung
+// Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -245,21 +246,27 @@ function benutzerAnmeldung() {
 
     console.log(`${benutzername} erfolgreich angemeldet`);
 
+    // Logbuch-Button wieder anzeigen
+    if (logbuchButton) {
+        logbuchButton.style.display = "block";
+    } else {
+        console.log("Logbuch-Button fehlt, wird neu erstellt.");
+        erstelleLogbuch();
+    }
+
     // Verstecke unnötige Bereiche
     if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
     // Starte die Benutzeroberfläche
-    zeigeQuestbook();          // Quests anzeigen
-    ladeFortschritte();        // Fortschritte (HP, MP) laden
-    täglicheHPRegeneration();  // Tägliche Regeneration ausführen
-    zeigeAvatar();             // Avatar anzeigen
-    ladeGlobaleQuests();       // Quests laden
+    zeigeQuestbook();
+    ladeFortschritte();
+    täglicheHPRegeneration();
+    zeigeAvatar();
+    ladeGlobaleQuests();
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
-
-
 
 // NPC Login
 function npcLogin() {
@@ -876,7 +883,11 @@ function ausloggen() {
     console.log("ausloggen() aufgerufen");
     
     // Logbuch-Button ausblenden
-    steuerungLogbuch(false);
+       const logbuchButton = document.getElementById("logbuch-button");
+        if (logbuchButton) {
+        logbuchButton.style.display = "none"; // Nur ausblenden, nicht löschen
+}
+
      
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
