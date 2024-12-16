@@ -36,12 +36,13 @@ function steuerungLogbuch(anzeigen) {
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
 
-    // Container für das Logbuch
+    // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
     logbuchContainer.style.position = "fixed";
-    logbuchContainer.style.bottom = "50px"; // Abstand zum Button
-    logbuchContainer.style.left = "10px";
+    logbuchContainer.style.bottom = "120px"; // Höher, damit es nicht mit dem Button kollidiert
+    logbuchContainer.style.left = "50%";
+    logbuchContainer.style.transform = "translateX(-50%)";
     logbuchContainer.style.width = "300px";
     logbuchContainer.style.maxHeight = "400px";
     logbuchContainer.style.overflowY = "auto";
@@ -53,15 +54,16 @@ function erstelleLogbuch() {
     logbuchContainer.style.display = "none"; // Zunächst versteckt
     logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
 
-    document.body.appendChild(logbuchContainer);
+    document.body.appendChild(logbuchContainer); // Container anhängen
 
     // Button für das Öffnen/Schließen des Logbuchs
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
     logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "10px";
-    logbuchButton.style.left = "10px";
+    logbuchButton.style.bottom = "60px"; // Button-Position anpassen
+    logbuchButton.style.left = "50%"; // Zentriert horizontal
+    logbuchButton.style.transform = "translateX(-50%)";
     logbuchButton.style.backgroundColor = "black";
     logbuchButton.style.color = "white";
     logbuchButton.style.border = "none";
@@ -70,9 +72,7 @@ function erstelleLogbuch() {
     logbuchButton.style.cursor = "pointer";
     logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
 
-    document.body.appendChild(logbuchButton);
-
-    // Event Listener für das Öffnen/Schließen des Logbuchs
+    // Button-Klick-Event: Container ein- oder ausblenden
     logbuchButton.addEventListener("click", () => {
         if (logbuchContainer.style.display === "none") {
             logbuchContainer.style.display = "block";
