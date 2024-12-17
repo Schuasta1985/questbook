@@ -426,11 +426,11 @@ button:hover {
     position: fixed;
     bottom: 10px;
     right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.);
     padding: 10px;
     border-radius: 8px;
     z-index: 50; /* Damit er über dem Hintergrund liegt */
-    width: 300px; /* Feste Breite, damit er nicht die ganze Breite einnimmt */
+    width: 200px; /* Feste Breite, damit er nicht die ganze Breite einnimmt */
 }
 
 @media (max-width: 768px) {
