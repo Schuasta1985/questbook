@@ -7,19 +7,22 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    erstelleLogbuch(); // Logbuch und Logbuch-Button erstellen und standardmäßig verstecken.
-
-    // LogbuchContainer sicherheitshalber verbergen
+    erstelleLogbuch(); // Logbuch erstellen
+    
+    // Logbuch verstecken
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) {
         logbuchContainer.style.display = "none";
     }
 
-    // Logbuch-Button beim Laden ausblenden (erfolgt bereits in erstelleLogbuch(), doppelt hält besser)
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
-        logbuchButton.style.display = "none";
+        logbuchButton.style.display = "none"; // Button beim Start ausblenden
     }
+
+    setTimeout(() => {
+        steuerungLogbuch(false); // Zusätzliche Sicherheit für das Logbuch
+    }, 0);
 
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
@@ -34,6 +37,17 @@ window.onload = function () {
     ladeLogbuch();
 };
 
+
+// Logbuch nur auf der Startseite ausblenden
+function steuerungLogbuch(anzeigen) {
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = anzeigen ? "block" : "none";
+    } else {
+        console.warn("Logbuch-Button wurde noch nicht erstellt.");
+    }
+}
+
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
@@ -41,42 +55,119 @@ function erstelleLogbuch() {
     // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
-    logbuchContainer.classList.add("logbuch-container");
-    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
-    document.body.appendChild(logbuchContainer);
+    logbuchContainer.style.position = "fixed";
+    logbuchContainer.style.bottom = "120px"; // Höher, damit es nicht mit dem Button kollidiert
+    logbuchContainer.style.left = "50%";
+    logbuchContainer.style.transform = "translateX(-50%)";
+    logbuchContainer.style.width = "300px";
+    logbuchContainer.style.maxHeight = "400px";
+    logbuchContainer.style.overflowY = "auto";
+    logbuchContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    logbuchContainer.style.color = "white";
+    logbuchContainer.style.padding = "10px";
+    logbuchContainer.style.borderRadius = "10px";
+    logbuchContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+    logbuchContainer.style.display = "none"; // Zunächst versteckt
+    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
+
+    document.body.appendChild(logbuchContainer); // Container anhängen
 
     // Button für das Öffnen/Schließen des Logbuchs
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
-    logbuchButton.classList.add("logbuch-button");
     logbuchButton.textContent = "Logbuch";
-
-    // Feste Positionierung am unteren Bildschirmrand, zentriert
     logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "10px";
-    logbuchButton.style.left = "50%";
+    logbuchButton.style.bottom = "60px"; // Button-Position anpassen
+    logbuchButton.style.left = "50%"; // Zentriert horizontal
     logbuchButton.style.transform = "translateX(-50%)";
-    logbuchButton.style.zIndex = "9999";
-    logbuchButton.style.display = "none"; // Standardmäßig verborgen
-
+    logbuchButton.style.backgroundColor = "black";
+    logbuchButton.style.color = "white";
+    logbuchButton.style.border = "none";
+    logbuchButton.style.borderRadius = "5px";
+    logbuchButton.style.padding = "10px";
+    logbuchButton.style.cursor = "pointer";
+    logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
+    logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
     logbuchButton.addEventListener("click", () => {
-        // Ein- und Ausblenden des Logbuch-Containers
-        if (logbuchContainer.style.display === "none") {
-            logbuchContainer.style.display = "block";
-        } else {
-            logbuchContainer.style.display = "none";
-        }
+        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
     });
 
-    document.body.appendChild(logbuchButton);
-    console.log("Logbuch-Button und Container erstellt.");
+    document.body.appendChild(logbuchButton); // Button anhängen
+
+    setTimeout(() => {
+        console.log("Logbuch-Button und Container erstellt.");
+        console.log("Logbuch-Button:", document.getElementById("logbuch-button"));
+    }, 0); // Timeout schließen
+} // Funktion schließen
+
+
+// Quest ins Logbuch eintragen
+function logbuchEintrag(questBeschreibung, benutzername, xp) {
+    console.log("Neuer Logbuch-Eintrag wird erstellt...");
+    const logbuchListe = document.getElementById("logbuch-list");
+
+    const datum = new Date();
+    const zeitstempel = datum.toLocaleString();
+
+    const eintrag = document.createElement("li");
+    eintrag.style.marginBottom = "10px";
+    eintrag.innerHTML = `
+        <strong>${questBeschreibung}</strong><br>
+        Erledigt von: ${benutzername}<br>
+        XP: ${xp}<br>
+        Am: ${zeitstempel}
+    `;
+
+    // Füge den neuen Eintrag oben hinzu (chronologisch absteigend)
+    logbuchListe.prepend(eintrag);
+
+    // Optional: Eintrag in Firebase speichern (falls benötigt)
+    if (currentUser) {
+        firebase.database().ref("logbuch").push({
+            quest: questBeschreibung,
+            benutzer: benutzername,
+            xp: xp,
+            zeit: zeitstempel
+        }).then(() => {
+            console.log("Logbuch-Eintrag erfolgreich gespeichert.");
+        }).catch((error) => {
+            console.error("Fehler beim Speichern des Logbuch-Eintrags:", error);
+        });
+    }
 }
 
+// Lade Logbuch aus Firebase (optional, falls serverseitige Speicherung genutzt wird)
+function ladeLogbuch() {
+    firebase.database().ref("logbuch").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const daten = snapshot.val();
+            const logbuchListe = document.getElementById("logbuch-list");
+            logbuchListe.innerHTML = ""; // Liste zurücksetzen
+
+            Object.values(daten).forEach((eintrag) => {
+                const listItem = document.createElement("li");
+                listItem.style.marginBottom = "10px";
+                listItem.innerHTML = `
+                    <strong>${eintrag.quest}</strong><br>
+                    Erledigt von: ${eintrag.benutzer}<br>
+                    XP: ${eintrag.xp}<br>
+                    Am: ${eintrag.zeit}
+                `;
+                logbuchListe.prepend(listItem); // Chronologisch absteigend
+            });
+        } else {
+            console.log("Keine Logbuch-Einträge gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden des Logbuchs:", error);
+    });
+}
+
+// Startseite anzeigen
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
 
-    // An dieser Stelle wird der Logbuch-Button NICHT mehr durch steuerungLogbuch() manipuliert.
-    // Wir verlassen uns darauf, dass er erst nach Login angezeigt wird.
+    steuerungLogbuch(false); // Logbuch-Button ausblenden
 
     const loginSection = document.getElementById("login-section");
     if (loginSection) {
@@ -108,6 +199,17 @@ function zeigeStartseite() {
     ladeBenutzerdaten();
 }
 
+// Questbuch anzeigen
+function zeigeQuestbook() {
+        const logbuchButton = document.getElementById("logbuch-button");
+    document.getElementById("quests-section").style.display = "block";
+    document.getElementById("xp-counter").style.display = "block";
+    document.getElementById("logout-button").style.display = "block";
+    document.getElementById("login-section").style.display = "none";
+}
+
+// Benutzeranmeldung
+// Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -123,15 +225,18 @@ function benutzerAnmeldung() {
         return;
     }
 
+    // Benutzername und Passwort auslesen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
+    // Benutzername-Passwort-Paar
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
+    // Validierung der Benutzerdaten
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -145,6 +250,7 @@ function benutzerAnmeldung() {
     // Benutzer erfolgreich angemeldet
     currentUser = benutzername;
     isAdmin = false;
+
     console.log(`${benutzername} erfolgreich angemeldet`);
 
     // Logbuch-Button wieder anzeigen
@@ -153,9 +259,6 @@ function benutzerAnmeldung() {
     } else {
         console.log("Logbuch-Button fehlt, wird neu erstellt.");
         erstelleLogbuch();
-        // Da erstelleLogbuch den Button wieder verbirgt, hier noch mal auf block setzen:
-        const neuErstellterButton = document.getElementById("logbuch-button");
-        if (neuErstellterButton) neuErstellterButton.style.display = "block";
     }
 
     // Verstecke unnötige Bereiche
@@ -171,18 +274,6 @@ function benutzerAnmeldung() {
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
-
-// Der Rest deines Codes bleibt unverändert, achte nur darauf,
-// dass du keine weiteren Funktionen mehr aufrufst, die Position
-// oder Anzeige des Logbuch-Buttons oder des NPC-Login-Containers
-// in irgendeiner Form umändern.
-
-// Entferne außerdem die Funktion erstelleLogbuchSchaltfläche(), 
-// da sie nicht benötigt wird. Falls sie im Code existiert, einfach löschen.
-
-// Stelle sicher, dass in deiner CSS-Datei die Media Queries, die den NPC-Login 
-// in der mobilen Ansicht auf 100% Breite setzen, entfernt sind, wenn du ihn 
-// immer rechts unten fixiert haben möchtest.
 
 // NPC Login
 function npcLogin() {
@@ -530,6 +621,29 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
+
+// Funktion zur Steuerung des Logbuch-Buttons
+function erstelleLogbuchSchaltfläche() {
+    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
+    const logbuchButton = document.createElement("button");
+    logbuchButton.id = "logbuch-button";
+    logbuchButton.textContent = "Logbuch";
+    logbuchButton.style.position = "fixed";
+    logbuchButton.style.bottom = "10px";
+    logbuchButton.style.left = "10px";
+    logbuchButton.style.padding = "10px";
+    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    logbuchButton.style.color = "white";
+    logbuchButton.style.border = "none";
+    logbuchButton.style.borderRadius = "5px";
+    logbuchButton.style.cursor = "pointer";
+    logbuchButton.onclick = () => {
+        const logbuchContainer = document.getElementById("logbuch-container");
+        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+    };
+
+    document.body.appendChild(logbuchButton);
+}
 // Neue quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
@@ -726,114 +840,119 @@ function questBearbeiten(questNummer) {
     });
 }
 
+
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
     if (currentUser) {
         const avatarContainer = document.getElementById("avatar-container");
-        const hpContainer = document.getElementById("hp-bar-container");
-        const mpContainer = document.getElementById("mp-bar-container");
-        const questsSection = document.getElementById("quests-section");
-        const levelSetContainer = document.getElementById("level-set-container");
 
-        // Fehlerprüfung
         if (!avatarContainer) {
             console.error("Avatar-Container wurde nicht gefunden!");
             return;
         }
 
-        // Avatar-Video Pfad laden
         const avatarPath = getAvatarForUser(currentUser);
+
         if (!avatarPath) {
             console.error(`Kein Avatar gefunden für Benutzer: ${currentUser}`);
             return;
         }
 
-        // Avatar einfügen
+        // Avatar-Video einfügen
         avatarContainer.innerHTML = `
             <video autoplay loop muted class="${currentUser === 'Jamie' ? 'avatar-jamie' : 'avatar-general'}">
                 <source src="${avatarPath}" type="video/mp4">
                 Dein Browser unterstützt das Video-Tag nicht.
             </video>
         `;
+
         avatarContainer.style.display = "flex"; // Avatar sichtbar machen
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
-
-        // HP- und MP-Leisten sichtbar machen
-        if (hpContainer) hpContainer.style.display = "flex";
-        if (mpContainer) mpContainer.style.display = "flex";
-
-        // Quests-Sektion anpassen
-        if (questsSection) questsSection.style.marginTop = "0px";
-
-        // Level-Set-Container verstecken
-        if (levelSetContainer) levelSetContainer.style.display = "none";
-
-        console.log("Avatar und Leisten wurden erfolgreich angezeigt.");
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 }
-function ausloggen() {
-    console.log("ausloggen() aufgerufen");
+    // Platz für den Avatar zurücksetzen
+    const questsSection = document.getElementById("quests-section");
+    if (questsSection) {
+        questsSection.style.marginTop = "0px";
+    }
 
-    // Level-Set-Container ausblenden
+    // Level-Set-Container verstecken
     const levelSetContainer = document.getElementById("level-set-container");
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
 
+// Ausloggen
+function ausloggen() {
+    console.log("ausloggen() aufgerufen");
+    
     // Logbuch-Button ausblenden
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) logbuchButton.style.display = "none";
+       const logbuchButton = document.getElementById("logbuch-button");
+        if (logbuchButton) {
+        logbuchButton.style.display = "none"; // Nur ausblenden, nicht löschen
+}
 
+     
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
+
+    // Globale Variablen zurücksetzen
+    currentUser = null;
+    isAdmin = false; // Admin-Status zurücksetzen
 
     // Avatar-Container zurücksetzen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
-        avatarContainer.style.display = "none";
-        avatarContainer.innerHTML = "";
+        avatarContainer.style.display = "none"; // Avatar ausblenden
+        avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
+    }
+
+    // Alle nicht benötigten Bereiche ausblenden
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+
+    // NPC-Login-Bereich sichtbar machen
+    const npcLoginSection = document.getElementById("npc-login-section");
+    if (npcLoginSection) {
+        npcLoginSection.style.display = "block";
+    }
+
+    // Quests zurücksetzen (leeren)
+    const questList = document.getElementById("quests");
+    if (questList) {
+        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
+    }
+
+    // Admin-Bereich entfernen
+    const adminButtonsContainer = document.getElementById("admin-buttons-container");
+    if (adminButtonsContainer) {
+        adminButtonsContainer.remove();
     }
 
     // HP- und MP-Anzeige ausblenden
     const hpContainer = document.getElementById("hp-bar-container");
-    if (hpContainer) hpContainer.style.display = "none";
+    if (hpContainer) {
+        hpContainer.style.display = "none";
+    }
 
     const mpContainer = document.getElementById("mp-bar-container");
-    if (mpContainer) mpContainer.style.display = "none";
+    if (mpContainer) {
+        mpContainer.style.display = "none";
+    }
 
-    // NPC-Login-Bereich wieder einblenden
-    const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) npcLoginSection.style.display = "block";
-
-    // Quests zurücksetzen (leeren)
-    const questList = document.getElementById("quests");
-    if (questList) questList.innerHTML = "";
-
-    // XP- und Questbereich ausblenden
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("xp-counter").style.display = "none";
-
-    // Admin-Bereich entfernen
-    const adminButtonsContainer = document.getElementById("admin-buttons-container");
-    if (adminButtonsContainer) adminButtonsContainer.remove();
-
-    // Benutzerübersicht wieder einblenden
+    // Benutzerübersicht einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
-    if (benutzerContainer) benutzerContainer.style.display = "flex";
+    if (benutzerContainer) {
+        benutzerContainer.style.display = "flex";
+    }
 
-    // Globale Variablen zurücksetzen
-    currentUser = null;
-    isAdmin = false;
-
-    // Zurück zur Startseite
+    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
-
-    console.log("Benutzer erfolgreich ausgeloggt.");
 }
-
 
 // Globale Variable für alle Benutzer
 let benutzerDaten = [];
