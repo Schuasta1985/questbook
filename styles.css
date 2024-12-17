@@ -401,7 +401,6 @@ button:hover {
 #logbuch-list strong {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
-
 .logbuch-button {
     position: fixed;
     bottom: 10px;
@@ -422,14 +421,6 @@ button:hover {
     transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
-    .logbuch-button {
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-}
-
 /* NPC Login */
 #npc-login-section {
     position: fixed;
@@ -438,10 +429,9 @@ button:hover {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 10px;
     border-radius: 8px;
-    z-index: 9999; /* Damit er über dem Hintergrund liegt, aber unter dem Logbuch-Button bleiben kann, falls gewünscht */
-    width: 200px; /* Feste Breite, damit er nicht die ganze Breite einnimmt */
+    z-index: 50; /* Damit er über dem Hintergrund liegt */
+    width: 100px; /* Feste Breite, damit er nicht die ganze Breite einnimmt */
 }
-
 
 @media (max-width: 768px) {
     #npc-login-section {
@@ -451,6 +441,6 @@ button:hover {
         width: 100%;
         text-align: center;
         border-radius: 0;
-        z-index: 5; /* Anpassen für mobile Geräte */
+        z-index: 10; /* Stelle sicher, dass er nicht über dem Logbuch-Button liegt */
     }
 }
