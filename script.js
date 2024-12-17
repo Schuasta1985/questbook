@@ -64,13 +64,30 @@ function erstelleLogbuch() {
     logbuchButton.id = "logbuch-button";
     logbuchButton.classList.add("logbuch-button"); // Klasse zuweisen
     logbuchButton.textContent = "Logbuch";
+
+    // Feste Positionierung am unteren Bildschirmrand, zentriert
+    logbuchButton.style.position = "fixed";
+    logbuchButton.style.bottom = "10px";
+    logbuchButton.style.left = "50%";
+    logbuchButton.style.transform = "translateX(-50%)";
+    logbuchButton.style.zIndex = "9999";
+    logbuchButton.style.display = "none"; // Standardmäßig verborgen
+
+    // Event-Listener zum Ein-/Ausblenden des Logbuchs
     logbuchButton.addEventListener("click", () => {
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+        if (logbuchContainer.style.display === "none") {
+            logbuchContainer.style.display = "block";
+        } else {
+            logbuchContainer.style.display = "none";
+        }
     });
 
-    document.body.appendChild(logbuchButton); // Button anhängen
+    // Button an das Dokument anhängen
+    document.body.appendChild(logbuchButton);
+
     console.log("Logbuch-Button und Container erstellt.");
 }
+
 
 // Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
@@ -221,6 +238,10 @@ function benutzerAnmeldung() {
     // Benutzer erfolgreich angemeldet
     currentUser = benutzername;
     isAdmin = false;
+    if (logbuchButton) {
+    logbuchButton.style.display = "block";
+    }
+
 
     console.log(`${benutzername} erfolgreich angemeldet`);
 
