@@ -7,22 +7,19 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    erstelleLogbuch(); // Logbuch erstellen
-    
-    // Logbuch verstecken
+    erstelleLogbuch(); // Logbuch und Logbuch-Button erstellen und standardmäßig verstecken.
+
+    // LogbuchContainer sicherheitshalber verbergen
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) {
         logbuchContainer.style.display = "none";
     }
 
+    // Logbuch-Button beim Laden ausblenden (erfolgt bereits in erstelleLogbuch(), doppelt hält besser)
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
-        logbuchButton.style.display = "none"; // Button beim Start ausblenden
+        logbuchButton.style.display = "none";
     }
-
-    setTimeout(() => {
-        steuerungLogbuch(false); // Zusätzliche Sicherheit für das Logbuch
-    }, 0);
 
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
@@ -37,17 +34,6 @@ window.onload = function () {
     ladeLogbuch();
 };
 
-
-// Logbuch nur auf der Startseite ausblenden
-function steuerungLogbuch(anzeigen) {
-    const logbuchButton = document.getElementById("logbuch-button");
-    if (logbuchButton) {
-        logbuchButton.style.display = anzeigen ? "block" : "none";
-    } else {
-        console.warn("Logbuch-Button wurde noch nicht erstellt.");
-    }
-}
-
 // Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
@@ -55,14 +41,14 @@ function erstelleLogbuch() {
     // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
-    logbuchContainer.classList.add("logbuch-container"); // Klasse zuweisen
+    logbuchContainer.classList.add("logbuch-container");
     logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
-    document.body.appendChild(logbuchContainer); // Container anhängen
+    document.body.appendChild(logbuchContainer);
 
     // Button für das Öffnen/Schließen des Logbuchs
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
-    logbuchButton.classList.add("logbuch-button"); // Klasse zuweisen
+    logbuchButton.classList.add("logbuch-button");
     logbuchButton.textContent = "Logbuch";
 
     // Feste Positionierung am unteren Bildschirmrand, zentriert
@@ -73,8 +59,8 @@ function erstelleLogbuch() {
     logbuchButton.style.zIndex = "9999";
     logbuchButton.style.display = "none"; // Standardmäßig verborgen
 
-    // Event-Listener zum Ein-/Ausblenden des Logbuchs
     logbuchButton.addEventListener("click", () => {
+        // Ein- und Ausblenden des Logbuch-Containers
         if (logbuchContainer.style.display === "none") {
             logbuchContainer.style.display = "block";
         } else {
@@ -82,80 +68,15 @@ function erstelleLogbuch() {
         }
     });
 
-    // Button an das Dokument anhängen
     document.body.appendChild(logbuchButton);
-
     console.log("Logbuch-Button und Container erstellt.");
 }
 
-
-// Quest ins Logbuch eintragen
-function logbuchEintrag(questBeschreibung, benutzername, xp) {
-    console.log("Neuer Logbuch-Eintrag wird erstellt...");
-    const logbuchListe = document.getElementById("logbuch-list");
-
-    const datum = new Date();
-    const zeitstempel = datum.toLocaleString();
-
-    const eintrag = document.createElement("li");
-    eintrag.style.marginBottom = "10px";
-    eintrag.innerHTML = `
-        <strong>${questBeschreibung}</strong><br>
-        Erledigt von: ${benutzername}<br>
-        XP: ${xp}<br>
-        Am: ${zeitstempel}
-    `;
-
-    // Füge den neuen Eintrag oben hinzu (chronologisch absteigend)
-    logbuchListe.prepend(eintrag);
-
-    // Optional: Eintrag in Firebase speichern (falls benötigt)
-    if (currentUser) {
-        firebase.database().ref("logbuch").push({
-            quest: questBeschreibung,
-            benutzer: benutzername,
-            xp: xp,
-            zeit: zeitstempel
-        }).then(() => {
-            console.log("Logbuch-Eintrag erfolgreich gespeichert.");
-        }).catch((error) => {
-            console.error("Fehler beim Speichern des Logbuch-Eintrags:", error);
-        });
-    }
-}
-
-// Lade Logbuch aus Firebase (optional, falls serverseitige Speicherung genutzt wird)
-function ladeLogbuch() {
-    firebase.database().ref("logbuch").get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const daten = snapshot.val();
-            const logbuchListe = document.getElementById("logbuch-list");
-            logbuchListe.innerHTML = ""; // Liste zurücksetzen
-
-            Object.values(daten).forEach((eintrag) => {
-                const listItem = document.createElement("li");
-                listItem.style.marginBottom = "10px";
-                listItem.innerHTML = `
-                    <strong>${eintrag.quest}</strong><br>
-                    Erledigt von: ${eintrag.benutzer}<br>
-                    XP: ${eintrag.xp}<br>
-                    Am: ${eintrag.zeit}
-                `;
-                logbuchListe.prepend(listItem); // Chronologisch absteigend
-            });
-        } else {
-            console.log("Keine Logbuch-Einträge gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden des Logbuchs:", error);
-    });
-}
-
-// Startseite anzeigen
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
 
-    steuerungLogbuch(false); // Logbuch-Button ausblenden
+    // An dieser Stelle wird der Logbuch-Button NICHT mehr durch steuerungLogbuch() manipuliert.
+    // Wir verlassen uns darauf, dass er erst nach Login angezeigt wird.
 
     const loginSection = document.getElementById("login-section");
     if (loginSection) {
@@ -187,17 +108,6 @@ function zeigeStartseite() {
     ladeBenutzerdaten();
 }
 
-// Questbuch anzeigen
-function zeigeQuestbook() {
-        const logbuchButton = document.getElementById("logbuch-button");
-    document.getElementById("quests-section").style.display = "block";
-    document.getElementById("xp-counter").style.display = "block";
-    document.getElementById("logout-button").style.display = "block";
-    document.getElementById("login-section").style.display = "none";
-}
-
-// Benutzeranmeldung
-// Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -213,18 +123,15 @@ function benutzerAnmeldung() {
         return;
     }
 
-    // Benutzername und Passwort auslesen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
-    // Benutzername-Passwort-Paar
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
-    // Validierung der Benutzerdaten
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -238,11 +145,6 @@ function benutzerAnmeldung() {
     // Benutzer erfolgreich angemeldet
     currentUser = benutzername;
     isAdmin = false;
-    if (logbuchButton) {
-    logbuchButton.style.display = "block";
-    }
-
-
     console.log(`${benutzername} erfolgreich angemeldet`);
 
     // Logbuch-Button wieder anzeigen
@@ -251,6 +153,9 @@ function benutzerAnmeldung() {
     } else {
         console.log("Logbuch-Button fehlt, wird neu erstellt.");
         erstelleLogbuch();
+        // Da erstelleLogbuch den Button wieder verbirgt, hier noch mal auf block setzen:
+        const neuErstellterButton = document.getElementById("logbuch-button");
+        if (neuErstellterButton) neuErstellterButton.style.display = "block";
     }
 
     // Verstecke unnötige Bereiche
@@ -266,6 +171,18 @@ function benutzerAnmeldung() {
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
+
+// Der Rest deines Codes bleibt unverändert, achte nur darauf,
+// dass du keine weiteren Funktionen mehr aufrufst, die Position
+// oder Anzeige des Logbuch-Buttons oder des NPC-Login-Containers
+// in irgendeiner Form umändern.
+
+// Entferne außerdem die Funktion erstelleLogbuchSchaltfläche(), 
+// da sie nicht benötigt wird. Falls sie im Code existiert, einfach löschen.
+
+// Stelle sicher, dass in deiner CSS-Datei die Media Queries, die den NPC-Login 
+// in der mobilen Ansicht auf 100% Breite setzen, entfernt sind, wenn du ihn 
+// immer rechts unten fixiert haben möchtest.
 
 // NPC Login
 function npcLogin() {
