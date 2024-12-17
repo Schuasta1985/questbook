@@ -530,29 +530,6 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
-
-// Funktion zur Steuerung des Logbuch-Buttons
-function erstelleLogbuchSchaltfläche() {
-    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
-    const logbuchButton = document.createElement("button");
-    logbuchButton.id = "logbuch-button";
-    logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "10px";
-    logbuchButton.style.left = "10px";
-    logbuchButton.style.padding = "10px";
-    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    logbuchButton.style.color = "white";
-    logbuchButton.style.border = "none";
-    logbuchButton.style.borderRadius = "5px";
-    logbuchButton.style.cursor = "pointer";
-    logbuchButton.onclick = () => {
-        const logbuchContainer = document.getElementById("logbuch-container");
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
-    };
-
-    document.body.appendChild(logbuchButton);
-}
 // Neue quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
