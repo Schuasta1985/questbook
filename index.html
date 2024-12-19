@@ -47,7 +47,7 @@
     </div>
 
     <div id="benutzer-container" class="benutzer-grid"></div>
-    
+
     <div id="avatar-container"></div>
     
     <!-- HP-Leiste -->
@@ -90,26 +90,15 @@
     <!-- Logout Button -->
     <button id="logout-button" onclick="ausloggen()" style="display: none;">Ausloggen</button>
 
-    <!-- NPC Login Section -->
-    <div id="npc-login-section" class="npc-login">
-    <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
-    <input type="password" id="npcPasswort" placeholder="NPC Passwort">
-    <button id="npcLoginButton" onclick="npcLogin()">NPC Anmelden</button>
+    <!-- NPC Login Section im normalen Dokumentenfluss -->
+    <div id="npc-login-section">
+        <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
+        <input type="password" id="npcPasswort" placeholder="NPC Passwort">
+        <button id="npcLoginButton" onclick="npcLogin()">NPC Anmelden</button>
     </div>
 
-
-    <div id="level-set-container" style="margin-top: 20px; display: none;">
-        <h3>Level eines Spielers setzen</h3>
-        <label for="spielerDropdownLevel">Spieler auswählen:</label>
-        <select id="spielerDropdownLevel">
-            <option value="">-- Bitte wählen --</option>
-            <option value="Thomas">Thomas</option>
-            <option value="Elke">Elke</option>
-            <option value="Jamie">Jamie</option>
-        </select>
-        <input type="number" id="levelInput" placeholder="Level eingeben">
-        <button id="setLevelButton">Level setzen</button>
-    </div>
+    <!-- Logbuch-Button ebenfalls im normalen Fluss -->
+    <button id="logbuch-button">Logbuch</button>
 
     <script src="script.js"></script>
 </body>
