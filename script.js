@@ -736,15 +736,7 @@ function zeigeAdminFunktionen() {
         } else {
             console.log("Admin-Buttons sind bereits vorhanden.");
         }
-
-        // Level-Set-Container anzeigen
-        if (levelSetContainer) {
-            levelSetContainer.style.display = "block"; // Nur für Admin sichtbar
-            const setLevelButton = document.getElementById("setLevelButton");
-            if (setLevelButton) {
-                setLevelButton.onclick = levelSetzen;
-            }
-        }
+        
     } else {
         // Admin-spezifische Elemente ausblenden oder entfernen
         console.log("Kein Admin-Modus, verstecke Admin-Funktionen");
@@ -753,40 +745,11 @@ function zeigeAdminFunktionen() {
             adminButtonsContainer.remove(); // Admin-Buttons entfernen
         }
 
-        if (levelSetContainer) {
-            levelSetContainer.style.display = "none"; // Level-Set-Container verstecken
-        }
-
         // Bearbeiten-Buttons von Quests entfernen
         const editButtons = document.querySelectorAll(".edit-button");
         editButtons.forEach((editButton) => {
             editButton.remove();
         });
-    }
-}
-
-
-// Level eines Benutzers setzen
-function levelSetzen() {
-    console.log("levelSetzen() aufgerufen");
-    const benutzername = document.getElementById("benutzerDropdownLevel").value;
-    const neuesLevel = parseInt(document.getElementById("levelInput").value, 10);
-
-    if (benutzername && !isNaN(neuesLevel) && neuesLevel > 0) {
-        firebase.database().ref(`benutzer/${benutzername}/fortschritte/level`).set(neuesLevel)
-        .then(() => {
-            console.log(`Level für ${benutzername} auf ${neuesLevel} gesetzt.`);
-            if (currentUser === benutzername) {
-                level = neuesLevel;
-                aktualisiereXPAnzeige();
-            }
-            alert(`Das Level von ${benutzername} wurde erfolgreich auf ${neuesLevel} gesetzt.`);
-        })
-        .catch((error) => {
-            console.error("Fehler beim Setzen des Levels:", error);
-        });
-    } else {
-        alert("Bitte wähle einen Benutzer aus und gib ein gültiges Level ein.");
     }
 }
 
