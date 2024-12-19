@@ -37,6 +37,7 @@ window.onload = function () {
 
     zeigeStartseite();
     ladeLogbuch();
+    ladeAktionen();
 };
 
 // Logbuch nur auf der Startseite ausblenden
@@ -1164,13 +1165,5 @@ function ladeAktionen() {
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
-}
-
-// Beim Login ausführen
-benutzerAnmeldung = function () {
-    // ... andere Login-Logik
-    ladeAktionen();
-};
-
 
 aktualisiereLayout();
