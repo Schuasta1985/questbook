@@ -6,7 +6,7 @@ let isAdmin = false;
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
-
+    positioniereButtons(); // Buttons positionieren
     erstelleLogbuch(); // Logbuch erstellen
     
     // Logbuch verstecken
@@ -36,6 +36,8 @@ window.onload = function () {
     zeigeStartseite();
     ladeLogbuch();
 };
+
+    window.onresize = positioniereButtons;
 
 
 // Logbuch nur auf der Startseite ausblenden
@@ -183,12 +185,12 @@ function zeigeStartseite() {
             <button id="benutzerLoginButton">Anmelden</button>
         `;
         loginSection.style.display = "block";
-
-        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
-        if (benutzerLoginButton) {
-            benutzerLoginButton.onclick = benutzerAnmeldung;
-        }
     }
+
+    ladeBenutzerdaten();
+    positioniereButtons(); // Sicherstellen, dass Buttons korrekt positioniert werden
+}
+
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
@@ -624,25 +626,17 @@ function aktualisiereQuestImDOM(questNummer, quest) {
 
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
-    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "10px";
-    logbuchButton.style.left = "10px";
-    logbuchButton.style.padding = "10px";
-    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    logbuchButton.style.color = "white";
-    logbuchButton.style.border = "none";
-    logbuchButton.style.borderRadius = "5px";
-    logbuchButton.style.cursor = "pointer";
-    logbuchButton.onclick = () => {
-        const logbuchContainer = document.getElementById("logbuch-container");
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
-    };
-
+    logbuchButton.style.position = "fixed"; // Fixiert
+    logbuchButton.style.bottom = "10vh"; // Abstand vom unteren Rand
+    logbuchButton.style.left = "50%"; // Zentriert
+    logbuchButton.style.transform = "translateX(-50%)"; // Zentrierung
+    logbuchButton.style.zIndex = "1001"; // Überlappt nicht mit NPC-Login
     document.body.appendChild(logbuchButton);
+}
+
 }
 // Neue quest erstellen
 function neueQuestErstellen() {
@@ -881,7 +875,7 @@ function ausloggen() {
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
-        npcLoginSection.style.display = "block";
+        npcLoginSection.style.bottom = logbuchButton.offsetHeight + 20 + "px"; // Abstand zum Logbuch-Button
     }
 
     // Quests zurücksetzen (leeren)
@@ -1072,3 +1066,13 @@ function aktualisiereLayout() {
     }
 }
 aktualisiereLayout();
+function positioniereButtons() {
+    const logbuchButton = document.getElementById("logbuch-button");
+    const npcLoginSection = document.getElementById("npc-login-section");
+
+    if (logbuchButton && npcLoginSection) {
+        // Dynamischer Abstand zwischen den Buttons
+        npcLoginSection.style.bottom = logbuchButton.offsetHeight + 20 + "px";
+    }
+}
+
