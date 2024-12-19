@@ -37,7 +37,6 @@ window.onload = function () {
     ladeLogbuch();
 };
 
-
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
     const logbuchButton = document.getElementById("logbuch-button");
@@ -47,13 +46,13 @@ function steuerungLogbuch(anzeigen) {
         console.warn("Logbuch-Button wurde noch nicht erstellt.");
     }
 }
+
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
 
     // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
-    // Kein Inline-Style hier, alles über CSS
 
     logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
     document.body.appendChild(logbuchContainer);
@@ -62,7 +61,6 @@ function erstelleLogbuch() {
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
-    // Kein Inline-Style hier, alles über CSS
 
     logbuchButton.addEventListener("click", () => {
         if (logbuchContainer.style.display === "none") {
@@ -75,7 +73,6 @@ function erstelleLogbuch() {
     document.body.appendChild(logbuchButton);
     console.log("Logbuch-Button und Container erstellt.");
 }
-
 
 // Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
@@ -112,7 +109,7 @@ function logbuchEintrag(questBeschreibung, benutzername, xp) {
     }
 }
 
-// Lade Logbuch aus Firebase (optional, falls serverseitige Speicherung genutzt wird)
+// Lade Logbuch aus Firebase (optional)
 function ladeLogbuch() {
     firebase.database().ref("logbuch").get().then((snapshot) => {
         if (snapshot.exists()) {
@@ -177,14 +174,18 @@ function zeigeStartseite() {
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
-        const logbuchButton = document.getElementById("logbuch-button");
     document.getElementById("quests-section").style.display = "block";
     document.getElementById("xp-counter").style.display = "block";
     document.getElementById("logout-button").style.display = "block";
     document.getElementById("login-section").style.display = "none";
+
+    // Logbuch-Button nur anzeigen, wenn vorhanden (sollte immer vorhanden sein)
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = "block";
+    }
 }
 
-// Benutzeranmeldung
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
@@ -201,18 +202,15 @@ function benutzerAnmeldung() {
         return;
     }
 
-    // Benutzername und Passwort auslesen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
-    // Benutzername-Passwort-Paar
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
-    // Validierung der Benutzerdaten
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
@@ -226,15 +224,11 @@ function benutzerAnmeldung() {
     // Benutzer erfolgreich angemeldet
     currentUser = benutzername;
     isAdmin = false;
-
     console.log(`${benutzername} erfolgreich angemeldet`);
 
-    // Logbuch-Button wieder anzeigen
+    // Logbuch-Button anzeigen, falls er existiert
     if (logbuchButton) {
         logbuchButton.style.display = "block";
-    } else {
-        console.log("Logbuch-Button fehlt, wird neu erstellt.");
-        erstelleLogbuch();
     }
 
     // Verstecke unnötige Bereiche
@@ -250,7 +244,6 @@ function benutzerAnmeldung() {
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
-
 // NPC Login
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
