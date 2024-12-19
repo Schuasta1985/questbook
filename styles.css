@@ -456,4 +456,36 @@ button:hover {
     margin: 20px auto; /* z.B. zentrieren oder woanders platzieren */
 }
 
+#zauber-menu {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFD700;
+    padding: 15px;
+    border-radius: 10px;
+    top: 110%; /* Positioniert es unter dem Zauber-Button */
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    width: 200px; /* Breite des Menüs */
+    text-align: center;
+}
+
+#zauber-menu button {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #FFD700;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#zauber-menu button:hover {
+    background-color: #FFC107;
+}
+
 
