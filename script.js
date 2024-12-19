@@ -619,7 +619,6 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
-
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
     const logbuchButton = document.createElement("button");
@@ -633,8 +632,7 @@ function erstelleLogbuchSchaltfläche() {
     document.body.appendChild(logbuchButton);
 }
 
-}
-// Neue quest erstellen
+// Neue Quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -678,7 +676,6 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung, XP pro Einheit und maximale Menge ein.");
     }
 }
-
 
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
