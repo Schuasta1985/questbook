@@ -424,19 +424,26 @@ button:hover {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
 #logbuch-button {
-    display: none;
     position: fixed;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
+    bottom: 80px; /* Etwas oberhalb des NPC-Login-Buttons */
+    left: 20px; /* Abstand vom linken Rand */
+    z-index: 998; /* Liegt unterhalb des NPC-Buttons */
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
 }
-
+#npc-login-section {
+    position: fixed;
+    bottom: 20px; /* Abstand vom unteren Rand */
+    right: 20px; /* Abstand vom rechten Rand */
+    z-index: 999; /* Überlappt nicht mit anderen Elementen */
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 
