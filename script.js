@@ -7,7 +7,8 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    erstelleLogbuch(); // Logbuch erstellen
+    // Erstelle Logbuch und Button nur einmal
+    erstelleLogbuch(); 
     
     // Logbuch verstecken
     const logbuchContainer = document.getElementById("logbuch-container");
@@ -47,34 +48,6 @@ function steuerungLogbuch(anzeigen) {
     }
 }
 
-function erstelleLogbuch() {
-    console.log("Logbuch wird erstellt...");
-
-    // Container für das Logbuch erstellen
-    const logbuchContainer = document.createElement("div");
-    logbuchContainer.id = "logbuch-container";
-
-    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
-    document.body.appendChild(logbuchContainer);
-
-    // Button für das Öffnen/Schließen des Logbuchs
-    const logbuchButton = document.createElement("button");
-    logbuchButton.id = "logbuch-button";
-    logbuchButton.textContent = "Logbuch";
-
-    logbuchButton.addEventListener("click", () => {
-        if (logbuchContainer.style.display === "none") {
-            logbuchContainer.style.display = "block";
-        } else {
-            logbuchContainer.style.display = "none";
-        }
-    });
-
-    document.body.appendChild(logbuchButton);
-    console.log("Logbuch-Button und Container erstellt.");
-}
-
-// Quest ins Logbuch eintragen
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
     console.log("Neuer Logbuch-Eintrag wird erstellt...");
     const logbuchListe = document.getElementById("logbuch-list");
@@ -109,7 +82,6 @@ function logbuchEintrag(questBeschreibung, benutzername, xp) {
     }
 }
 
-// Lade Logbuch aus Firebase (optional)
 function ladeLogbuch() {
     firebase.database().ref("logbuch").get().then((snapshot) => {
         if (snapshot.exists()) {
@@ -136,7 +108,6 @@ function ladeLogbuch() {
     });
 }
 
-// Startseite anzeigen
 function zeigeStartseite() {
     console.log("zeigeStartseite() aufgerufen");
 
@@ -172,21 +143,18 @@ function zeigeStartseite() {
     ladeBenutzerdaten();
 }
 
-// Questbuch anzeigen
 function zeigeQuestbook() {
     document.getElementById("quests-section").style.display = "block";
     document.getElementById("xp-counter").style.display = "block";
     document.getElementById("logout-button").style.display = "block";
     document.getElementById("login-section").style.display = "none";
 
-    // Logbuch-Button nur anzeigen, wenn vorhanden (sollte immer vorhanden sein)
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
         logbuchButton.style.display = "block";
     }
 }
 
-// Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -226,16 +194,13 @@ function benutzerAnmeldung() {
     isAdmin = false;
     console.log(`${benutzername} erfolgreich angemeldet`);
 
-    // Logbuch-Button anzeigen, falls er existiert
     if (logbuchButton) {
         logbuchButton.style.display = "block";
     }
 
-    // Verstecke unnötige Bereiche
     if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
-    // Starte die Benutzeroberfläche
     zeigeQuestbook();
     ladeFortschritte();
     täglicheHPRegeneration();
@@ -244,6 +209,7 @@ function benutzerAnmeldung() {
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
+
 // NPC Login
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
