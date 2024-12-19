@@ -47,58 +47,34 @@ function steuerungLogbuch(anzeigen) {
         console.warn("Logbuch-Button wurde noch nicht erstellt.");
     }
 }
-
-// Logbuch erstellen (zunächst versteckt)
 function erstelleLogbuch() {
     console.log("Logbuch wird erstellt...");
 
     // Container für das Logbuch erstellen
     const logbuchContainer = document.createElement("div");
     logbuchContainer.id = "logbuch-container";
-    logbuchContainer.style.position = "fixed";
-    logbuchContainer.style.bottom = "120px"; // Höher, damit es nicht mit dem Button kollidiert
-    logbuchContainer.style.left = "50%";
-    logbuchContainer.style.transform = "translateX(-50%)";
-    logbuchContainer.style.width = "300px";
-    logbuchContainer.style.maxHeight = "400px";
-    logbuchContainer.style.overflowY = "auto";
-    logbuchContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    logbuchContainer.style.color = "white";
-    logbuchContainer.style.padding = "10px";
-    logbuchContainer.style.borderRadius = "10px";
-    logbuchContainer.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
-    logbuchContainer.style.display = "none"; // Zunächst versteckt
-    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list' style='list-style: none; padding: 0;'></ul>";
+    // Kein Inline-Style hier, alles über CSS
 
-    document.body.appendChild(logbuchContainer); // Container anhängen
+    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
+    document.body.appendChild(logbuchContainer);
 
     // Button für das Öffnen/Schließen des Logbuchs
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "60px"; // Button-Position anpassen
-    logbuchButton.style.left = "50%"; // Zentriert horizontal
-    logbuchButton.style.transform = "translateX(-50%)";
-    logbuchButton.style.backgroundColor = "black";
-    logbuchButton.style.color = "white";
-    logbuchButton.style.border = "none";
-    logbuchButton.style.borderRadius = "5px";
-    logbuchButton.style.padding = "10px";
-    logbuchButton.style.cursor = "pointer";
-    logbuchButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.5)";
-    logbuchButton.style.zIndex = "1000"; // Stelle sicher, dass der Button nicht von anderen Elementen überdeckt wird.
+    // Kein Inline-Style hier, alles über CSS
+
     logbuchButton.addEventListener("click", () => {
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+        if (logbuchContainer.style.display === "none") {
+            logbuchContainer.style.display = "block";
+        } else {
+            logbuchContainer.style.display = "none";
+        }
     });
 
-    document.body.appendChild(logbuchButton); // Button anhängen
-
-    setTimeout(() => {
-        console.log("Logbuch-Button und Container erstellt.");
-        console.log("Logbuch-Button:", document.getElementById("logbuch-button"));
-    }, 0); // Timeout schließen
-} // Funktion schließen
+    document.body.appendChild(logbuchButton);
+    console.log("Logbuch-Button und Container erstellt.");
+}
 
 
 // Quest ins Logbuch eintragen
@@ -802,8 +778,6 @@ function questBearbeiten(questNummer) {
         console.error("Fehler beim Bearbeiten der Quest:", error);
     });
 }
-
-
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
@@ -832,10 +806,11 @@ function zeigeAvatar() {
 
         avatarContainer.style.display = "flex"; // Avatar sichtbar machen
         avatarContainer.style.marginTop = "20px"; // Platz schaffen
+
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
-}
+
     // Platz für den Avatar zurücksetzen
     const questsSection = document.getElementById("quests-section");
     if (questsSection) {
@@ -847,6 +822,7 @@ function zeigeAvatar() {
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
+}
 
 // Ausloggen
 function ausloggen() {
