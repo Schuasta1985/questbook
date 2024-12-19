@@ -281,30 +281,29 @@ function speichereFortschritte() {
 
 
 // Benutzerfortschritte aus Firebase laden
-function ladeFortschritte() {
+function ladeFortschritte(callback) {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
             .then((snapshot) => {
                 if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    xp = data.xp || 0;
-                    level = data.level || 1;
-                    aktuelleHP = data.hp || berechneMaxHP(level);
-                    maxHP = data.maxHP || berechneMaxHP(level);
-                    aktuelleMP = data.mp || berechneMaxMP(level);
-                    maxMP = data.maxMP || berechneMaxMP(level);
+                    const daten = snapshot.val();
+                    xp = daten.xp || 0;
+                    level = daten.level || 1;
+                    aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
+                    maxHP = berechneMaxHP(level);
+                    aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
+                    maxMP = berechneMaxMP(level);
 
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
                     aktualisiereMPLeiste(aktuelleMP, level);
+
+                    // Callback aufrufen, wenn vorhanden
+                    if (typeof callback === "function") {
+                        callback();
+                    }
                 } else {
                     console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
-                    aktuelleHP = berechneMaxHP(1);
-                    maxHP = berechneMaxHP(1);
-                    aktuelleMP = berechneMaxMP(1);
-                    maxMP = berechneMaxMP(1);
-                    aktualisiereHPLeiste(aktuelleHP, 1);
-                    aktualisiereMPLeiste(aktuelleMP, 1);
                 }
             })
             .catch((error) => {
@@ -314,33 +313,46 @@ function ladeFortschritte() {
 }
 
 
+
 // Tägliche HP-Regeneration
 function täglicheHPRegeneration() {
-    if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const daten = snapshot.val();
-                    const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
-                    const maxHP = berechneMaxHP(daten.level);
+    if (!currentUser) return; // Sicherstellen, dass ein Benutzer angemeldet ist
 
+    const heutigesDatum = new Date().toDateString();
+    const letzterTag = localStorage.getItem("letzteHPRegeneration");
+
+    if (letzterTag === heutigesDatum) {
+        console.log("HP wurde heute bereits regeneriert.");
+        return;
+    }
+
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
+                const maxHP = berechneMaxHP(daten.level);
+
+                if (aktuelleHP < maxHP) {
                     const neueHP = Math.min(aktuelleHP + 100, maxHP);
 
                     firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
                         .then(() => {
                             console.log(`Tägliche HP-Regeneration abgeschlossen: ${aktuelleHP} -> ${neueHP}`);
                             aktualisiereHPLeiste(neueHP, daten.level);
+                            localStorage.setItem("letzteHPRegeneration", heutigesDatum);
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
                         });
                 }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
-            });
-    }
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+        });
 }
+
 
 function täglicheMPRegeneration() {
     if (currentUser) {
