@@ -33,7 +33,10 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-
+    // MP einmal am Tag regenerieren
+if (letzterMPTag !== heutigesDatum) {
+    taeglicheMPRegeneration();
+    localStorage.setItem("letzteMPRegeneration", heutigesDatum);
     zeigeStartseite();
     ladeLogbuch();
 };
@@ -337,6 +340,36 @@ function täglicheHPRegeneration() {
             .catch((error) => {
                 console.error("Fehler beim Laden der Fortschrittsdaten:", error);
             });
+    }
+}
+// Einmal am Tag MP auf MaxMP zurücksetzen, ähnlich der täglichenHPRegeneration()
+function taeglicheMPRegeneration() {
+    if (currentUser) {
+        // Prüfe ob heute schon MP regeneriert wurde
+        const heutigesDatum = new Date().toDateString();
+        const letzterMPTag = localStorage.getItem("letzteMPRegeneration");
+        if (letzterMPTag !== heutigesDatum) {
+            firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const daten = snapshot.val();
+                        const maxMP = daten.maxMP || berechneMaxMP(daten.level || 1);
+                        // Setze MP auf MaxMP
+                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                            .then(() => {
+                                console.log(`Tägliche MP-Regeneration abgeschlossen: MP -> ${maxMP}`);
+                                aktualisiereMPLeiste(maxMP, daten.level || 1);
+                                localStorage.setItem("letzteMPRegeneration", heutigesDatum);
+                            })
+                            .catch((error) => {
+                                console.error("Fehler beim Speichern der regenerierten MP:", error);
+                            });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+                });
+        }
     }
 }
 
