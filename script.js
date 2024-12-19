@@ -31,6 +31,7 @@ window.onload = function () {
     // HP einmal am Tag regenerieren
     if (letzterTag !== heutigesDatum) {
         täglicheHPRegeneration();
+        täglicheMPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
 
@@ -339,6 +340,32 @@ function täglicheHPRegeneration() {
             });
     }
 }
+
+function täglicheMPRegeneration() {
+    if (currentUser) {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const daten = snapshot.val();
+                    const maxMP = berechneMaxMP(daten.level);
+
+                    // MP auf Maximum setzen
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                        .then(() => {
+                            console.log(`Tägliche MP-Regeneration abgeschlossen: ${maxMP}`);
+                            aktualisiereMPLeiste(maxMP, daten.level);
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der regenerierten MP:", error);
+                        });
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der MP-Daten:", error);
+            });
+    }
+}
+
 
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
@@ -735,10 +762,10 @@ function zeigeAvatar() {
         }
 
         avatarContainer.innerHTML = `
-            <video autoplay loop muted class="${currentUser === 'Jamie' ? 'avatar-jamie' : 'avatar-general'}">
-                <source src="${avatarPath}" type="video/mp4">
-                Dein Browser unterstützt das Video-Tag nicht.
+            <video autoplay loop muted>
+                <source src="${getAvatarForUser(currentUser)}" type="video/mp4">
             </video>
+            <button id="zauber-button" onclick="zeigeZauberMenu()">Zauber</button>
         `;
 
         avatarContainer.style.display = "flex";
@@ -954,4 +981,101 @@ function aktualisiereLayout() {
         questsSection.style.marginTop = "20px";
     }
 }
+function zeigeZauberMenu() {
+    const zauberMenu = document.createElement("div");
+    zauberMenu.id = "zauber-menu";
+    zauberMenu.innerHTML = `
+        <h3>Zauber</h3>
+        <button onclick="schadenZufügen()">Schaden zufügen</button>
+        <button onclick="heilen()">Heilen</button>
+    `;
+    document.body.appendChild(zauberMenu);
+}
+function schadenZufügen() {
+    const zielSpieler = prompt("Welchem Spieler möchtest du Schaden zufügen?");
+    const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
+
+    if (isNaN(schaden) || schaden <= 0) {
+        alert("Ungültiger Schaden.");
+        return;
+    }
+
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                if (daten.mp < schaden) {
+                    alert("Nicht genug MP.");
+                    return;
+                }
+
+                // MP abziehen
+                const neueMP = daten.mp - schaden;
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
+
+                // Zielspieler Schaden zufügen
+                firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
+                    .then((zielSnapshot) => {
+                        if (zielSnapshot.exists()) {
+                            const zielDaten = zielSnapshot.val();
+                            const neueHP = zielDaten.hp - schaden;
+
+                            if (neueHP <= 0) {
+                                // Spieler stirbt
+                                const neuesLevel = Math.max(1, zielDaten.level - 1);
+                                const maxHP = berechneMaxHP(neuesLevel);
+
+                                firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).update({
+                                    level: neuesLevel,
+                                    hp: maxHP
+                                });
+
+                                alert(`${zielSpieler} ist gestorben und hat ein Level verloren.`);
+                            } else {
+                                // HP aktualisieren
+                                firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                            }
+                        }
+                    });
+            }
+        });
+}
+function heilen() {
+    const zielSpieler = prompt("Welchen Spieler möchtest du heilen?");
+    const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
+
+    if (isNaN(heilung) || heilung <= 0) {
+        alert("Ungültige Heilung.");
+        return;
+    }
+
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                if (daten.mp < heilung) {
+                    alert("Nicht genug MP.");
+                    return;
+                }
+
+                // MP abziehen
+                const neueMP = daten.mp - heilung;
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
+
+                // Zielspieler heilen
+                firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
+                    .then((zielSnapshot) => {
+                        if (zielSnapshot.exists()) {
+                            const zielDaten = zielSnapshot.val();
+                            const maxHP = berechneMaxHP(zielDaten.level);
+                            const neueHP = Math.min(zielDaten.hp + heilung, maxHP);
+
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                        }
+                    });
+            }
+        });
+}
+
+
 aktualisiereLayout();
