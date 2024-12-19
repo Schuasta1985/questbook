@@ -428,30 +428,32 @@ button:hover {
 }
 /* Logbuch-Button direkt über dem unteren Bildschirmrand, zentriert */
 #logbuch-button {
-    display: none;
-    position: fixed;
-    bottom: 50px; /* Unterhalb des Logbuch-Containers */
-    left: 50%;
-    transform: translateX(-50%);
+    /* Entferne position: fixed; */
+    position: static; /* oder ganz weglassen */
+    margin: 20px auto; /* z.B. unterhalb des Logins oder oben an der Seite */
+    display: block;
     background-color: black;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    /* Kein transform, kein fixed, kein hoher z-index */
 }
+
 /* NPC Login immer unten rechts fixiert */
 #npc-login-section {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
+    /* Entferne position: fixed; */
+    position: static; /* oder ganz weglassen */
+    bottom: auto;
+    right: auto;
+    /* Behalte Hintergrund, Padding, etc. bei */
+    background-color: rgba(0,0,0,0.7);
     padding: 10px;
     border-radius: 8px;
-    z-index: 1000; /* Hoch genug, damit er über Inhalte liegt, aber unter dem Logbuch bleiben kann, falls nötig */
-    width: 200px; /* Feste Breite */
+    z-index: 1; /* Ein niedriger z-index, damit es nicht über anderen Elementen steht */
+    width: 200px;
+    margin: 20px auto; /* z.B. zentrieren oder woanders platzieren */
 }
 
 
