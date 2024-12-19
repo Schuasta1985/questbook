@@ -33,10 +33,7 @@ window.onload = function () {
         täglicheHPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-    // MP einmal am Tag regenerieren
-if (letzterMPTag !== heutigesDatum) {
-    taeglicheMPRegeneration();
-    localStorage.setItem("letzteMPRegeneration", heutigesDatum);
+
     zeigeStartseite();
     ladeLogbuch();
 };
@@ -340,36 +337,6 @@ function täglicheHPRegeneration() {
             .catch((error) => {
                 console.error("Fehler beim Laden der Fortschrittsdaten:", error);
             });
-    }
-}
-// Einmal am Tag MP auf MaxMP zurücksetzen, ähnlich der täglichenHPRegeneration()
-function taeglicheMPRegeneration() {
-    if (currentUser) {
-        // Prüfe ob heute schon MP regeneriert wurde
-        const heutigesDatum = new Date().toDateString();
-        const letzterMPTag = localStorage.getItem("letzteMPRegeneration");
-        if (letzterMPTag !== heutigesDatum) {
-            firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-                .then((snapshot) => {
-                    if (snapshot.exists()) {
-                        const daten = snapshot.val();
-                        const maxMP = daten.maxMP || berechneMaxMP(daten.level || 1);
-                        // Setze MP auf MaxMP
-                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
-                            .then(() => {
-                                console.log(`Tägliche MP-Regeneration abgeschlossen: MP -> ${maxMP}`);
-                                aktualisiereMPLeiste(maxMP, daten.level || 1);
-                                localStorage.setItem("letzteMPRegeneration", heutigesDatum);
-                            })
-                            .catch((error) => {
-                                console.error("Fehler beim Speichern der regenerierten MP:", error);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    console.error("Fehler beim Laden der Fortschrittsdaten:", error);
-                });
-        }
     }
 }
 
@@ -987,91 +954,4 @@ function aktualisiereLayout() {
         questsSection.style.marginTop = "20px";
     }
 }
-function schadenZufuegen(menge) {
-    if (!currentUser) return; // Nur wenn ein Spieler angemeldet ist
-    const zielSpielerDropdown = document.getElementById("zielSpielerDropdown");
-    const zielBenutzer = zielSpielerDropdown.value;
-
-    if (!zielBenutzer) {
-        alert("Bitte wähle einen Zielspieler aus, um Schaden zuzufügen.");
-        return;
-    }
-
-    // Überprüfen, ob Zielspieler != aktueller Benutzer ist
-    if (zielBenutzer === currentUser) {
-        alert("Du kannst dir selbst keinen Schaden zufügen!");
-        return;
-    }
-
-    firebase.database().ref(`benutzer/${zielBenutzer}/fortschritte`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const daten = snapshot.val();
-                const level = daten.level || 1;
-                const maxHP = daten.maxHP || berechneMaxHP(level);
-                let aktuelleHP = daten.hp || maxHP;
-
-                aktuelleHP = Math.max(0, aktuelleHP - menge); // HP nicht unter 0
-                firebase.database().ref(`benutzer/${zielBenutzer}/fortschritte/hp`).set(aktuelleHP)
-                    .then(() => {
-                        console.log(`Schaden zugefügt an ${zielBenutzer}: -${menge} HP`);
-                        // Fortschritte speichern, falls nötig
-                        // HP-Leiste des Zielspielers wird nicht direkt aktualisiert, 
-                        // da dessen Ansicht evtl. auf einem anderen Client ist.
-                        // Falls gewünscht, könnte man hier eine Update-Funktion für Zielspieler aufrufen
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern des Schadens:", error);
-                    });
-            } else {
-                console.log("Benutzer nicht gefunden oder keine Daten vorhanden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Zielspieler-Daten:", error);
-        });
-}
-
-function heilen(menge) {
-    if (!currentUser) return; 
-    const zielSpielerDropdown = document.getElementById("zielSpielerDropdown");
-    const zielBenutzer = zielSpielerDropdown.value;
-
-    if (!zielBenutzer) {
-        alert("Bitte wähle einen Zielspieler aus, um ihn zu heilen.");
-        return;
-    }
-
-    if (zielBenutzer === currentUser) {
-        alert("Du kannst dich nicht selbst heilen!");
-        return;
-    }
-
-    firebase.database().ref(`benutzer/${zielBenutzer}/fortschritte`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const daten = snapshot.val();
-                const level = daten.level || 1;
-                const maxHP = daten.maxHP || berechneMaxHP(level);
-                let aktuelleHP = daten.hp || maxHP;
-
-                aktuelleHP = Math.min(maxHP, aktuelleHP + menge); // HP nicht über Max
-                firebase.database().ref(`benutzer/${zielBenutzer}/fortschritte/hp`).set(aktuelleHP)
-                    .then(() => {
-                        console.log(`Geheilt: +${menge} HP für ${zielBenutzer}`);
-                        // Analog zur Schadenfunktion aktualisieren wir hier nur die Datenbank.
-                        // Die Anzeige beim Zielspieler muss separat aktualisiert werden.
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der Heilung:", error);
-                    });
-            } else {
-                console.log("Benutzer nicht gefunden oder keine Daten vorhanden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Zielspieler-Daten:", error);
-        });
-}
-
 aktualisiereLayout();

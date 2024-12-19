@@ -47,7 +47,7 @@
     </div>
 
     <div id="benutzer-container" class="benutzer-grid"></div>
-
+    
     <div id="avatar-container"></div>
     
     <!-- HP-Leiste -->
@@ -90,27 +90,25 @@
     <!-- Logout Button -->
     <button id="logout-button" onclick="ausloggen()" style="display: none;">Ausloggen</button>
 
-    <!-- NPC Login Section im normalen Dokumentenfluss -->
-    <div id="npc-login-section">
+    <!-- NPC Login Section -->
+    <div id="npc-login-section" class="npc-login" style="position: fixed; bottom: 10px; right: 10px;">
         <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
         <input type="password" id="npcPasswort" placeholder="NPC Passwort">
         <button id="npcLoginButton" onclick="npcLogin()">NPC Anmelden</button>
     </div>
-<div id="avatar-und-buttons" style="display: flex; align-items: center; gap: 20px;">
-    <div id="avatar-container"></div>
-    <div id="hp-mp-actions">
-        <!-- Dropdown zur Auswahl des Zielspielers -->
-        <select id="zielSpielerDropdown">
-            <option value="">-- Zielspieler wählen --</option>
+
+    <div id="level-set-container" style="margin-top: 20px; display: none;">
+        <h3>Level eines Spielers setzen</h3>
+        <label for="spielerDropdownLevel">Spieler auswählen:</label>
+        <select id="spielerDropdownLevel">
+            <option value="">-- Bitte wählen --</option>
             <option value="Thomas">Thomas</option>
             <option value="Elke">Elke</option>
             <option value="Jamie">Jamie</option>
         </select>
-        <button id="damage-button" onclick="schadenZufuegen(20)">Schaden zufügen</button>
-        <button id="heal-button" onclick="heilen(50)">Heilen</button>
+        <input type="number" id="levelInput" placeholder="Level eingeben">
+        <button id="setLevelButton">Level setzen</button>
     </div>
-</div>
-
 
     <script src="script.js"></script>
 </body>
