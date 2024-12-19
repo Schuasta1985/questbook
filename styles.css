@@ -424,34 +424,19 @@ button:hover {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
 #logbuch-button {
-    position: fixed; /* Fixiert den Button */
-    bottom: 80px; /* Abstand vom unteren Rand */
-    left: 50%; /* Zentriert horizontal */
-    transform: translateX(-50%); /* Korrekte Zentrierung */
+    display: none;
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: black;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
-    z-index: 1001; /* Über anderen Elementen */
-}
-#npc-login-section {
-    position: fixed; /* Fixiert den Button */
-    bottom: 10px; /* Abstand vom unteren Rand */
-    right: 10px; /* Abstand vom rechten Rand */
-    background: rgba(0, 0, 0, 0.8); /* Transparenter Hintergrund */
-    padding: 10px;
-    border-radius: 10px;
-    z-index: 1000; /* Unter dem Logbuch-Button */
-}
-
-@media (max-width: 768px) {
-    #npc-login-section {
-        bottom: 10px; /* Immer am unteren Rand */
-        width: auto; /* Breite dynamisch */
-        right: 10px; /* Position bleibt rechts */
-    }
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 

@@ -6,7 +6,7 @@ let isAdmin = false;
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
-    positioniereButtons(); // Buttons positionieren
+
     erstelleLogbuch(); // Logbuch erstellen
     
     // Logbuch verstecken
@@ -36,8 +36,6 @@ window.onload = function () {
     zeigeStartseite();
     ladeLogbuch();
 };
-
-    window.onresize = positioniereButtons;
 
 
 // Logbuch nur auf der Startseite ausblenden
@@ -185,18 +183,21 @@ function zeigeStartseite() {
             <button id="benutzerLoginButton">Anmelden</button>
         `;
         loginSection.style.display = "block";
-    }
 
-    ladeBenutzerdaten();
-    positioniereButtons(); // Sicherstellen, dass Buttons korrekt positioniert werden
+        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
+        if (benutzerLoginButton) {
+            benutzerLoginButton.onclick = benutzerAnmeldung;
+        }
+    }
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("npc-login-section").style.display = "block";
-}
 
+    ladeBenutzerdaten();
+}
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -207,6 +208,7 @@ function zeigeQuestbook() {
     document.getElementById("login-section").style.display = "none";
 }
 
+// Benutzeranmeldung
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
@@ -619,20 +621,30 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
+
 // Funktion zur Steuerung des Logbuch-Buttons
 function erstelleLogbuchSchaltfläche() {
+    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
     const logbuchButton = document.createElement("button");
     logbuchButton.id = "logbuch-button";
     logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed"; // Fixiert
-    logbuchButton.style.bottom = "10vh"; // Abstand vom unteren Rand
-    logbuchButton.style.left = "50%"; // Zentriert
-    logbuchButton.style.transform = "translateX(-50%)"; // Zentrierung
-    logbuchButton.style.zIndex = "1001"; // Überlappt nicht mit NPC-Login
+    logbuchButton.style.position = "fixed";
+    logbuchButton.style.bottom = "10px";
+    logbuchButton.style.left = "10px";
+    logbuchButton.style.padding = "10px";
+    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    logbuchButton.style.color = "white";
+    logbuchButton.style.border = "none";
+    logbuchButton.style.borderRadius = "5px";
+    logbuchButton.style.cursor = "pointer";
+    logbuchButton.onclick = () => {
+        const logbuchContainer = document.getElementById("logbuch-container");
+        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
+    };
+
     document.body.appendChild(logbuchButton);
 }
-
-// Neue Quest erstellen
+// Neue quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -676,6 +688,7 @@ function neueQuestErstellen() {
         alert("Ungültige Eingabe. Bitte gib eine gültige Beschreibung, XP pro Einheit und maximale Menge ein.");
     }
 }
+
 
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
@@ -868,7 +881,7 @@ function ausloggen() {
     // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
     if (npcLoginSection) {
-        npcLoginSection.style.bottom = logbuchButton.offsetHeight + 20 + "px"; // Abstand zum Logbuch-Button
+        npcLoginSection.style.display = "block";
     }
 
     // Quests zurücksetzen (leeren)
@@ -1059,13 +1072,3 @@ function aktualisiereLayout() {
     }
 }
 aktualisiereLayout();
-function positioniereButtons() {
-    const logbuchButton = document.getElementById("logbuch-button");
-    const npcLoginSection = document.getElementById("npc-login-section");
-
-    if (logbuchButton && npcLoginSection) {
-        // Dynamischer Abstand zwischen den Buttons
-        npcLoginSection.style.bottom = logbuchButton.offsetHeight + 20 + "px";
-    }
-}
-
