@@ -455,5 +455,25 @@ button:hover {
     width: 200px;
     margin: 20px auto; /* z.B. zentrieren oder woanders platzieren */
 }
+#hp-mp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Passe die Buttons an deine bestehende Farb- und Stilwelt an */
+#damage-button, #heal-button {
+    background-color: #808000; /* Olivgrün wie deine anderen Buttons */
+    color: #FFD700;
+    border: none;
+    padding: 10px 15px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#damage-button:hover, #heal-button:hover {
+    background-color: #B22222; /* Sattes Rot oder ähnlicher Hover-Farbton */
+}
 
 
