@@ -996,8 +996,25 @@ function zeigeZauberMenu() {
     zauberMenu.style.padding = "20px";
     zauberMenu.style.border = "2px solid black";
     zauberMenu.style.borderRadius = "10px";
+
+    const spielerDropdown = document.createElement("select");
+    spielerDropdown.id = "spieler-dropdown";
+    spielerDropdown.style.marginBottom = "15px";
+
+    Object.keys(benutzerDaten).forEach((spieler) => {
+        if (spieler !== currentUser) {
+            const option = document.createElement("option");
+            option.value = spieler;
+            option.textContent = spieler;
+            spielerDropdown.appendChild(option);
+        }
+    });
+
     zauberMenu.innerHTML = `
         <h3>Zauber</h3>
+    `;
+    zauberMenu.appendChild(spielerDropdown);
+    zauberMenu.innerHTML += `
         <button onclick="schadenZufügen()">Schaden zufügen</button>
         <button onclick="heilen()">Heilen</button>
         <button onclick="document.body.removeChild(document.getElementById('zauber-menu'))">Schließen</button>
@@ -1006,11 +1023,11 @@ function zeigeZauberMenu() {
 }
 
 function schadenZufügen() {
-    const zielSpieler = prompt("Welchem Spieler möchtest du Schaden zufügen?");
+    const zielSpieler = document.getElementById("spieler-dropdown").value;
     const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
 
-    if (isNaN(schaden) || schaden <= 0) {
-        alert("Ungültiger Schaden.");
+    if (!zielSpieler || isNaN(schaden) || schaden <= 0) {
+        alert("Ungültige Eingabe.");
         return;
     }
 
@@ -1018,14 +1035,13 @@ function schadenZufügen() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                const kosten = schaden; // 1 MP = 1 Schaden
-                if (daten.mp < kosten) {
+                if (daten.mp < schaden) {
                     alert("Nicht genug MP.");
                     return;
                 }
 
                 // MP abziehen
-                const neueMP = daten.mp - kosten;
+                const neueMP = daten.mp - schaden;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
                 // Zielspieler Schaden zufügen
@@ -1034,6 +1050,15 @@ function schadenZufügen() {
                         if (zielSnapshot.exists()) {
                             const zielDaten = zielSnapshot.val();
                             const neueHP = zielDaten.hp - schaden;
+
+                            const aktion = {
+                                typ: "schaden",
+                                wert: schaden,
+                                von: currentUser,
+                                zeitpunkt: new Date().toLocaleString()
+                            };
+
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
                             if (neueHP <= 0) {
                                 // Spieler stirbt
@@ -1057,26 +1082,26 @@ function schadenZufügen() {
 }
 
 function heilen() {
-    const zielSpieler = prompt("Welchen Spieler möchtest du heilen?");
+    const zielSpieler = document.getElementById("spieler-dropdown").value;
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
 
-    if (isNaN(heilung) || heilung <= 0) {
-        alert("Ungültige Heilung.");
+    if (!zielSpieler || isNaN(heilung) || heilung <= 0) {
+        alert("Ungültige Eingabe.");
         return;
     }
+
 
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                const kosten = heilung; // 1 MP = 1 Heilung
-                if (daten.mp < kosten) {
+                if (daten.mp < heilung) {
                     alert("Nicht genug MP.");
                     return;
                 }
 
                 // MP abziehen
-                const neueMP = daten.mp - kosten;
+                const neueMP = daten.mp - heilung;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
                 // Zielspieler heilen
@@ -1087,12 +1112,65 @@ function heilen() {
                             const maxHP = berechneMaxHP(zielDaten.level);
                             const neueHP = Math.min(zielDaten.hp + heilung, maxHP);
 
+                            const aktion = {
+                                typ: "heilung",
+                                wert: heilung,
+                                von: currentUser,
+                                zeitpunkt: new Date().toLocaleString()
+                            };
+
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
                         }
                     });
             }
         });
 }
+
+function ladeAktionen() {
+    firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const aktionen = snapshot.val();
+                const aktionenArray = Object.values(aktionen);
+
+                const aktionenContainer = document.createElement("div");
+                aktionenContainer.id = "aktionen-container";
+                aktionenContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+                aktionenContainer.style.color = "#FFD700";
+                aktionenContainer.style.padding = "10px";
+                aktionenContainer.style.borderRadius = "5px";
+                aktionenContainer.style.margin = "20px";
+                aktionenContainer.style.textAlign = "center";
+
+                aktionenContainer.innerHTML = "<h3>Letzte Aktionen:</h3>";
+
+                aktionenArray.forEach((aktion) => {
+                    const aktionElement = document.createElement("p");
+                    aktionElement.textContent = `${aktion.typ === "schaden" ? "Schaden" : "Heilung"}: ${aktion.wert} von ${aktion.von} am ${aktion.zeitpunkt}`;
+                    aktionenContainer.appendChild(aktionElement);
+                });
+
+                const avatarContainer = document.getElementById("avatar-container");
+                avatarContainer.appendChild(aktionenContainer);
+
+                // Aktionen nach Anzeige löschen
+                firebase.database().ref(`benutzer/${currentUser}/aktionen`).remove();
+            } else {
+                console.log("Keine Aktionen für den Benutzer vorhanden.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Aktionen:", error);
+        });
+}
+
+// Beim Login ausführen
+benutzerAnmeldung = function () {
+    // ... andere Login-Logik
+    ladeAktionen();
+};
 
 
 aktualisiereLayout();
