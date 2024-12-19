@@ -1128,7 +1128,6 @@ function heilen() {
             }
         });
 }
-
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
@@ -1164,6 +1163,8 @@ function ladeAktionen() {
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
-        });
+        }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
+}
+
 
 aktualisiereLayout();
