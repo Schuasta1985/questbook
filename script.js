@@ -763,12 +763,16 @@ function zeigeAvatar() {
 
         avatarContainer.innerHTML = `
             <video autoplay loop muted>
-                <source src="${getAvatarForUser(currentUser)}" type="video/mp4">
+                <source src="${avatarPath}" type="video/mp4">
             </video>
-            <button id="zauber-button" onclick="zeigeZauberMenu()">Zauber</button>
+            <div id="zauber-buttons" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; align-items: center;">
+                <button onclick="zeigeZauberMenu()">Zauber</button>
+            </div>
         `;
 
         avatarContainer.style.display = "flex";
+        avatarContainer.style.flexDirection = "column";
+        avatarContainer.style.alignItems = "center";
         avatarContainer.style.marginTop = "20px";
 
     } else {
@@ -785,6 +789,7 @@ function zeigeAvatar() {
         levelSetContainer.style.display = "none";
     }
 }
+
 
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
@@ -984,13 +989,23 @@ function aktualisiereLayout() {
 function zeigeZauberMenu() {
     const zauberMenu = document.createElement("div");
     zauberMenu.id = "zauber-menu";
+    zauberMenu.style.position = "absolute";
+    zauberMenu.style.top = "50%";
+    zauberMenu.style.left = "50%";
+    zauberMenu.style.transform = "translate(-50%, -50%)";
+    zauberMenu.style.backgroundColor = "white";
+    zauberMenu.style.padding = "20px";
+    zauberMenu.style.border = "2px solid black";
+    zauberMenu.style.borderRadius = "10px";
     zauberMenu.innerHTML = `
         <h3>Zauber</h3>
         <button onclick="schadenZufügen()">Schaden zufügen</button>
         <button onclick="heilen()">Heilen</button>
+        <button onclick="document.body.removeChild(document.getElementById('zauber-menu'))">Schließen</button>
     `;
     document.body.appendChild(zauberMenu);
 }
+
 function schadenZufügen() {
     const zielSpieler = prompt("Welchem Spieler möchtest du Schaden zufügen?");
     const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
@@ -1004,13 +1019,14 @@ function schadenZufügen() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                if (daten.mp < schaden) {
+                const kosten = schaden; // 1 MP = 1 Schaden
+                if (daten.mp < kosten) {
                     alert("Nicht genug MP.");
                     return;
                 }
 
                 // MP abziehen
-                const neueMP = daten.mp - schaden;
+                const neueMP = daten.mp - kosten;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
                 // Zielspieler Schaden zufügen
@@ -1040,6 +1056,7 @@ function schadenZufügen() {
             }
         });
 }
+
 function heilen() {
     const zielSpieler = prompt("Welchen Spieler möchtest du heilen?");
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
@@ -1053,13 +1070,14 @@ function heilen() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                if (daten.mp < heilung) {
+                const kosten = heilung; // 1 MP = 1 Heilung
+                if (daten.mp < kosten) {
                     alert("Nicht genug MP.");
                     return;
                 }
 
                 // MP abziehen
-                const neueMP = daten.mp - heilung;
+                const neueMP = daten.mp - kosten;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
                 // Zielspieler heilen
