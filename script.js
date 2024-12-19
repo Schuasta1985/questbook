@@ -189,17 +189,14 @@ function zeigeStartseite() {
 
     ladeBenutzerdaten();
     positioniereButtons(); // Sicherstellen, dass Buttons korrekt positioniert werden
-}
-
 
     // Verstecke andere Sektionen
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
     document.getElementById("npc-login-section").style.display = "block";
-
-    ladeBenutzerdaten();
 }
+
 
 // Questbuch anzeigen
 function zeigeQuestbook() {
@@ -210,7 +207,6 @@ function zeigeQuestbook() {
     document.getElementById("login-section").style.display = "none";
 }
 
-// Benutzeranmeldung
 // Benutzeranmeldung
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
