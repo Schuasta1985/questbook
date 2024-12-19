@@ -48,6 +48,32 @@ function steuerungLogbuch(anzeigen) {
     }
 }
 
+function erstelleLogbuch() {
+    console.log("Logbuch wird erstellt...");
+
+    // Container für das Logbuch erstellen
+    const logbuchContainer = document.createElement("div");
+    logbuchContainer.id = "logbuch-container";
+    logbuchContainer.innerHTML = "<h3>Logbuch</h3><ul id='logbuch-list'></ul>";
+    document.body.appendChild(logbuchContainer);
+
+    // Button für das Öffnen/Schließen des Logbuchs
+    const logbuchButton = document.createElement("button");
+    logbuchButton.id = "logbuch-button";
+    logbuchButton.textContent = "Logbuch";
+
+    logbuchButton.addEventListener("click", () => {
+        if (logbuchContainer.style.display === "none") {
+            logbuchContainer.style.display = "block";
+        } else {
+            logbuchContainer.style.display = "none";
+        }
+    });
+
+    document.body.appendChild(logbuchButton);
+    console.log("Logbuch-Button und Container erstellt.");
+}
+
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
     console.log("Neuer Logbuch-Eintrag wird erstellt...");
     const logbuchListe = document.getElementById("logbuch-list");
@@ -239,8 +265,8 @@ function speichereFortschritte() {
             level: level,
             hp: aktuelleHP || berechneMaxHP(level),
             maxHP: maxHP || berechneMaxHP(level),
-            mp: aktuelleMP || berechneMaxMP(level), // Ergänzung
-            maxMP: maxMP || berechneMaxMP(level) // Ergänzung
+            mp: aktuelleMP || berechneMaxMP(level),
+            maxMP: maxMP || berechneMaxMP(level)
         })
         .then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
@@ -263,23 +289,18 @@ function ladeFortschritte() {
                     level = data.level || 1;
                     aktuelleHP = data.hp || berechneMaxHP(level);
                     maxHP = data.maxHP || berechneMaxHP(level);
-                    aktuelleMP = data.mp || berechneMaxMP(level); // Ergänzung
-                    maxMP = data.maxMP || berechneMaxMP(level); // Ergänzung
+                    aktuelleMP = data.mp || berechneMaxMP(level);
+                    maxMP = data.maxMP || berechneMaxMP(level);
 
-                    // Anzeigen aktualisieren
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level); // Ergänzung
+                    aktualisiereMPLeiste(aktuelleMP, level);
                 } else {
                     console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
-
-                    // Standardwerte setzen, falls keine Daten vorhanden
                     aktuelleHP = berechneMaxHP(1);
                     maxHP = berechneMaxHP(1);
                     aktuelleMP = berechneMaxMP(1);
                     maxMP = berechneMaxMP(1);
-
-                    // Anzeigen aktualisieren
                     aktualisiereHPLeiste(aktuelleHP, 1);
                     aktualisiereMPLeiste(aktuelleMP, 1);
                 }
@@ -291,7 +312,7 @@ function ladeFortschritte() {
 }
 
 
-// Füge die tägliche Regeneration hier ein
+// Tägliche HP-Regeneration
 function täglicheHPRegeneration() {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
@@ -301,14 +322,12 @@ function täglicheHPRegeneration() {
                     const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
                     const maxHP = berechneMaxHP(daten.level);
 
-                    // Erhöhe HP um 100, aber nicht über das Maximum
                     const neueHP = Math.min(aktuelleHP + 100, maxHP);
 
-                    // Speichere die aktualisierten HP in Firebase
                     firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
                         .then(() => {
                             console.log(`Tägliche HP-Regeneration abgeschlossen: ${aktuelleHP} -> ${neueHP}`);
-                            aktualisiereHPLeiste(neueHP, daten.level); // HP-Anzeige aktualisieren
+                            aktualisiereHPLeiste(neueHP, daten.level);
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
@@ -321,8 +340,6 @@ function täglicheHPRegeneration() {
     }
 }
 
-
-// Quests speichern in Firebase
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/quests`).set(quests)
@@ -335,7 +352,6 @@ function speichereQuestsInFirebase(quests) {
     }
 }
 
-// Quests aus Firebase laden
 function ladeGlobaleQuests() {
     console.log("ladeGlobaleQuests() aufgerufen");
     firebase.database().ref('quests').get()
@@ -396,9 +412,6 @@ function ladeGlobaleQuests() {
         });
 }
 
-// Restliche Funktionen bleiben unverändert wie im letzten Beitrag
-
-// XP-Anzeige und Level-Up überprüfen
 function aktualisiereXPAnzeige() {
     console.log("aktualisiereXPAnzeige() aufgerufen");
     const levelElement = document.getElementById('level');
@@ -424,7 +437,6 @@ function aktualisiereXPAnzeige() {
     speichereFortschritte();
 }
 
-// Level-Aufstieg überprüfen
 function überprüfeLevelAufstieg() {
     console.log("überprüfeLevelAufstieg() aufgerufen");
     const xpFürLevelUp = level <= 10 ? 100 : 200 + ((Math.floor((level - 1) / 10)) * 100);
@@ -437,7 +449,6 @@ function überprüfeLevelAufstieg() {
     }
 }
 
-// Level-Up Animation
 function zeigeLevelUpAnimation() {
     console.log("zeigeLevelUpAnimation() aufgerufen");
     const videoContainer = document.createElement('div');
@@ -447,7 +458,7 @@ function zeigeLevelUpAnimation() {
     videoContainer.style.left = '0';
     videoContainer.style.width = '100%';
     videoContainer.style.height = '100%';
-    videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Schwarzer, leicht transparenter Hintergrund
+    videoContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
     videoContainer.style.zIndex = '500';
 
     const video = document.createElement('video');
@@ -467,7 +478,7 @@ function zeigeLevelUpAnimation() {
         }
     }, 10000); // Video nach 10 Sekunden entfernen
 }
-// Integration mit Quest-Abschluss
+
 function questErledigt(questNummer) {
     console.log("questErledigt() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
@@ -494,7 +505,6 @@ function questErledigt(questNummer) {
                     const xpGutschrift = erledigteMenge * (quest.xpProEinheit || 0);
                     xp += xpGutschrift;
 
-                    // Aktualisiere die Quest-Daten
                     quest.aktuelleMenge = (quest.aktuelleMenge || 0) + erledigteMenge;
                     if (!quest.erledigtVon) {
                         quest.erledigtVon = {};
@@ -506,14 +516,12 @@ function questErledigt(questNummer) {
 
                     speichereFortschritte();
 
-                    // Ins Logbuch eintragen
                     logbuchEintrag(quest.beschreibung, currentUser, xpGutschrift);
 
-                    // Aktualisierte Quests in Firebase speichern
                     firebase.database().ref('quests').set(quests)
                         .then(() => {
-                            aktualisiereXPAnzeige(); // XP-Anzeige aktualisieren
-                            ladeGlobaleQuests(); // Quests neu laden
+                            aktualisiereXPAnzeige();
+                            ladeGlobaleQuests();
                             console.log(`Quest ${questNummer} wurde um ${erledigteMenge} Einheiten ergänzt.`);
                         })
                         .catch((error) => {
@@ -531,7 +539,6 @@ function questErledigt(questNummer) {
         });
 }
 
-
 function aktualisiereQuestImDOM(questNummer, quest) {
     const questList = document.getElementById("quests");
     const questElement = questList.children[questNummer];
@@ -540,7 +547,6 @@ function aktualisiereQuestImDOM(questNummer, quest) {
         const questText = questElement.querySelector(".quest-text");
 
         if (questText) {
-            // Setze die Quest als durchgestrichen und füge Erledigt-Info hinzu
             questText.style.textDecoration = "line-through";
             const erledigtInfo = quest.alleBenutzer
                 ? `<br><small>Erledigt von: ${currentUser}</small>`
@@ -548,7 +554,6 @@ function aktualisiereQuestImDOM(questNummer, quest) {
             questText.innerHTML += erledigtInfo;
         }
 
-        // Entferne den "Erledigt"-Button
         const erledigtButton = questElement.querySelector("button");
         if (erledigtButton) {
             erledigtButton.remove();
@@ -556,30 +561,10 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
+// Wichtig: Keine Funktion "erstelleLogbuchSchaltfläche()" mehr!
+// Stelle sicher, dass diese Funktion nicht mehr existiert und nirgends aufgerufen wird.
 
-// Funktion zur Steuerung des Logbuch-Buttons
-function erstelleLogbuchSchaltfläche() {
-    console.log("Logbuch-Button existiert:", !!document.getElementById("logbuch-button"));
-    const logbuchButton = document.createElement("button");
-    logbuchButton.id = "logbuch-button";
-    logbuchButton.textContent = "Logbuch";
-    logbuchButton.style.position = "fixed";
-    logbuchButton.style.bottom = "10px";
-    logbuchButton.style.left = "10px";
-    logbuchButton.style.padding = "10px";
-    logbuchButton.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    logbuchButton.style.color = "white";
-    logbuchButton.style.border = "none";
-    logbuchButton.style.borderRadius = "5px";
-    logbuchButton.style.cursor = "pointer";
-    logbuchButton.onclick = () => {
-        const logbuchContainer = document.getElementById("logbuch-container");
-        logbuchContainer.style.display = logbuchContainer.style.display === "none" ? "block" : "none";
-    };
-
-    document.body.appendChild(logbuchButton);
-}
-// Neue quest erstellen
+// Neue Quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
     const neueQuestBeschreibung = prompt("Bitte die Beschreibung für die neue Quest eingeben:");
@@ -597,24 +582,22 @@ function neueQuestErstellen() {
             alleBenutzer: alleBenutzer
         };
 
-        // Speichern der neuen Quest in der globalen Quests-Liste
         firebase.database().ref('quests').once('value')
             .then((snapshot) => {
                 let quests = snapshot.exists() ? snapshot.val() : [];
 
-                // Sicherstellen, dass wir ein Array haben
                 if (!Array.isArray(quests)) {
                     console.error("Fehler: Erwartete eine Array-Struktur für die Quests.");
                     quests = [];
                 }
 
-                quests.push(neueQuest); // Füge die neue Quest hinzu
+                quests.push(neueQuest);
 
                 return firebase.database().ref('quests').set(quests);
             })
             .then(() => {
                 console.log("Neue Quest erfolgreich erstellt.");
-                ladeGlobaleQuests(); // Lade die aktualisierten Quests neu
+                ladeGlobaleQuests();
             })
             .catch((error) => {
                 console.error("Fehler beim Speichern der neuen Quest:", error);
@@ -624,7 +607,6 @@ function neueQuestErstellen() {
     }
 }
 
-
 function zeigeAdminFunktionen() {
     console.log("zeigeAdminFunktionen() aufgerufen");
 
@@ -632,10 +614,8 @@ function zeigeAdminFunktionen() {
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
 
     if (isAdmin) {
-        // Admin-spezifische Funktionen aktivieren
         console.log("Admin-Modus aktiv, zeige Admin-Funktionen");
 
-        // Bearbeiten-Button für Quests hinzufügen
         const questItems = document.querySelectorAll("#quests li");
         questItems.forEach((questItem, index) => {
             if (!questItem.querySelector(".edit-button")) {
@@ -648,7 +628,10 @@ function zeigeAdminFunktionen() {
             }
         });
 
-        // Admin-Buttons erstellen, falls sie nicht existieren
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "block";
+        }
+
         if (!adminButtonsContainer) {
             console.log("Admin-Buttons werden erstellt.");
             const questbookContainer = document.getElementById("quests-section");
@@ -668,19 +651,18 @@ function zeigeAdminFunktionen() {
             newAdminButtonsContainer.appendChild(createButton);
             newAdminButtonsContainer.appendChild(deleteButton);
             questbookContainer.appendChild(newAdminButtonsContainer);
-        } else {
-            console.log("Admin-Buttons sind bereits vorhanden.");
         }
-        
     } else {
-        // Admin-spezifische Elemente ausblenden oder entfernen
         console.log("Kein Admin-Modus, verstecke Admin-Funktionen");
 
         if (adminButtonsContainer) {
-            adminButtonsContainer.remove(); // Admin-Buttons entfernen
+            adminButtonsContainer.remove();
         }
 
-        // Bearbeiten-Buttons von Quests entfernen
+        if (levelSetContainer) {
+            levelSetContainer.style.display = "none";
+        }
+
         const editButtons = document.querySelectorAll(".edit-button");
         editButtons.forEach((editButton) => {
             editButton.remove();
@@ -688,11 +670,9 @@ function zeigeAdminFunktionen() {
     }
 }
 
-// Quests zurücksetzen
 function questsZuruecksetzen() {
     console.log("questsZuruecksetzen() aufgerufen");
     if (confirm("Möchtest du wirklich alle Quests zurücksetzen?")) {
-        // Setze die globalen Quests zurück
         firebase.database().ref('quests').set([])
         .then(() => {
             console.log("Alle Quests wurden zurückgesetzt.");
@@ -704,8 +684,6 @@ function questsZuruecksetzen() {
     }
 }
 
-
-// Funktion zum Bearbeiten von Quests
 function questBearbeiten(questNummer) {
     console.log("questBearbeiten() aufgerufen für QuestNummer:", questNummer);
     firebase.database().ref('quests').get()
@@ -737,6 +715,7 @@ function questBearbeiten(questNummer) {
         console.error("Fehler beim Bearbeiten der Quest:", error);
     });
 }
+
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
@@ -755,7 +734,6 @@ function zeigeAvatar() {
             return;
         }
 
-        // Avatar-Video einfügen
         avatarContainer.innerHTML = `
             <video autoplay loop muted class="${currentUser === 'Jamie' ? 'avatar-jamie' : 'avatar-general'}">
                 <source src="${avatarPath}" type="video/mp4">
@@ -763,75 +741,61 @@ function zeigeAvatar() {
             </video>
         `;
 
-        avatarContainer.style.display = "flex"; // Avatar sichtbar machen
-        avatarContainer.style.marginTop = "20px"; // Platz schaffen
+        avatarContainer.style.display = "flex";
+        avatarContainer.style.marginTop = "20px";
 
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
 
-    // Platz für den Avatar zurücksetzen
     const questsSection = document.getElementById("quests-section");
     if (questsSection) {
         questsSection.style.marginTop = "0px";
     }
 
-    // Level-Set-Container verstecken
     const levelSetContainer = document.getElementById("level-set-container");
     if (levelSetContainer) {
         levelSetContainer.style.display = "none";
     }
 }
 
-// Ausloggen
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
     
-    // Logbuch-Button ausblenden
-       const logbuchButton = document.getElementById("logbuch-button");
-        if (logbuchButton) {
-        logbuchButton.style.display = "none"; // Nur ausblenden, nicht löschen
-}
+    const logbuchButton = document.getElementById("logbuch-button");
+    if (logbuchButton) {
+        logbuchButton.style.display = "none";
+    }
 
-     
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) logbuchContainer.style.display = "none";
 
-    // Globale Variablen zurücksetzen
     currentUser = null;
-    isAdmin = false; // Admin-Status zurücksetzen
+    isAdmin = false;
 
-    // Avatar-Container zurücksetzen
     const avatarContainer = document.getElementById("avatar-container");
     if (avatarContainer) {
-        avatarContainer.style.display = "none"; // Avatar ausblenden
-        avatarContainer.innerHTML = ""; // Inhalt zurücksetzen
+        avatarContainer.style.display = "none";
+        avatarContainer.innerHTML = "";
     }
 
-    // Alle nicht benötigten Bereiche ausblenden
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
 
-    // NPC-Login-Bereich sichtbar machen
     const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "block";
-    }
+    if (npcLoginSection) npcLoginSection.style.display = "block";
 
-    // Quests zurücksetzen (leeren)
     const questList = document.getElementById("quests");
     if (questList) {
-        questList.innerHTML = ""; // Löscht alle Einträge in der Quest-Liste
+        questList.innerHTML = "";
     }
 
-    // Admin-Bereich entfernen
     const adminButtonsContainer = document.getElementById("admin-buttons-container");
     if (adminButtonsContainer) {
         adminButtonsContainer.remove();
     }
 
-    // HP- und MP-Anzeige ausblenden
     const hpContainer = document.getElementById("hp-bar-container");
     if (hpContainer) {
         hpContainer.style.display = "none";
@@ -842,20 +806,16 @@ function ausloggen() {
         mpContainer.style.display = "none";
     }
 
-    // Benutzerübersicht einblenden
     const benutzerContainer = document.getElementById("benutzer-container");
     if (benutzerContainer) {
         benutzerContainer.style.display = "flex";
     }
 
-    // Zurück zur Startseite (Login-Bereich wieder sichtbar machen)
     zeigeStartseite();
 }
 
-// Globale Variable für alle Benutzer
 let benutzerDaten = [];
 
-// Funktion zum Laden der Benutzerdaten
 function ladeBenutzerdaten() {
     console.log("ladeBenutzerdaten() aufgerufen");
     firebase.database().ref('benutzer').get().then((snapshot) => {
@@ -870,29 +830,25 @@ function ladeBenutzerdaten() {
     });
 }
 
-// Benutzer auf der Startseite anzeigen
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
     const benutzerContainer = document.getElementById("benutzer-container");
-    benutzerContainer.innerHTML = ""; // Vorherige Inhalte löschen
+    benutzerContainer.innerHTML = "";
 
     for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
         const benutzerElement = document.createElement("div");
         benutzerElement.className = "benutzer-item";
 
-        // Avatar (Video)
         const avatarElement = document.createElement("video");
         avatarElement.src = getAvatarForUser(benutzername);
         avatarElement.autoplay = true;
         avatarElement.loop = true;
         avatarElement.muted = true;
-        avatarElement.style.width = "100px"; // Anpassbare Größe
+        avatarElement.style.width = "100px";
 
-        // Benutzername
         const nameElement = document.createElement("h3");
         nameElement.textContent = benutzername;
 
-        // Level
         const levelElement = document.createElement("div");
         levelElement.textContent = `Level: ${daten.fortschritte?.level || 1}`;
         levelElement.style.border = "2px solid gold";
@@ -900,7 +856,6 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
-        // MP-Leiste mit Anzeige
         const mpElement = document.createElement("div");
         mpElement.className = "mp-bar";
         const aktuelleMP = daten.fortschritte?.mp || 0;
@@ -912,7 +867,6 @@ function zeigeBenutzerAufStartseite() {
         `;
         mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
 
-        // HP-Leiste mit Anzeige
         const hpElement = document.createElement("div");
         hpElement.className = "hp-bar";
         const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
@@ -924,7 +878,6 @@ function zeigeBenutzerAufStartseite() {
         `;
         hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
 
-        // Alles zusammenfügen
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
@@ -935,7 +888,6 @@ function zeigeBenutzerAufStartseite() {
     }
 }
 
-// Avatar für Benutzer festlegen
 function getAvatarForUser(user) {
     if (user === "Thomas") {
         return "avatars/thomas.mp4";
@@ -946,21 +898,20 @@ function getAvatarForUser(user) {
     }
     return "https://via.placeholder.com/100?text=Avatar";
 }
-// Funktion zur Berechnung der maximalen HP basierend auf dem Level
+
 function berechneMaxHP(level) {
     return 100 + Math.floor((level - 1) / 10) * 200;
 }
 
 function aktualisiereHPLeiste(aktuelleHP, level) {
-    const maxHP = berechneMaxHP(level); // Berechnet das maximale HP basierend auf dem Level
+    const maxHP = berechneMaxHP(level);
     const hpProgress = document.getElementById("hp-progress");
 
     if (hpProgress) {
         const prozent = (aktuelleHP / maxHP) * 100;
         hpProgress.style.width = `${prozent}%`;
-        hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`; // Zeigt sowohl aktuelle als auch maximale HP an
+        hpProgress.textContent = `${aktuelleHP} / ${maxHP} HP`;
 
-        // Dynamische Farbänderung der Leiste
         if (prozent > 75) {
             hpProgress.style.backgroundColor = "green";
         } else if (prozent > 50) {
@@ -972,20 +923,19 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
         }
     }
 }
-// Funktion zur Berechnung der maximalen MP basierend auf dem Level
+
 function berechneMaxMP(level) {
-    return 50 + Math.floor((level - 1) / 10) * 50; // Start mit 50 MP, +50 MP alle 10 Level
+    return 50 + Math.floor((level - 1) / 10) * 50;
 }
 
-// Funktion zur Aktualisierung der MP-Leiste
 function aktualisiereMPLeiste(aktuelleMP, level) {
-    const maxMP = berechneMaxMP(level); // Berechnet das maximale MP basierend auf dem Level
+    const maxMP = berechneMaxMP(level);
     const mpProgress = document.getElementById("mp-progress");
 
     if (mpProgress) {
         const prozent = (aktuelleMP / maxMP) * 100;
         mpProgress.style.width = `${prozent}%`;
-        mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`; // Zeigt sowohl aktuelle als auch maximale MP an
+        mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`;
     }
 }
 
@@ -996,14 +946,12 @@ function berechneHPFarbe(prozent) {
     return "red";
 }
 
-
 function aktualisiereLayout() {
     const hpContainer = document.getElementById("hp-bar-container");
     const questsSection = document.getElementById("quests-section");
 
     if (hpContainer && questsSection) {
-        // Abstand zwischen HP-Leiste und Quests anpassen
-        questsSection.style.marginTop = "20px"; // Mehr Platz oberhalb der Quests
+        questsSection.style.marginTop = "20px";
     }
 }
 aktualisiereLayout();
