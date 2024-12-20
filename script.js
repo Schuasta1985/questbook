@@ -234,6 +234,8 @@ function benutzerAnmeldung() {
     täglicheHPRegeneration();
     zeigeAvatar();
     ladeGlobaleQuests();
+    zeigeSpezialfähigkeiten();
+
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
