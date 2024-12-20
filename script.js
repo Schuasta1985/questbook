@@ -1527,6 +1527,48 @@ function ladeAktionenVonFirebase() {
         console.error('Fehler beim Laden der Aktionen:', error);
     });
 }
+function zeigeAktionenAufStartseite() {
+    const benutzerContainer = document.getElementById("benutzer-container");
+
+    // Überprüfen, ob der Container bereits existiert
+    let aktionenContainer = document.getElementById("aktionen-container");
+    if (!aktionenContainer) {
+        aktionenContainer = document.createElement("div");
+        aktionenContainer.id = "aktionen-container";
+        aktionenContainer.style.marginTop = "20px";
+        aktionenContainer.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+        aktionenContainer.style.border = "2px solid #FFD700";
+        aktionenContainer.style.borderRadius = "10px";
+        aktionenContainer.style.padding = "20px";
+        aktionenContainer.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.5)";
+        aktionenContainer.innerHTML = '<h3>Aktionen der Spezialfähigkeiten:</h3><ul id="aktionen-list"></ul>';
+        benutzerContainer.appendChild(aktionenContainer);
+    }
+
+    const aktionenListe = document.getElementById("aktionen-list");
+    aktionenListe.innerHTML = ""; // Liste zurücksetzen
+
+    // Aktionen aus Firebase laden
+    firebase.database().ref('aktionen').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const aktionen = snapshot.val();
+            Object.values(aktionen).forEach((aktion) => {
+                const listItem = document.createElement("li");
+                listItem.style.marginBottom = "10px";
+                listItem.innerHTML = `
+                    <strong>${aktion.ausführer}</strong> hat die Fähigkeit 
+                    <em>"${aktion.name}"</em> auf <strong>${aktion.ziel}</strong> angewendet.<br>
+                    <small>${aktion.text}</small>
+                `;
+                aktionenListe.appendChild(listItem);
+            });
+        } else {
+            console.log("Keine Aktionen gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Aktionen:", error);
+    });
+}
 
 
 
