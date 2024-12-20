@@ -1212,28 +1212,28 @@ function zeigeSpezialfähigkeitenMenu() {
     titel.textContent = `Spezialfähigkeiten von ${currentUser}`;
     spezialfähigkeitenContainer.appendChild(titel);
 
-    firebase.database().ref(`benutzer/${currentUser}/fähigkeiten`).get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const fähigkeiten = snapshot.val();
-            Object.entries(fähigkeiten).forEach(([name, details]) => {
-                const button = document.createElement('button');
-                button.textContent = `${name} (Kosten: ${details.levelKosten} Level)`;
-                button.style.marginBottom = '10px';
+    firebase.database().ref(`benutzer/${currentUser}/fähigkeiten`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const fähigkeiten = snapshot.val();
+                Object.entries(fähigkeiten).forEach(([name, details]) => {
+                    const button = document.createElement('button');
+                    button.textContent = `${name} (Kosten: ${details.levelKosten} Level)`;
+                    button.style.marginBottom = '10px';
 
-                const erfolgswahrscheinlichkeit = 80 - (10 * (details.levelKosten - 1));
-                button.title = `Erfolgswahrscheinlichkeit: ${erfolgswahrscheinlichkeit}%`;
+                    const erfolgswahrscheinlichkeit = 80 - (10 * (details.levelKosten - 1));
+                    button.title = `Erfolgswahrscheinlichkeit: ${erfolgswahrscheinlichkeit}%`;
 
-                button.onclick = () => verwendeFähigkeit(name, details.levelKosten, erfolgswahrscheinlichkeit);
-                spezialfähigkeitenContainer.appendChild(button);
-            });
-        } else {
-            const keineFähigkeiten = document.createElement('p');
-            keineFähigkeiten.textContent = 'Keine Spezialfähigkeiten verfügbar.';
-            spezialfähigkeitenContainer.appendChild(keineFähigkeiten);
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Spezialfähigkeiten:", error);
-    });
+                    button.onclick = () => verwendeFähigkeit(name, details.levelKosten, erfolgswahrscheinlichkeit);
+                    spezialfähigkeitenContainer.appendChild(button);
+                });
+            } else {
+                const keineFähigkeiten = document.createElement('p');
+                keineFähigkeiten.textContent = 'Keine Spezialfähigkeiten verfügbar.';
+                spezialfähigkeitenContainer.appendChild(keineFähigkeiten);
+            }
+        })
+        .catch((error) => console.error("Fehler beim Laden der Spezialfähigkeiten:", error));
 
     const schließenButton = document.createElement('button');
     schließenButton.textContent = 'Schließen';
