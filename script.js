@@ -1325,20 +1325,6 @@ function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
 }
 
 // Übersicht in die Startseite integrieren
-function fügeFähigkeitenÜbersichtHinzu() {
-    const listeContainer = document.createElement('ul');
-    listeContainer.id = 'fähigkeiten-übersicht';
-    listeContainer.style.marginTop = '20px';
-
-    const startseite = document.getElementById('quests-section');
-    if (startseite) {
-        startseite.appendChild(listeContainer);
-    } else {
-        console.warn('Quests-Section nicht gefunden, konnte Fähigkeiten-Übersicht nicht hinzufügen.');
-    }
-}
-
-// Button für Spezialfähigkeiten hinzufügen
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
     if (!avatarContainer) {
@@ -1349,14 +1335,19 @@ function fügeSpezialfähigkeitenButtonHinzu() {
     const button = document.createElement('button');
     button.textContent = 'Spezialfähigkeiten';
     button.style.marginLeft = '10px';
-    button.style.padding = '10px';
+    button.style.padding = '10px 20px';
+    button.style.fontSize = '1rem';
     button.style.backgroundColor = '#FFD700';
+    button.style.color = '#000';
     button.style.border = 'none';
     button.style.borderRadius = '5px';
     button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.3)';
     button.style.cursor = 'pointer';
+    button.onclick = zeigeSpezialfähigkeitenMenu;
 
-    button.onclick = zeigeSpezialfähigkeitenMenu; // Das Menü anzeigen
+    avatarContainer.style.display = 'flex';
+    avatarContainer.style.flexDirection = 'row';
+    avatarContainer.style.justifyContent = 'center';
     avatarContainer.appendChild(button);
 }
 
