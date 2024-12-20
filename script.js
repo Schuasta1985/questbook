@@ -1326,15 +1326,14 @@ function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
 
 // Übersicht in die Startseite integrieren
 function fügeSpezialfähigkeitenButtonHinzu() {
-    const avatarContainer = document.getElementById('avatar-container');
-    if (!avatarContainer) {
-        console.warn('Avatar-Container nicht gefunden!');
+    const benutzerContainer = document.getElementById('benutzer-container');
+    if (!benutzerContainer) {
+        console.warn('Benutzer-Container nicht gefunden!');
         return;
     }
 
     const button = document.createElement('button');
     button.textContent = 'Spezialfähigkeiten';
-    button.style.marginLeft = '10px';
     button.style.padding = '10px 20px';
     button.style.fontSize = '1rem';
     button.style.backgroundColor = '#FFD700';
@@ -1345,12 +1344,8 @@ function fügeSpezialfähigkeitenButtonHinzu() {
     button.style.cursor = 'pointer';
     button.onclick = zeigeSpezialfähigkeitenMenu;
 
-    avatarContainer.style.display = 'flex';
-    avatarContainer.style.flexDirection = 'row';
-    avatarContainer.style.justifyContent = 'center';
-    avatarContainer.appendChild(button);
+    benutzerContainer.appendChild(button);
 }
-
 
 function initialisiereSpezialfähigkeitenFürAlleSpieler() {
     const spielerDaten = {
@@ -1386,5 +1381,87 @@ function initialisiereSpezialfähigkeitenFürAlleSpieler() {
 }
 
 
+function zeigeSpezialfähigkeitenMenu() {
+    const spezialfähigkeitenContainer = document.createElement('div');
+    spezialfähigkeitenContainer.id = 'spezialfähigkeiten-container';
+    spezialfähigkeitenContainer.style.position = 'absolute';
+    spezialfähigkeitenContainer.style.top = '20%';
+    spezialfähigkeitenContainer.style.right = '10%';
+    spezialfähigkeitenContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    spezialfähigkeitenContainer.style.border = '2px solid #FFD700';
+    spezialfähigkeitenContainer.style.borderRadius = '10px';
+    spezialfähigkeitenContainer.style.padding = '20px';
+    spezialfähigkeitenContainer.style.width = '300px';
+    spezialfähigkeitenContainer.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)';
+    spezialfähigkeitenContainer.style.zIndex = '1000';
+
+    const titel = document.createElement('h3');
+    titel.textContent = `Wähle deine Spezialfähigkeit aus:`;
+    spezialfähigkeitenContainer.appendChild(titel);
+
+    firebase.database().ref(`benutzer`).get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const benutzerDaten = snapshot.val();
+            const auswahlContainer = document.createElement('select');
+
+            Object.keys(benutzerDaten).forEach((spieler) => {
+                const option = document.createElement('option');
+                option.value = spieler;
+                option.textContent = spieler;
+                auswahlContainer.appendChild(option);
+            });
+
+            spezialfähigkeitenContainer.appendChild(auswahlContainer);
+
+            // Buttons für Fähigkeiten
+            ['Massiere mich', 'Ich will gekuschelt werden', 'Mach mir was zu essen', 'Wunsch frei'].forEach((fähigkeit, index) => {
+                const button = document.createElement('button');
+                button.textContent = `${fähigkeit} (Kosten: ${index + 1} Level)`;
+                button.style.display = 'block';
+                button.style.marginTop = '10px';
+                button.style.padding = '10px';
+                button.style.backgroundColor = '#FFD700';
+                button.style.color = '#000';
+                button.style.border = 'none';
+                button.style.borderRadius = '5px';
+                button.style.cursor = 'pointer';
+
+                button.onclick = () => {
+                    const zielSpieler = auswahlContainer.value;
+                    if (!zielSpieler) {
+                        alert('Bitte wähle einen Spieler aus!');
+                        return;
+                    }
+
+                    const lustigerText = generiereLustigenText(fähigkeit, zielSpieler);
+                    alert(lustigerText);
+
+                    spezialfähigkeitenContainer.remove();
+                };
+
+                spezialfähigkeitenContainer.appendChild(button);
+            });
+        } else {
+            alert('Keine Benutzer gefunden!');
+        }
+    });
+
+    const schließenButton = document.createElement('button');
+    schließenButton.textContent = 'Schließen';
+    schließenButton.onclick = () => document.body.removeChild(spezialfähigkeitenContainer);
+    spezialfähigkeitenContainer.appendChild(schließenButton);
+
+    document.body.appendChild(spezialfähigkeitenContainer);
+}
+
+function generiereLustigenText(fähigkeit, zielSpieler) {
+    const lustigeTexte = {
+        'Massiere mich': `${zielSpieler} schwingt die magischen Hände und massiert so gut, dass selbst Steine entspannen!`,
+        'Ich will gekuschelt werden': `${zielSpieler} kuschelt so warm und weich, dass du dich wie eine Wolke fühlst!`,
+        'Mach mir was zu essen': `${zielSpieler} zaubert ein 5-Sterne-Menü aus Luft und Liebe!`,
+        'Wunsch frei': `${zielSpieler} zaubert deinen Wunsch mit einer Extraportion Glitzer und Drama!`
+    };
+    return lustigeTexte[fähigkeit] || 'Diese Fähigkeit ist so mächtig, dass selbst die Sterne staunen!';
+}
 
 aktualisiereLayout();
