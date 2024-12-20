@@ -169,6 +169,7 @@ function zeigeStartseite() {
     document.getElementById("npc-login-section").style.display = "block";
 
     ladeBenutzerdaten();
+    zeigeSpezialfähigkeitenStartseite();
 }
 
 function zeigeQuestbook() {
@@ -761,7 +762,6 @@ function zeigeAvatar() {
 
     if (currentUser) {
         const avatarContainer = document.getElementById("avatar-container");
-
         if (!avatarContainer) {
             console.error("Avatar-Container wurde nicht gefunden!");
             return;
@@ -775,21 +775,20 @@ function zeigeAvatar() {
         }
 
         avatarContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="display: flex; align-items: center;">
                 <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
                 <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                        style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
+                        style="margin-left: 15px; padding: 10px 20px; background-color: #FFD700; 
                                color: black; font-weight: bold; border: none; border-radius: 5px;
                                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
-                    Zauber
+                    Spezialfähigkeiten
                 </button>
             </div>
         `;
 
         avatarContainer.style.display = "flex";
-        avatarContainer.style.flexDirection = "column";
         avatarContainer.style.alignItems = "center";
         avatarContainer.style.marginTop = "20px";
     } else {
@@ -801,7 +800,6 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
-
 
 function ausloggen() {
     console.log("ausloggen() aufgerufen");
@@ -1190,6 +1188,284 @@ function ladeAktionen() {
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
+}
+function anwendenSpezialfähigkeit(fähigkeitName, zielBenutzer = "Alle") {
+    console.log(`anwendenSpezialfähigkeit() aufgerufen für: ${fähigkeitName}`);
+
+    // Details der Fähigkeit abrufen
+    const faehigkeitDetails = spezialfaehigkeiten[currentUser].find((f) => f.name === fähigkeitName);
+
+    if (!faehigkeitDetails) {
+        console.error("Fähigkeit nicht gefunden:", fähigkeitName);
+        return;
+    }
+
+    // Erfolgswahrscheinlichkeit basierend auf Stärke
+    const erfolgswahrscheinlichkeit = faehigkeitDetails.chance / 100; // Prozentsatz
+    const erfolg = Math.random() <= erfolgswahrscheinlichkeit;
+
+    // Level-Kosten abziehen
+    level = Math.max(1, level - faehigkeitDetails.kosten);
+    aktualisiereXPAnzeige();
+    speichereFortschritte();
+
+    // Erfolg oder Misserfolg
+    if (erfolg) {
+        alert(`${fähigkeitName} erfolgreich angewendet!`);
+        spieleAnimation("avatars/Erfolg.gif");
+        speichereSpezialfähigkeit(fähigkeitName, zielBenutzer, true); // Erfolg speichern
+    } else {
+        alert(`${fähigkeitName} ist fehlgeschlagen. Level wurde trotzdem abgezogen.`);
+        spieleAnimation("avatars/Misserfolg.gif");
+        speichereSpezialfähigkeit(fähigkeitName, zielBenutzer, false); // Misserfolg speichern
+    }
+}
+
+// Speichere die Nutzung der Fähigkeit in Firebase
+function speichereSpezialfähigkeit(fähigkeitName, zielBenutzer, erfolgreich) {
+    if (!currentUser) {
+        console.error("Kein Benutzer angemeldet. Spezialfähigkeit kann nicht gespeichert werden.");
+        return;
+    }
+
+    const eintrag = {
+        fähigkeit: fähigkeitName,
+        ziel: zielBenutzer,
+        erfolgreich: erfolgreich,
+        benutzer: currentUser,
+        zeit: new Date().toLocaleString(),
+    };
+
+    firebase.database().ref(`spezialfaehigkeiten/${new Date().toISOString()}`).set(eintrag)
+        .then(() => console.log("Spezialfähigkeit erfolgreich gespeichert:", eintrag))
+        .catch((error) => console.error("Fehler beim Speichern der Spezialfähigkeit:", error));
+}
+
+
+// Funktion zur Anzeige von Animationen (.gif)
+function zeigeAnimation(gifPfad) {
+    const gifContainer = document.createElement("div");
+    gifContainer.id = "gif-animation-container";
+    gifContainer.style.position = "fixed";
+    gifContainer.style.top = "0";
+    gifContainer.style.left = "0";
+    gifContainer.style.width = "100%";
+    gifContainer.style.height = "100%";
+    gifContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    gifContainer.style.zIndex = "500";
+    gifContainer.style.display = "flex";
+    gifContainer.style.justifyContent = "center";
+    gifContainer.style.alignItems = "center";
+
+    const gif = document.createElement("img");
+    gif.src = gifPfad;
+    gif.alt = "Animation";
+    gif.style.maxWidth = "90%";
+    gif.style.maxHeight = "90%";
+
+    gifContainer.appendChild(gif);
+    document.body.appendChild(gifContainer);
+
+    setTimeout(() => {
+        if (gifContainer && document.body.contains(gifContainer)) {
+            document.body.removeChild(gifContainer);
+        }
+    }, 3000); // Animation nach 3 Sekunden entfernen
+}
+
+function aktualisiereAktionen(faehigkeit, bereitsVerwendet, erfolgreich) {
+    const daten = {
+        heute: (bereitsVerwendet || 0) + 1,
+        dieseWoche: faehigkeit.limit === "wöchentlich" ? true : undefined,
+        erfolg: erfolgreich,
+        zeitpunkt: new Date().toLocaleString(),
+        name: currentUser,
+        faehigkeit: faehigkeit.name,
+    };
+
+    // In Firebase speichern
+    firebase.database().ref(`benutzer/${currentUser}/aktionen/${faehigkeit.name}`).set(daten)
+        .then(() => {
+            console.log(`"${faehigkeit.name}" erfolgreich in Firebase aktualisiert.`);
+            ladeAktionen(); // Aktionen erneut laden
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Spezialfähigkeit in Firebase:", error);
+        });
+
+    // Level abziehen, unabhängig vom Erfolg
+    if (faehigkeit.kosten > 0) {
+        const neuesLevel = Math.max(1, level - faehigkeit.kosten);
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte/level`).set(neuesLevel)
+            .then(() => {
+                console.log(`Level aktualisiert: ${neuesLevel}`);
+                aktualisiereXPAnzeige();
+            })
+            .catch((error) => {
+                console.error("Fehler beim Aktualisieren des Levels:", error);
+            });
+    }
+}
+function ladeSpezialfaehigkeitenLog() {
+    console.log("ladeSpezialfaehigkeitenLog() aufgerufen");
+
+    // Container für das Log erstellen/holen
+    const spezialfaehigkeitenLogContainer = document.getElementById("spezialfaehigkeiten-log-container") || document.createElement("div");
+    spezialfaehigkeitenLogContainer.id = "spezialfaehigkeiten-log-container";
+    spezialfaehigkeitenLogContainer.innerHTML = "<h3>Verwendete Spezialfähigkeiten:</h3>";
+    spezialfaehigkeitenLogContainer.style.marginTop = "20px";
+    spezialfaehigkeitenLogContainer.style.color = "#FFD700";
+    spezialfaehigkeitenLogContainer.style.padding = "10px";
+    spezialfaehigkeitenLogContainer.style.border = "2px solid #FFD700";
+    spezialfaehigkeitenLogContainer.style.borderRadius = "10px";
+    spezialfaehigkeitenLogContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+
+    document.body.appendChild(spezialfaehigkeitenLogContainer);
+
+    // Daten aus Firebase laden
+    firebase.database().ref('benutzer').get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const benutzerDaten = snapshot.val();
+                spezialfaehigkeitenLogContainer.innerHTML = "<h3>Verwendete Spezialfähigkeiten:</h3>";
+
+                for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
+                    if (daten.aktionen) {
+                        for (const [fähigkeit, details] of Object.entries(daten.aktionen)) {
+                            const eintrag = document.createElement("p");
+                            eintrag.innerHTML = `
+                                <strong>${details.faehigkeit}</strong> von <em>${details.name}</em> 
+                                (${details.erfolg ? "Erfolg" : "Misserfolg"}) 
+                                am ${details.zeitpunkt}.
+                            `;
+                            spezialfaehigkeitenLogContainer.appendChild(eintrag);
+                        }
+                    }
+                }
+            } else {
+                console.log("Keine Spezialfähigkeiten-Daten gefunden.");
+                spezialfaehigkeitenLogContainer.innerHTML += "<p>Keine Spezialfähigkeiten verwendet.</p>";
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Spezialfähigkeiten-Logs:", error);
+        });
+}
+function speichereSpezialfähigkeit(faehigkeitName, zielBenutzer) {
+    const zeitstempel = new Date().toLocaleString();
+
+    const daten = {
+        faehigkeit: faehigkeitName,
+        von: currentUser,
+        ziel: zielBenutzer,
+        zeit: zeitstempel,
+    };
+
+    // Speichere die Spezialfähigkeit in Firebase
+    firebase.database().ref("spezialfaehigkeiten").push(daten)
+        .then(() => {
+            console.log(`Spezialfähigkeit "${faehigkeitName}" von ${currentUser} an ${zielBenutzer} gespeichert.`);
+            ladeSpezialfähigkeitenListe();
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Spezialfähigkeit:", error);
+        });
+}
+function ladeSpezialfähigkeitenListe() {
+    firebase.database().ref("spezialfaehigkeiten").get()
+        .then((snapshot) => {
+            const spezialfaehigkeitenContainer = document.getElementById("spezialfaehigkeiten-liste") || document.createElement("div");
+            spezialfaehigkeitenContainer.id = "spezialfaehigkeiten-liste";
+            spezialfaehigkeitenContainer.style.marginTop = "20px";
+            spezialfaehigkeitenContainer.style.textAlign = "center";
+            spezialfaehigkeitenContainer.style.color = "#FFD700";
+            spezialfaehigkeitenContainer.style.padding = "10px";
+            spezialfaehigkeitenContainer.style.border = "2px solid #FFD700";
+            spezialfaehigkeitenContainer.style.borderRadius = "10px";
+            spezialfaehigkeitenContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+            spezialfaehigkeitenContainer.innerHTML = "<h3>Heute genutzte Spezialfähigkeiten:</h3>";
+
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                const faehigkeitenListe = Object.values(daten).filter((eintrag) => {
+                    const heute = new Date().toDateString();
+                    const eintragsDatum = new Date(eintrag.zeit).toDateString();
+                    return heute === eintragsDatum; // Nur heutige Einträge anzeigen
+                });
+
+                if (faehigkeitenListe.length > 0) {
+                    faehigkeitenListe.forEach((eintrag) => {
+                        const eintragElement = document.createElement("p");
+                        eintragElement.innerHTML = `
+                            <strong>${eintrag.faehigkeit}</strong> - von: ${eintrag.von}, Ziel: ${eintrag.ziel}, Zeit: ${eintrag.zeit}
+                        `;
+                        spezialfaehigkeitenContainer.appendChild(eintragElement);
+                    });
+                } else {
+                    spezialfaehigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten genutzt.</p>";
+                }
+            } else {
+                spezialfaehigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten genutzt.</p>";
+            }
+
+            const startseitenContainer = document.getElementById("quests-section");
+            if (startseitenContainer) {
+                if (!startseitenContainer.contains(spezialfaehigkeitenContainer)) {
+                    startseitenContainer.appendChild(spezialfaehigkeitenContainer);
+                }
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Spezialfähigkeiten-Liste:", error);
+        });
+}
+
+function zeigeSpezialfähigkeitenStartseite() {
+    console.log("zeigeSpezialfähigkeitenStartseite() aufgerufen");
+
+    // Spezialfähigkeiten-Container erstellen oder abrufen
+    let spezialfaehigkeitenContainer = document.getElementById("spezialfaehigkeiten-log");
+    if (!spezialfaehigkeitenContainer) {
+        spezialfaehigkeitenContainer = document.createElement("div");
+        spezialfaehigkeitenContainer.id = "spezialfaehigkeiten-log";
+        spezialfaehigkeitenContainer.style.marginTop = "20px";
+        spezialfaehigkeitenContainer.style.textAlign = "center";
+        spezialfaehigkeitenContainer.style.color = "#FFD700";
+        spezialfaehigkeitenContainer.style.padding = "10px";
+        spezialfaehigkeitenContainer.style.border = "2px solid #FFD700";
+        spezialfaehigkeitenContainer.style.borderRadius = "10px";
+        spezialfaehigkeitenContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+        spezialfaehigkeitenContainer.innerHTML = "<h3>Heute genutzte Spezialfähigkeiten:</h3>";
+        document.body.appendChild(spezialfaehigkeitenContainer);
+    }
+
+    // Firebase-Daten abrufen
+    firebase.database().ref("spezialfaehigkeiten").orderByChild("zeit").once("value")
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                spezialfaehigkeitenContainer.innerHTML = "<h3>Heute genutzte Spezialfähigkeiten:</h3>";
+
+                // Daten filtern und sortieren
+                Object.values(daten).forEach((eintrag) => {
+                    const faehigkeitElement = document.createElement("div");
+                    faehigkeitElement.style.marginBottom = "10px";
+                    faehigkeitElement.innerHTML = `
+                        <strong>${eintrag.fähigkeit}</strong><br>
+                        Verwendet von: ${eintrag.benutzer}<br>
+                        Ziel: ${eintrag.ziel || "Alle"}<br>
+                        Status: ${eintrag.erfolgreich ? "Erfolgreich" : "Fehlgeschlagen"}<br>
+                        Zeitpunkt: ${eintrag.zeit}
+                    `;
+                    spezialfaehigkeitenContainer.appendChild(faehigkeitElement);
+                });
+            } else {
+                spezialfaehigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten wurden heute genutzt.</p>";
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Spezialfähigkeiten:", error);
+        });
 }
 
 
