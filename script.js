@@ -1332,11 +1332,11 @@ function starteBerechnung(faehigkeit, bereitsVerwendet) {
         document.body.removeChild(animationContainer);
 
         if (erfolgreich) {
-            spieleAnimation("Erfolg.mp4");
+            spieleAnimation("Erfolg.gif");
             alert(`"${faehigkeit.name}" war erfolgreich!`);
             aktualisiereAktionen(faehigkeit, bereitsVerwendet, true);
         } else {
-            spieleAnimation("Misserfolg.mp4");
+            spieleAnimation("Misserfolg.gif");
             alert(`"${faehigkeit.name}" ist fehlgeschlagen.`);
             aktualisiereAktionen(faehigkeit, bereitsVerwendet, false);
         }
