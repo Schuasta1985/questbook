@@ -1395,24 +1395,71 @@ function ladeAktionen() {
 function anwendenSpezialfähigkeit(fähigkeitName) {
     console.log(`anwendenSpezialfähigkeit() aufgerufen für: ${fähigkeitName}`);
 
-    const erfolgschance = Math.random();
-    const kosten = 2; // Beispiel: Kosten für die Fähigkeit
-    const erfolg = erfolgschance > 0.3; // 70% Erfolgswahrscheinlichkeit
+    // Spezialfähigkeiten-Daten abrufen
+    const fähigkeit = spezialfaehigkeiten[currentUser].find(f => f.name === fähigkeitName);
 
-    if (erfolg) {
-        alert(`${fähigkeitName} erfolgreich angewendet!`);
-        // Reduziere Level um die Kosten
-        level -= kosten;
-        aktualisiereXPAnzeige();
-
-        // Erfolg-Animation (Video abspielen)
-        zeigeAnimation("avatars/Erfolg.mp4");
-    } else {
-        alert(`${fähigkeitName} ist fehlgeschlagen. Versuche es erneut!`);
-        // Fehlgeschlagen-Animation
-        zeigeAnimation("avatars/Misserfolg.mp4");
+    if (!fähigkeit) {
+        alert(`Die Spezialfähigkeit "${fähigkeitName}" existiert nicht.`);
+        return;
     }
+
+    const kosten = fähigkeit.kosten;
+    const erfolgschance = fähigkeit.chance / 100;
+    const erfolgreich = Math.random() < erfolgschance;
+
+    if (level < kosten) {
+        alert(`Du hast nicht genug Level, um "${fähigkeitName}" zu verwenden. Benötigt: ${kosten}`);
+        return;
+    }
+
+    if (erfolgreich) {
+        alert(`"${fähigkeitName}" wurde erfolgreich angewendet!`);
+        level -= kosten; // Level um die Kosten reduzieren
+        speichereFortschritte();
+
+        // Erfolg-Animation
+        spieleAnimation("avatars/Erfolg.gif");
+    } else {
+        alert(`"${fähigkeitName}" ist fehlgeschlagen. Versuche es erneut!`);
+        spieleAnimation("avatars/Misserfolg.gif");
+    }
+
+    // Aktion in Firebase speichern
+    const aktion = {
+        name: fähigkeitName,
+        kosten: kosten,
+        erfolgreich: erfolgreich ? "Ja" : "Nein",
+        zeitpunkt: new Date().toLocaleString(),
+    };
+
+    firebase.database().ref(`benutzer/${currentUser}/aktionen`).push(aktion)
+        .then(() => console.log(`Aktion "${fähigkeitName}" erfolgreich gespeichert.`))
+        .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
 }
+
+function ladeAktionen() {
+    const aktionenContainer = document.getElementById("aktionen-container") || document.createElement("div");
+    aktionenContainer.id = "aktionen-container";
+    aktionenContainer.innerHTML = "<h3>Heute verwendete Spezialfähigkeiten:</h3>";
+
+    firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const aktionen = snapshot.val();
+                Object.values(aktionen).forEach((aktion) => {
+                    const eintrag = document.createElement("p");
+                    eintrag.textContent = `${aktion.name} - Erfolgreich: ${aktion.erfolgreich} - von: ${aktion.von} am ${aktion.zeitpunkt}`;
+                    aktionenContainer.appendChild(eintrag);
+                });
+            } else {
+                aktionenContainer.innerHTML += "<p>Keine Aktionen für heute vorhanden.</p>";
+            }
+
+            document.body.appendChild(aktionenContainer);
+        })
+        .catch((error) => console.error("Fehler beim Laden der Aktionen:", error));
+}
+
 function zeigeAnimation(videoPfad) {
     const videoContainer = document.createElement("div");
     videoContainer.id = "zauber-video-container";
