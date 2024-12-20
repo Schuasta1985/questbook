@@ -1192,5 +1192,145 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
+const spezialfaehigkeiten = {
+    Thomas: [
+        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Thomas braucht eine entspannte Schulter.", limit: "täglich" },
+        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Thomas sehnt sich nach Wärme.", limit: "täglich" },
+        { name: "Ich mag an Kaiserschmarren", kosten: 3, chance: 60, beschreibung: "Thomas hat Hunger auf Süßes!", limit: "täglich" },
+        { name: "Ich brauch das Auto", kosten: 5, chance: 60, beschreibung: "Thomas braucht Mobilität.", limit: "wöchentlich" },
+    ],
+    Elke: [
+        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Elke braucht Entspannung.", limit: "täglich" },
+        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Elke sehnt sich nach Nähe.", limit: "täglich" },
+        { name: "Mach mir was zu essen", kosten: 3, chance: 60, beschreibung: "Elke möchte etwas Warmes essen.", limit: "täglich" },
+        { name: "Wunsch frei", kosten: 5, chance: 60, beschreibung: "Elke wünscht sich Erfüllung.", limit: "wöchentlich" },
+    ],
+    Jamie: [
+        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Jamie möchte entspannen.", limit: "täglich" },
+        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Jamie mag Nähe.", limit: "täglich" },
+        { name: "30 Min Gaming Zeit", kosten: 2, chance: 70, beschreibung: "Jamie braucht eine Gaming-Pause.", limit: "täglich" },
+        { name: "Unendliche Spielzeit", kosten: 5, chance: 60, beschreibung: "Jamie träumt vom Gaming-Tag.", limit: "wöchentlich" },
+    ],
+};
+
+function zeigeSpezialfaehigkeiten() {
+    const spezialContainer = document.createElement("div");
+    spezialContainer.id = "spezial-container";
+    spezialContainer.style.textAlign = "center";
+    spezialContainer.style.marginTop = "20px";
+
+    const faehigkeiten = spezialfaehigkeiten[currentUser];
+    if (!faehigkeiten) return;
+
+    faehigkeiten.forEach((faehigkeit) => {
+        const button = document.createElement("button");
+        button.textContent = faehigkeit.name;
+        button.style.margin = "10px";
+        button.onclick = () => aktiviereSpezialfaehigkeit(faehigkeit);
+
+        spezialContainer.appendChild(button);
+    });
+
+    const avatarContainer = document.getElementById("avatar-container");
+    avatarContainer.parentNode.insertBefore(spezialContainer, avatarContainer.nextSibling);
+}
+
+function aktiviereSpezialfaehigkeit(faehigkeit) {
+    if (!confirm(`Möchtest du "${faehigkeit.name}" wirklich aktivieren?`)) return;
+
+    // Überprüfen, ob die Fähigkeit bereits verwendet wurde
+    firebase.database().ref(`benutzer/${currentUser}/aktionen/${faehigkeit.name}`).get()
+        .then((snapshot) => {
+            const daten = snapshot.val();
+            const bereitsVerwendet = daten?.heute || 0;
+            const limitErreicht = faehigkeit.limit === "täglich" && bereitsVerwendet >= 1 ||
+                faehigkeit.limit === "wöchentlich" && daten?.dieseWoche;
+
+            if (limitErreicht) {
+                alert(`"${faehigkeit.name}" wurde heute oder diese Woche bereits verwendet.`);
+                return;
+            }
+
+            starteBerechnung(faehigkeit, bereitsVerwendet);
+        });
+}
+
+function starteBerechnung(faehigkeit, bereitsVerwendet) {
+    const animationContainer = document.createElement("div");
+    animationContainer.style.textAlign = "center";
+    animationContainer.innerHTML = "<p>Berechnung läuft...</p>";
+    document.body.appendChild(animationContainer);
+
+    setTimeout(() => {
+        const erfolgreich = Math.random() * 100 < faehigkeit.chance;
+        document.body.removeChild(animationContainer);
+
+        if (erfolgreich) {
+            spieleAnimation("Erfolg.mp4");
+            alert(`"${faehigkeit.name}" war erfolgreich!`);
+            aktualisiereAktionen(faehigkeit, bereitsVerwendet, true);
+        } else {
+            spieleAnimation("Misserfolg.mp4");
+            alert(`"${faehigkeit.name}" ist fehlgeschlagen.`);
+            aktualisiereAktionen(faehigkeit, bereitsVerwendet, false);
+        }
+    }, 3000);
+}
+
+function spieleAnimation(dateiname) {
+    const video = document.createElement("video");
+    video.src = `avatars/${dateiname}`;
+    video.autoplay = true;
+    video.style.position = "fixed";
+    video.style.top = "50%";
+    video.style.left = "50%";
+    video.style.transform = "translate(-50%, -50%)";
+    video.style.width = "80%";
+    video.style.zIndex = "1000";
+
+    document.body.appendChild(video);
+    video.onended = () => document.body.removeChild(video);
+}
+
+function aktualisiereAktionen(faehigkeit, bereitsVerwendet, erfolgreich) {
+    const daten = {
+        heute: (bereitsVerwendet || 0) + 1,
+        dieseWoche: faehigkeit.limit === "wöchentlich" ? true : undefined,
+    };
+
+    firebase.database().ref(`benutzer/${currentUser}/aktionen/${faehigkeit.name}`).set(daten)
+        .then(() => {
+            console.log(`"${faehigkeit.name}" wurde aktualisiert.`);
+            ladeAktionen();
+        });
+
+    if (erfolgreich && faehigkeit.kosten > 0) {
+        const neuesLevel = Math.max(1, level - faehigkeit.kosten);
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte/level`).set(neuesLevel);
+        aktualisiereXPAnzeige();
+    }
+}
+
+function ladeAktionen() {
+    const aktionenContainer = document.getElementById("aktionen-container") || document.createElement("div");
+    aktionenContainer.id = "aktionen-container";
+    aktionenContainer.innerHTML = "<h3>Heutige Spezialfähigkeiten:</h3>";
+
+    firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
+        .then((snapshot) => {
+            const aktionen = snapshot.val();
+            if (aktionen) {
+                Object.keys(aktionen).forEach((name) => {
+                    const eintrag = document.createElement("p");
+                    eintrag.textContent = `${name}: ${aktionen[name].heute || 0} Mal verwendet.`;
+                    aktionenContainer.appendChild(eintrag);
+                });
+            }
+
+            document.body.appendChild(aktionenContainer);
+        });
+}
+
+
 
 aktualisiereLayout();
