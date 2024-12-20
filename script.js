@@ -1212,28 +1212,66 @@ const spezialfaehigkeiten = {
         { name: "Unendliche Spielzeit", kosten: 5, chance: 60, beschreibung: "Jamie träumt vom Gaming-Tag.", limit: "wöchentlich" },
     ],
 };
+function zeigeSpezialfähigkeiten() {
+    console.log("zeigeSpezialfähigkeiten() aufgerufen");
 
-function zeigeSpezialfaehigkeiten() {
-    const spezialContainer = document.createElement("div");
-    spezialContainer.id = "spezial-container";
-    spezialContainer.style.textAlign = "center";
-    spezialContainer.style.marginTop = "20px";
+    // Container für Spezialfähigkeiten erstellen
+    const spezialfähigkeitenContainer = document.getElementById("spezialfaehigkeiten-container") || document.createElement("div");
+    spezialfähigkeitenContainer.id = "spezialfaehigkeiten-container";
+    spezialfähigkeitenContainer.style.marginTop = "20px";
+    spezialfähigkeitenContainer.style.textAlign = "center";
+    spezialfähigkeitenContainer.style.color = "#FFD700";
+    spezialfähigkeitenContainer.style.padding = "10px";
+    spezialfähigkeitenContainer.style.border = "2px solid #FFD700";
+    spezialfähigkeitenContainer.style.borderRadius = "10px";
+    spezialfähigkeitenContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    spezialfähigkeitenContainer.innerHTML = "<h3>Heute verfügbare Spezialfähigkeiten:</h3>";
 
-    const faehigkeiten = spezialfaehigkeiten[currentUser];
-    if (!faehigkeiten) return;
+    // Spezialfähigkeiten basierend auf Benutzer anzeigen
+    const spezialfähigkeiten = {
+        Thomas: [
+            { name: "Massiere mich", kosten: "2 Level" },
+            { name: "Ich will gekuschelt werden", kosten: "1 Level" },
+            { name: "Ich mag an Kaiserschmarren", kosten: "3 Level" },
+            { name: "Ich brauch das Auto", kosten: "5 Level" }
+        ],
+        Elke: [
+            { name: "Entspannung", kosten: "2 Level" },
+            { name: "Gekuschelt werden", kosten: "1 Level" },
+            { name: "Bekocht werden", kosten: "3 Level" },
+            { name: "Wunsch frei", kosten: "5 Level" }
+        ],
+        Jamie: [
+            { name: "Massiere mich", kosten: "2 Level" },
+            { name: "Ich will gekuschelt werden", kosten: "1 Level" },
+            { name: "30 Min Gaming Zeit", kosten: "2 Level" },
+            { name: "Unendliche Spielzeit", kosten: "5 Level" }
+        ]
+    };
 
-    faehigkeiten.forEach((faehigkeit) => {
-        const button = document.createElement("button");
-        button.textContent = faehigkeit.name;
-        button.style.margin = "10px";
-        button.onclick = () => aktiviereSpezialfaehigkeit(faehigkeit);
+    if (currentUser && spezialfähigkeiten[currentUser]) {
+        spezialfähigkeiten[currentUser].forEach((fähigkeit) => {
+            const fähigkeitItem = document.createElement("div");
+            fähigkeitItem.style.marginBottom = "10px";
+            fähigkeitItem.innerHTML = `
+                <strong>${fähigkeit.name}</strong> - Kosten: ${fähigkeit.kosten}
+                <button onclick="anwendenSpezialfähigkeit('${fähigkeit.name}')"
+                        style="margin-left: 10px; padding: 5px 10px; background-color: #FFD700;
+                               color: black; border: none; border-radius: 5px;">
+                    Anwenden
+                </button>
+            `;
+            spezialfähigkeitenContainer.appendChild(fähigkeitItem);
+        });
+    } else {
+        spezialfähigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten verfügbar.</p>";
+    }
 
-        spezialContainer.appendChild(button);
-    });
-
-    const avatarContainer = document.getElementById("avatar-container");
-    avatarContainer.parentNode.insertBefore(spezialContainer, avatarContainer.nextSibling);
+    // Container in den Body oder ein passendes Element einfügen
+    const questsSection = document.getElementById("quests-section");
+    questsSection.appendChild(spezialfähigkeitenContainer);
 }
+
 
 function aktiviereSpezialfaehigkeit(faehigkeit) {
     if (!confirm(`Möchtest du "${faehigkeit.name}" wirklich aktivieren?`)) return;
@@ -1330,7 +1368,54 @@ function ladeAktionen() {
             document.body.appendChild(aktionenContainer);
         });
 }
+function anwendenSpezialfähigkeit(fähigkeitName) {
+    console.log(`anwendenSpezialfähigkeit() aufgerufen für: ${fähigkeitName}`);
 
+    const erfolgschance = Math.random();
+    const kosten = 2; // Beispiel: Kosten für die Fähigkeit
+    const erfolg = erfolgschance > 0.3; // 70% Erfolgswahrscheinlichkeit
 
+    if (erfolg) {
+        alert(`${fähigkeitName} erfolgreich angewendet!`);
+        // Reduziere Level um die Kosten
+        level -= kosten;
+        aktualisiereXPAnzeige();
+
+        // Erfolg-Animation (Video abspielen)
+        zeigeAnimation("avatars/Erfolg.mp4");
+    } else {
+        alert(`${fähigkeitName} ist fehlgeschlagen. Versuche es erneut!`);
+        // Fehlgeschlagen-Animation
+        zeigeAnimation("avatars/Misserfolg.mp4");
+    }
+}
+function zeigeAnimation(videoPfad) {
+    const videoContainer = document.createElement("div");
+    videoContainer.id = "zauber-video-container";
+    videoContainer.style.position = "fixed";
+    videoContainer.style.top = "0";
+    videoContainer.style.left = "0";
+    videoContainer.style.width = "100%";
+    videoContainer.style.height = "100%";
+    videoContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    videoContainer.style.zIndex = "500";
+
+    const video = document.createElement("video");
+    video.src = videoPfad;
+    video.autoplay = true;
+    video.style.width = "100%";
+    video.style.height = "100%";
+    video.style.objectFit = "contain";
+
+    videoContainer.appendChild(video);
+    document.body.appendChild(videoContainer);
+
+    setTimeout(() => {
+        if (videoContainer && document.body.contains(videoContainer)) {
+            video.pause();
+            document.body.removeChild(videoContainer);
+        }
+    }, 3000); // Video nach 3 Sekunden entfernen
+}
 
 aktualisiereLayout();
