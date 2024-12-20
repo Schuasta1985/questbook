@@ -186,32 +186,38 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
+    // Elemente aus der HTML holen
     const npcLoginSection = document.getElementById("npc-login-section");
     const logbuchButton = document.getElementById("logbuch-button");
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
 
+    // Validierung: Eingabefelder vorhanden?
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
         alert("Es gab ein Problem beim Laden der Seite. Bitte versuche es später erneut.");
         return;
     }
 
+    // Eingaben prüfen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
+    // Passwort-Liste
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
+    // Validierung: Benutzername ausgewählt?
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
     }
 
+    // Validierung: Passwort korrekt?
     if (passwort !== benutzerPasswoerter[benutzername]) {
         alert("Das eingegebene Passwort ist falsch.");
         return;
@@ -222,13 +228,20 @@ function benutzerAnmeldung() {
     isAdmin = false;
     console.log(`${benutzername} erfolgreich angemeldet`);
 
+    // Eingabefelder deaktivieren/ausblenden
+    benutzernameInput.disabled = true;
+    passwortInput.disabled = true;
+
+    // Logbuch-Button einblenden
     if (logbuchButton) {
         logbuchButton.style.display = "block";
     }
 
+    // NPC-Login und Benutzer-Container ausblenden
     if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
+    // Starte Benutzeransicht
     zeigeQuestbook();
     ladeFortschritte();
     täglicheHPRegeneration();
@@ -236,9 +249,11 @@ function benutzerAnmeldung() {
     ladeGlobaleQuests();
     zeigeSpezialfähigkeiten();
 
-
+    // Erfolgsmeldung anzeigen
+    alert(`Willkommen, ${benutzername}! Du bist jetzt erfolgreich angemeldet.`);
     console.log("Benutzeranmeldung abgeschlossen!");
 }
+
 
 // NPC Login
 function npcLogin() {
@@ -1217,9 +1232,15 @@ const spezialfaehigkeiten = {
 function zeigeSpezialfähigkeiten() {
     console.log("zeigeSpezialfähigkeiten() aufgerufen");
 
-    // Container für Spezialfähigkeiten erstellen
-    const spezialfähigkeitenContainer = document.getElementById("spezialfaehigkeiten-container") || document.createElement("div");
-    spezialfähigkeitenContainer.id = "spezialfaehigkeiten-container";
+    // Spezialfähigkeiten-Container holen oder erstellen
+    let spezialfähigkeitenContainer = document.getElementById("spezialfaehigkeiten-container");
+    if (!spezialfähigkeitenContainer) {
+        spezialfähigkeitenContainer = document.createElement("div");
+        spezialfähigkeitenContainer.id = "spezialfaehigkeiten-container";
+    }
+
+    // Stil und Grundstruktur setzen
+    spezialfähigkeitenContainer.style.display = "block"; // Sichtbar machen
     spezialfähigkeitenContainer.style.marginTop = "20px";
     spezialfähigkeitenContainer.style.textAlign = "center";
     spezialfähigkeitenContainer.style.color = "#FFD700";
@@ -1269,11 +1290,16 @@ function zeigeSpezialfähigkeiten() {
         spezialfähigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten verfügbar.</p>";
     }
 
-    // Container in den Body oder ein passendes Element einfügen
+    // Container in die questsSection einfügen, falls vorhanden
     const questsSection = document.getElementById("quests-section");
-    questsSection.appendChild(spezialfähigkeitenContainer);
+    if (questsSection) {
+        if (!questsSection.contains(spezialfähigkeitenContainer)) {
+            questsSection.appendChild(spezialfähigkeitenContainer);
+        }
+    } else {
+        console.error("questsSection nicht gefunden. Spezialfähigkeiten können nicht eingefügt werden.");
+    }
 }
-
 
 function aktiviereSpezialfaehigkeit(faehigkeit) {
     if (!confirm(`Möchtest du "${faehigkeit.name}" wirklich aktivieren?`)) return;
