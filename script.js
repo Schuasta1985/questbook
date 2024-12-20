@@ -791,6 +791,7 @@ function zeigeAvatar() {
             </div>
         `;
 
+        fügeSpezialfähigkeitenButtonHinzu(); // Hier den Button für Spezialfähigkeiten hinzufügen
         avatarContainer.style.display = "flex";
         avatarContainer.style.flexDirection = "column";
         avatarContainer.style.alignItems = "center";
@@ -1348,9 +1349,17 @@ function fügeSpezialfähigkeitenButtonHinzu() {
     const button = document.createElement('button');
     button.textContent = 'Spezialfähigkeiten';
     button.style.marginLeft = '10px';
-    button.onclick = zeigeSpezialfähigkeitenMenu;
+    button.style.padding = '10px';
+    button.style.backgroundColor = '#FFD700';
+    button.style.border = 'none';
+    button.style.borderRadius = '5px';
+    button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.3)';
+    button.style.cursor = 'pointer';
+
+    button.onclick = zeigeSpezialfähigkeitenMenu; // Das Menü anzeigen
     avatarContainer.appendChild(button);
 }
+
 
 function initialisiereSpezialfähigkeitenFürAlleSpieler() {
     const spielerDaten = {
