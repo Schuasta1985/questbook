@@ -275,24 +275,22 @@ function npcLogin() {
     }
 }
 
-
-// Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
     if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).update({
             xp: xp,
             level: level,
             hp: aktuelleHP || berechneMaxHP(level),
-            maxHP: maxHP || berechneMaxHP(level),
+            maxHP: berechneMaxHP(level),
             mp: aktuelleMP || berechneMaxMP(level),
-            maxMP: maxMP || berechneMaxMP(level)
-        })
-        .then(() => {
+            maxMP: berechneMaxMP(level),
+        }).then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.error("Fehler beim Speichern der Fortschritte:", error);
         });
+    } else {
+        console.error("Kein Benutzer angemeldet, Fortschritte können nicht gespeichert werden.");
     }
 }
 
@@ -306,21 +304,22 @@ function ladeFortschritte(callback) {
                     const daten = snapshot.val();
                     xp = daten.xp || 0;
                     level = daten.level || 1;
-                    aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
+                    aktuelleHP = daten.hp || berechneMaxHP(level);
                     maxHP = berechneMaxHP(level);
-                    aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
+                    aktuelleMP = daten.mp || berechneMaxMP(level);
                     maxMP = berechneMaxMP(level);
 
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
                     aktualisiereMPLeiste(aktuelleMP, level);
 
-                    // Callback aufrufen, wenn vorhanden
+                    console.log("Fortschrittsdaten erfolgreich geladen:", daten);
+
                     if (typeof callback === "function") {
                         callback();
                     }
                 } else {
-                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
+                    console.warn("Keine Fortschrittsdaten gefunden.");
                 }
             })
             .catch((error) => {
@@ -328,9 +327,6 @@ function ladeFortschritte(callback) {
             });
     }
 }
-
-
-
 // Tägliche HP-Regeneration
 function täglicheHPRegeneration() {
     if (!currentUser) return; // Sicherstellen, dass ein Benutzer angemeldet ist
