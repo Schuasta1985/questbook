@@ -1375,18 +1375,13 @@ function initialisiereSpezialfähigkeitenFürAlleSpieler() {
     };
 
     Object.entries(spielerDaten).forEach(([spielerName, fähigkeiten]) => {
-        firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).get()
+        firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).once('value')
             .then((snapshot) => {
                 if (!snapshot.exists()) {
-                    console.log(`Standardfähigkeiten für ${spielerName} werden gespeichert.`);
-                    firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).set(fähigkeiten)
-                        .then(() => console.log(`Spezialfähigkeiten für ${spielerName} erfolgreich gespeichert.`))
-                        .catch((error) => console.error(`Fehler beim Speichern der Spezialfähigkeiten für ${spielerName}:`, error));
-                } else {
-                    console.log(`Spezialfähigkeiten für ${spielerName} existieren bereits.`);
+                    return firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).set(fähigkeiten);
                 }
             })
-            .catch((error) => console.error(`Fehler beim Abrufen der Spezialfähigkeiten für ${spielerName}:`, error));
+            .catch((error) => console.error(`Fehler beim Initialisieren der Fähigkeiten für ${spielerName}:`, error));
     });
 }
 
