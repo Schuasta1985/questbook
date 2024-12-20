@@ -142,8 +142,6 @@ function ladeLogbuch() {
 function zeigeStartseite() {
     console.log('zeigeStartseite() aufgerufen');
 
-    steuerungLogbuch(false); // Logbuch-Button ausblenden
-
     const loginSection = document.getElementById('login-section');
     if (loginSection) {
         loginSection.innerHTML = `
@@ -165,10 +163,8 @@ function zeigeStartseite() {
         }
     }
 
-    // Spezialfähigkeiten-Aktionen zur Startseite hinzufügen
-    fügeAktionenZurStartseiteHinzu();
-
     ladeBenutzerdaten();
+    zeigeAktionenAufStartseite(); // Zeigt die Liste der Aktionen an
 }
 
 function zeigeQuestbook() {
