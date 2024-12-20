@@ -186,38 +186,32 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    // Elemente aus der HTML holen
     const npcLoginSection = document.getElementById("npc-login-section");
     const logbuchButton = document.getElementById("logbuch-button");
     const benutzernameInput = document.getElementById("spielerDropdown");
     const passwortInput = document.getElementById("spielerPasswort");
     const benutzerContainer = document.getElementById("benutzer-container");
 
-    // Validierung: Eingabefelder vorhanden?
     if (!benutzernameInput || !passwortInput) {
         console.error("Fehler: Spieler-Dropdown oder Passwortfeld nicht gefunden!");
         alert("Es gab ein Problem beim Laden der Seite. Bitte versuche es später erneut.");
         return;
     }
 
-    // Eingaben prüfen
     const benutzername = benutzernameInput.value.trim();
     const passwort = passwortInput.value.trim();
 
-    // Passwort-Liste
     const benutzerPasswoerter = {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
     };
 
-    // Validierung: Benutzername ausgewählt?
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
         alert("Bitte wähle einen gültigen Benutzer aus.");
         return;
     }
 
-    // Validierung: Passwort korrekt?
     if (passwort !== benutzerPasswoerter[benutzername]) {
         alert("Das eingegebene Passwort ist falsch.");
         return;
@@ -228,32 +222,21 @@ function benutzerAnmeldung() {
     isAdmin = false;
     console.log(`${benutzername} erfolgreich angemeldet`);
 
-    // Eingabefelder deaktivieren/ausblenden
-    benutzernameInput.disabled = true;
-    passwortInput.disabled = true;
-
-    // Logbuch-Button einblenden
     if (logbuchButton) {
         logbuchButton.style.display = "block";
     }
 
-    // NPC-Login und Benutzer-Container ausblenden
     if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
-    // Starte Benutzeransicht
     zeigeQuestbook();
     ladeFortschritte();
     täglicheHPRegeneration();
     zeigeAvatar();
     ladeGlobaleQuests();
-    zeigeSpezialfähigkeiten();
 
-    // Erfolgsmeldung anzeigen
-    alert(`Willkommen, ${benutzername}! Du bist jetzt erfolgreich angemeldet.`);
     console.log("Benutzeranmeldung abgeschlossen!");
 }
-
 
 // NPC Login
 function npcLogin() {
@@ -275,22 +258,24 @@ function npcLogin() {
     }
 }
 
+
+// Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
     if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).update({
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
             level: level,
             hp: aktuelleHP || berechneMaxHP(level),
-            maxHP: berechneMaxHP(level),
+            maxHP: maxHP || berechneMaxHP(level),
             mp: aktuelleMP || berechneMaxMP(level),
-            maxMP: berechneMaxMP(level),
-        }).then(() => {
+            maxMP: maxMP || berechneMaxMP(level)
+        })
+        .then(() => {
             console.log("Fortschritte erfolgreich gespeichert.");
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.error("Fehler beim Speichern der Fortschritte:", error);
         });
-    } else {
-        console.error("Kein Benutzer angemeldet, Fortschritte können nicht gespeichert werden.");
     }
 }
 
@@ -304,22 +289,21 @@ function ladeFortschritte(callback) {
                     const daten = snapshot.val();
                     xp = daten.xp || 0;
                     level = daten.level || 1;
-                    aktuelleHP = daten.hp || berechneMaxHP(level);
+                    aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
                     maxHP = berechneMaxHP(level);
-                    aktuelleMP = daten.mp || berechneMaxMP(level);
+                    aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
                     maxMP = berechneMaxMP(level);
 
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
                     aktualisiereMPLeiste(aktuelleMP, level);
 
-                    console.log("Fortschrittsdaten erfolgreich geladen:", daten);
-
+                    // Callback aufrufen, wenn vorhanden
                     if (typeof callback === "function") {
                         callback();
                     }
                 } else {
-                    console.warn("Keine Fortschrittsdaten gefunden.");
+                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
                 }
             })
             .catch((error) => {
@@ -327,6 +311,9 @@ function ladeFortschritte(callback) {
             });
     }
 }
+
+
+
 // Tägliche HP-Regeneration
 function täglicheHPRegeneration() {
     if (!currentUser) return; // Sicherstellen, dass ein Benutzer angemeldet ist
@@ -1205,288 +1192,5 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
-const spezialfaehigkeiten = {
-    Thomas: [
-        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Thomas braucht eine entspannte Schulter.", limit: "täglich" },
-        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Thomas sehnt sich nach Wärme.", limit: "täglich" },
-        { name: "Ich mag an Kaiserschmarren", kosten: 3, chance: 60, beschreibung: "Thomas hat Hunger auf Süßes!", limit: "täglich" },
-        { name: "Ich brauch das Auto", kosten: 5, chance: 60, beschreibung: "Thomas braucht Mobilität.", limit: "wöchentlich" },
-    ],
-    Elke: [
-        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Elke braucht Entspannung.", limit: "täglich" },
-        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Elke sehnt sich nach Nähe.", limit: "täglich" },
-        { name: "Mach mir was zu essen", kosten: 3, chance: 60, beschreibung: "Elke möchte etwas Warmes essen.", limit: "täglich" },
-        { name: "Wunsch frei", kosten: 5, chance: 60, beschreibung: "Elke wünscht sich Erfüllung.", limit: "wöchentlich" },
-    ],
-    Jamie: [
-        { name: "Massiere mich", kosten: 2, chance: 70, beschreibung: "Jamie möchte entspannen.", limit: "täglich" },
-        { name: "Ich will gekuschelt werden", kosten: 1, chance: 80, beschreibung: "Jamie mag Nähe.", limit: "täglich" },
-        { name: "30 Min Gaming Zeit", kosten: 2, chance: 70, beschreibung: "Jamie braucht eine Gaming-Pause.", limit: "täglich" },
-        { name: "Unendliche Spielzeit", kosten: 5, chance: 60, beschreibung: "Jamie träumt vom Gaming-Tag.", limit: "wöchentlich" },
-    ],
-};
-function zeigeSpezialfähigkeiten() {
-    console.log("zeigeSpezialfähigkeiten() aufgerufen");
-
-    // Spezialfähigkeiten-Container holen oder erstellen
-    let spezialfähigkeitenContainer = document.getElementById("spezialfaehigkeiten-container");
-    if (!spezialfähigkeitenContainer) {
-        spezialfähigkeitenContainer = document.createElement("div");
-        spezialfähigkeitenContainer.id = "spezialfaehigkeiten-container";
-    }
-
-    // Stil und Grundstruktur setzen
-    spezialfähigkeitenContainer.style.display = "block"; // Sichtbar machen
-    spezialfähigkeitenContainer.style.marginTop = "20px";
-    spezialfähigkeitenContainer.style.textAlign = "center";
-    spezialfähigkeitenContainer.style.color = "#FFD700";
-    spezialfähigkeitenContainer.style.padding = "10px";
-    spezialfähigkeitenContainer.style.border = "2px solid #FFD700";
-    spezialfähigkeitenContainer.style.borderRadius = "10px";
-    spezialfähigkeitenContainer.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
-    spezialfähigkeitenContainer.innerHTML = "<h3>Heute verfügbare Spezialfähigkeiten:</h3>";
-
-    // Spezialfähigkeiten basierend auf Benutzer anzeigen
-    const spezialfähigkeiten = {
-        Thomas: [
-            { name: "Massiere mich", kosten: "2 Level" },
-            { name: "Ich will gekuschelt werden", kosten: "1 Level" },
-            { name: "Ich mag an Kaiserschmarren", kosten: "3 Level" },
-            { name: "Ich brauch das Auto", kosten: "5 Level" }
-        ],
-        Elke: [
-            { name: "Entspannung", kosten: "2 Level" },
-            { name: "Gekuschelt werden", kosten: "1 Level" },
-            { name: "Bekocht werden", kosten: "3 Level" },
-            { name: "Wunsch frei", kosten: "5 Level" }
-        ],
-        Jamie: [
-            { name: "Massiere mich", kosten: "2 Level" },
-            { name: "Ich will gekuschelt werden", kosten: "1 Level" },
-            { name: "30 Min Gaming Zeit", kosten: "2 Level" },
-            { name: "Unendliche Spielzeit", kosten: "5 Level" }
-        ]
-    };
-
-    if (currentUser && spezialfähigkeiten[currentUser]) {
-        spezialfähigkeiten[currentUser].forEach((fähigkeit) => {
-            const fähigkeitItem = document.createElement("div");
-            fähigkeitItem.style.marginBottom = "10px";
-            fähigkeitItem.innerHTML = `
-                <strong>${fähigkeit.name}</strong> - Kosten: ${fähigkeit.kosten}
-                <button onclick="anwendenSpezialfähigkeit('${fähigkeit.name}')"
-                        style="margin-left: 10px; padding: 5px 10px; background-color: #FFD700;
-                               color: black; border: none; border-radius: 5px;">
-                    Anwenden
-                </button>
-            `;
-            spezialfähigkeitenContainer.appendChild(fähigkeitItem);
-        });
-    } else {
-        spezialfähigkeitenContainer.innerHTML += "<p>Keine Spezialfähigkeiten verfügbar.</p>";
-    }
-
-    // Container in die questsSection einfügen, falls vorhanden
-    const questsSection = document.getElementById("quests-section");
-    if (questsSection) {
-        if (!questsSection.contains(spezialfähigkeitenContainer)) {
-            questsSection.appendChild(spezialfähigkeitenContainer);
-        }
-    } else {
-        console.error("questsSection nicht gefunden. Spezialfähigkeiten können nicht eingefügt werden.");
-    }
-}
-
-function aktiviereSpezialfaehigkeit(faehigkeit) {
-    if (!confirm(`Möchtest du "${faehigkeit.name}" wirklich aktivieren?`)) return;
-
-    // Überprüfen, ob die Fähigkeit bereits verwendet wurde
-    firebase.database().ref(`benutzer/${currentUser}/aktionen/${faehigkeit.name}`).get()
-        .then((snapshot) => {
-            const daten = snapshot.val();
-            const bereitsVerwendet = daten?.heute || 0;
-            const limitErreicht = faehigkeit.limit === "täglich" && bereitsVerwendet >= 1 ||
-                faehigkeit.limit === "wöchentlich" && daten?.dieseWoche;
-
-            if (limitErreicht) {
-                alert(`"${faehigkeit.name}" wurde heute oder diese Woche bereits verwendet.`);
-                return;
-            }
-
-            starteBerechnung(faehigkeit, bereitsVerwendet);
-        });
-}
-
-function starteBerechnung(faehigkeit, bereitsVerwendet) {
-    const animationContainer = document.createElement("div");
-    animationContainer.style.textAlign = "center";
-    animationContainer.innerHTML = "<p>Berechnung läuft...</p>";
-    document.body.appendChild(animationContainer);
-
-    setTimeout(() => {
-        const erfolgreich = Math.random() * 100 < faehigkeit.chance;
-        document.body.removeChild(animationContainer);
-
-        if (erfolgreich) {
-            spieleAnimation("Erfolg.gif");
-            alert(`"${faehigkeit.name}" war erfolgreich!`);
-            aktualisiereAktionen(faehigkeit, bereitsVerwendet, true);
-        } else {
-            spieleAnimation("Misserfolg.gif");
-            alert(`"${faehigkeit.name}" ist fehlgeschlagen.`);
-            aktualisiereAktionen(faehigkeit, bereitsVerwendet, false);
-        }
-    }, 3000);
-}
-
-function spieleAnimation(dateiname) {
-    const video = document.createElement("video");
-    video.src = `avatars/${dateiname}`;
-    video.autoplay = true;
-    video.style.position = "fixed";
-    video.style.top = "50%";
-    video.style.left = "50%";
-    video.style.transform = "translate(-50%, -50%)";
-    video.style.width = "80%";
-    video.style.zIndex = "1000";
-
-    document.body.appendChild(video);
-    video.onended = () => document.body.removeChild(video);
-}
-
-function aktualisiereAktionen(faehigkeit, bereitsVerwendet, erfolgreich) {
-    const daten = {
-        heute: (bereitsVerwendet || 0) + 1,
-        dieseWoche: faehigkeit.limit === "wöchentlich" ? true : undefined,
-    };
-
-    firebase.database().ref(`benutzer/${currentUser}/aktionen/${faehigkeit.name}`).set(daten)
-        .then(() => {
-            console.log(`"${faehigkeit.name}" wurde aktualisiert.`);
-            ladeAktionen();
-        });
-
-    if (erfolgreich && faehigkeit.kosten > 0) {
-        const neuesLevel = Math.max(1, level - faehigkeit.kosten);
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte/level`).set(neuesLevel);
-        aktualisiereXPAnzeige();
-    }
-}
-
-function ladeAktionen() {
-    const aktionenContainer = document.getElementById("aktionen-container") || document.createElement("div");
-    aktionenContainer.id = "aktionen-container";
-    aktionenContainer.innerHTML = "<h3>Heutige Spezialfähigkeiten:</h3>";
-
-    firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
-        .then((snapshot) => {
-            const aktionen = snapshot.val();
-            if (aktionen) {
-                Object.keys(aktionen).forEach((name) => {
-                    const eintrag = document.createElement("p");
-                    eintrag.textContent = `${name}: ${aktionen[name].heute || 0} Mal verwendet.`;
-                    aktionenContainer.appendChild(eintrag);
-                });
-            }
-
-            document.body.appendChild(aktionenContainer);
-        });
-}
-function anwendenSpezialfähigkeit(fähigkeitName) {
-    console.log(`anwendenSpezialfähigkeit() aufgerufen für: ${fähigkeitName}`);
-
-    // Spezialfähigkeiten-Daten abrufen
-    const fähigkeit = spezialfaehigkeiten[currentUser].find(f => f.name === fähigkeitName);
-
-    if (!fähigkeit) {
-        alert(`Die Spezialfähigkeit "${fähigkeitName}" existiert nicht.`);
-        return;
-    }
-
-    const kosten = fähigkeit.kosten;
-    const erfolgschance = fähigkeit.chance / 100;
-    const erfolgreich = Math.random() < erfolgschance;
-
-    if (level < kosten) {
-        alert(`Du hast nicht genug Level, um "${fähigkeitName}" zu verwenden. Benötigt: ${kosten}`);
-        return;
-    }
-
-    if (erfolgreich) {
-        alert(`"${fähigkeitName}" wurde erfolgreich angewendet!`);
-        level -= kosten; // Level um die Kosten reduzieren
-        speichereFortschritte();
-
-        // Erfolg-Animation
-        spieleAnimation("avatars/Erfolg.gif");
-    } else {
-        alert(`"${fähigkeitName}" ist fehlgeschlagen. Versuche es erneut!`);
-        spieleAnimation("avatars/Misserfolg.gif");
-    }
-
-    // Aktion in Firebase speichern
-    const aktion = {
-        name: fähigkeitName,
-        kosten: kosten,
-        erfolgreich: erfolgreich ? "Ja" : "Nein",
-        zeitpunkt: new Date().toLocaleString(),
-    };
-
-    firebase.database().ref(`benutzer/${currentUser}/aktionen`).push(aktion)
-        .then(() => console.log(`Aktion "${fähigkeitName}" erfolgreich gespeichert.`))
-        .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
-}
-
-function ladeAktionen() {
-    const aktionenContainer = document.getElementById("aktionen-container") || document.createElement("div");
-    aktionenContainer.id = "aktionen-container";
-    aktionenContainer.innerHTML = "<h3>Heute verwendete Spezialfähigkeiten:</h3>";
-
-    firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const aktionen = snapshot.val();
-                Object.values(aktionen).forEach((aktion) => {
-                    const eintrag = document.createElement("p");
-                    eintrag.textContent = `${aktion.name} - Erfolgreich: ${aktion.erfolgreich} - von: ${aktion.von} am ${aktion.zeitpunkt}`;
-                    aktionenContainer.appendChild(eintrag);
-                });
-            } else {
-                aktionenContainer.innerHTML += "<p>Keine Aktionen für heute vorhanden.</p>";
-            }
-
-            document.body.appendChild(aktionenContainer);
-        })
-        .catch((error) => console.error("Fehler beim Laden der Aktionen:", error));
-}
-
-function zeigeAnimation(videoPfad) {
-    const videoContainer = document.createElement("div");
-    videoContainer.id = "zauber-video-container";
-    videoContainer.style.position = "fixed";
-    videoContainer.style.top = "0";
-    videoContainer.style.left = "0";
-    videoContainer.style.width = "100%";
-    videoContainer.style.height = "100%";
-    videoContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    videoContainer.style.zIndex = "500";
-
-    const video = document.createElement("video");
-    video.src = videoPfad;
-    video.autoplay = true;
-    video.style.width = "100%";
-    video.style.height = "100%";
-    video.style.objectFit = "contain";
-
-    videoContainer.appendChild(video);
-    document.body.appendChild(videoContainer);
-
-    setTimeout(() => {
-        if (videoContainer && document.body.contains(videoContainer)) {
-            video.pause();
-            document.body.removeChild(videoContainer);
-        }
-    }, 3000); // Video nach 3 Sekunden entfernen
-}
 
 aktualisiereLayout();
