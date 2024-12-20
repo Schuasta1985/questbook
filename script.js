@@ -1274,6 +1274,7 @@ function verwendeFähigkeit(name, kosten, erfolgswahrscheinlichkeit) {
     alert(lustigerText);
 }
 
+// Lustige Texte für Spezialfähigkeiten generieren
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
         'Massiere mich': `${ausführer} zwingt ${ziel}, zur Massage anzutreten. Hände geschmeidig? Check!`,
@@ -1283,6 +1284,7 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel}, und die Magie passiert.`;
 }
+
 // Animation anzeigen
 function zeigeAnimation(pfad, nachricht) {
     const animationContainer = document.createElement('div');
@@ -1330,6 +1332,7 @@ function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
 }
 
 // Übersicht in die Startseite integrieren
+// Spezialfähigkeiten: Button rechts vom Avatar
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
     if (!avatarContainer) {
@@ -1339,21 +1342,20 @@ function fügeSpezialfähigkeitenButtonHinzu() {
 
     const button = document.createElement('button');
     button.textContent = 'Spezialfähigkeiten';
-    button.style.marginLeft = '10px';
-    button.style.padding = '10px 20px';
+    button.style.marginLeft = '20px';
+    button.style.padding = '10px 15px';
     button.style.backgroundColor = '#FFD700';
-    button.style.color = 'black';
+    button.style.color = '#000';
     button.style.border = 'none';
     button.style.borderRadius = '5px';
-    button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.3)';
     button.style.cursor = 'pointer';
-
     button.onclick = zeigeSpezialfähigkeitenMenu;
 
     avatarContainer.style.display = 'flex';
-    avatarContainer.style.flexDirection = 'row'; // Button rechts vom Avatar
+    avatarContainer.style.alignItems = 'center';
     avatarContainer.appendChild(button);
 }
+
 function initialisiereSpezialfähigkeitenFürAlleSpieler() {
     const spielerDaten = {
         "Thomas": {
@@ -1470,6 +1472,7 @@ function generiereLustigenText(fähigkeit, zielSpieler) {
     };
     return lustigeTexte[fähigkeit] || 'Diese Fähigkeit ist so mächtig, dass selbst die Sterne staunen!';
 }
+// Spezialfähigkeiten-Log auf der Startseite
 function fügeAktionenZurStartseiteHinzu() {
     const aktionenContainer = document.createElement('div');
     aktionenContainer.id = 'aktionen-container';
@@ -1485,6 +1488,7 @@ function fügeAktionenZurStartseiteHinzu() {
     ladeAktionenVonFirebase();
 }
 
+// Logbuch für Aktionen laden
 function ladeAktionenVonFirebase() {
     const aktionenListe = document.getElementById('aktionen-list');
     aktionenListe.innerHTML = ''; // Liste zurücksetzen
@@ -1496,7 +1500,7 @@ function ladeAktionenVonFirebase() {
                 const listItem = document.createElement('li');
                 listItem.style.marginBottom = '10px';
                 listItem.innerHTML = `
-                    <strong>${aktion.typ}</strong> - ${aktion.ausführer} hat ${aktion.ziel} mit der Fähigkeit "${aktion.name}" beglückt.<br>
+                    <strong>${aktion.name}</strong> - ${aktion.ausführer} hat ${aktion.ziel} mit der Fähigkeit "${aktion.name}" beglückt.<br>
                     <small>${aktion.text}</small>
                 `;
                 aktionenListe.appendChild(listItem);
