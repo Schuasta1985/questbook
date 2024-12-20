@@ -6,25 +6,21 @@ let isAdmin = false;
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
-
-    // Erstelle Logbuch und Button nur einmal
-    erstelleLogbuch(); 
     
-    // Logbuch verstecken
+    initialisiereSpezialfähigkeitenFürAlleSpieler(); // Spezialfähigkeiten für alle Spieler prüfen und speichern
+    
+    erstelleLogbuch(); 
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) {
         logbuchContainer.style.display = "none";
     }
-
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
         logbuchButton.style.display = "none"; // Button beim Start ausblenden
     }
-
     setTimeout(() => {
         steuerungLogbuch(false); // Zusätzliche Sicherheit für das Logbuch
     }, 0);
-
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
@@ -38,7 +34,14 @@ window.onload = function () {
     zeigeStartseite();
     ladeLogbuch();
     ladeAktionen();
+    initialisiereSpezialfähigkeiten();
 };
+
+// Startseite initialisieren
+function initialisiereSpezialfähigkeiten() {
+    fügeSpezialfähigkeitenButtonHinzu();
+    fügeFähigkeitenÜbersichtHinzu();
+}
 
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
@@ -1191,6 +1194,202 @@ function ladeAktionen() {
             console.error("Fehler beim Laden der Aktionen:", error);
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
+// Spezialfähigkeiten: Button und Menü rechts neben dem Avatar
+function zeigeSpezialfähigkeitenMenu() {
+    const spezialfähigkeitenContainer = document.createElement('div');
+    spezialfähigkeitenContainer.id = 'spezialfähigkeiten-container';
+    spezialfähigkeitenContainer.style.position = 'absolute';
+    spezialfähigkeitenContainer.style.top = '50%';
+    spezialfähigkeitenContainer.style.left = '50%';
+    spezialfähigkeitenContainer.style.transform = 'translate(-50%, -50%)';
+    spezialfähigkeitenContainer.style.backgroundColor = 'white';
+    spezialfähigkeitenContainer.style.padding = '20px';
+    spezialfähigkeitenContainer.style.border = '2px solid black';
+    spezialfähigkeitenContainer.style.borderRadius = '10px';
+    spezialfähigkeitenContainer.style.zIndex = '1000';
+
+    const titel = document.createElement('h3');
+    titel.textContent = `Spezialfähigkeiten von ${currentUser}`;
+    spezialfähigkeitenContainer.appendChild(titel);
+
+    firebase.database().ref(`benutzer/${currentUser}/fähigkeiten`).get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const fähigkeiten = snapshot.val();
+            Object.entries(fähigkeiten).forEach(([name, details]) => {
+                const button = document.createElement('button');
+                button.textContent = `${name} (Kosten: ${details.levelKosten} Level)`;
+                button.style.marginBottom = '10px';
+
+                const erfolgswahrscheinlichkeit = 80 - (10 * (details.levelKosten - 1));
+                button.title = `Erfolgswahrscheinlichkeit: ${erfolgswahrscheinlichkeit}%`;
+
+                button.onclick = () => verwendeFähigkeit(name, details.levelKosten, erfolgswahrscheinlichkeit);
+                spezialfähigkeitenContainer.appendChild(button);
+            });
+        } else {
+            const keineFähigkeiten = document.createElement('p');
+            keineFähigkeiten.textContent = 'Keine Spezialfähigkeiten verfügbar.';
+            spezialfähigkeitenContainer.appendChild(keineFähigkeiten);
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Spezialfähigkeiten:", error);
+    });
+
+    const schließenButton = document.createElement('button');
+    schließenButton.textContent = 'Schließen';
+    schließenButton.onclick = () => document.body.removeChild(spezialfähigkeitenContainer);
+    spezialfähigkeitenContainer.appendChild(schließenButton);
+
+    document.body.appendChild(spezialfähigkeitenContainer);
+}
+
+
+// Spezialfähigkeiten verwenden
+function verwendeFähigkeit(name, kosten, erfolgswahrscheinlichkeit) {
+    if (level < kosten) {
+        alert('Nicht genügend Level, um diese Fähigkeit zu verwenden.');
+        return;
+    }
+
+    // Zufallszahl zur Erfolgsprüfung
+    const erfolg = Math.random() * 100 < erfolgswahrscheinlichkeit;
+
+    if (erfolg) {
+        // Level abziehen und Abklingzeit setzen
+        level -= kosten;
+        aktualisiereXPAnzeige();
+        firebase.database().ref(`benutzer/${currentUser}/fähigkeiten/${name}`).update({
+            letzteNutzung: new Date().toISOString()
+        });
+
+        // Erfolg-Animation anzeigen
+        zeigeAnimation('avatars/erfolg.gif', `Die Fähigkeit ${name} war erfolgreich!`);
+    } else {
+        // Level abziehen bei Misserfolg
+        level -= kosten;
+        aktualisiereXPAnzeige();
+
+        // Misserfolg-Animation anzeigen
+        zeigeAnimation('avatars/misserfolg.gif', `Die Fähigkeit ${name} war nicht erfolgreich.`);
+    }
+
+    // Übersicht aktualisieren
+    aktualisiereFähigkeitenÜbersicht(name, erfolg);
+}
+
+// Animation anzeigen
+function zeigeAnimation(pfad, nachricht) {
+    const animationContainer = document.createElement('div');
+    animationContainer.style.position = 'fixed';
+    animationContainer.style.top = '0';
+    animationContainer.style.left = '0';
+    animationContainer.style.width = '100%';
+    animationContainer.style.height = '100%';
+    animationContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    animationContainer.style.display = 'flex';
+    animationContainer.style.justifyContent = 'center';
+    animationContainer.style.alignItems = 'center';
+    animationContainer.style.zIndex = '1000';
+
+    const img = document.createElement('img');
+    img.src = pfad;
+    img.style.width = '50%';
+
+    const text = document.createElement('p');
+    text.textContent = nachricht;
+    text.style.color = 'white';
+    text.style.fontSize = '20px';
+    text.style.marginTop = '20px';
+
+    animationContainer.appendChild(img);
+    animationContainer.appendChild(text);
+    document.body.appendChild(animationContainer);
+
+    setTimeout(() => {
+        document.body.removeChild(animationContainer);
+    }, 3000);
+}
+
+// Übersicht aktualisieren
+function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
+    const listeContainer = document.getElementById('fähigkeiten-übersicht');
+    if (!listeContainer) {
+        console.warn('Fähigkeiten-Übersicht nicht gefunden!');
+        return;
+    }
+
+    const eintrag = document.createElement('li');
+    eintrag.textContent = `${currentUser} hat die Fähigkeit ${name} angewandt – ${erfolg ? 'erfolgreich' : 'nicht erfolgreich'}`;
+    listeContainer.prepend(eintrag);
+}
+
+// Übersicht in die Startseite integrieren
+function fügeFähigkeitenÜbersichtHinzu() {
+    const listeContainer = document.createElement('ul');
+    listeContainer.id = 'fähigkeiten-übersicht';
+    listeContainer.style.marginTop = '20px';
+
+    const startseite = document.getElementById('quests-section');
+    if (startseite) {
+        startseite.appendChild(listeContainer);
+    } else {
+        console.warn('Quests-Section nicht gefunden, konnte Fähigkeiten-Übersicht nicht hinzufügen.');
+    }
+}
+
+// Button für Spezialfähigkeiten hinzufügen
+function fügeSpezialfähigkeitenButtonHinzu() {
+    const avatarContainer = document.getElementById('avatar-container');
+    if (!avatarContainer) {
+        console.warn('Avatar-Container nicht gefunden!');
+        return;
+    }
+
+    const button = document.createElement('button');
+    button.textContent = 'Spezialfähigkeiten';
+    button.style.marginLeft = '10px';
+    button.onclick = zeigeSpezialfähigkeitenMenu;
+    avatarContainer.appendChild(button);
+}
+
+function initialisiereSpezialfähigkeitenFürAlleSpieler() {
+    const spielerDaten = {
+        "Thomas": {
+            "Massiere mich": { levelKosten: 2 },
+            "Ich will gekuschelt werden": { levelKosten: 1 },
+            "Mach mir was zu essen": { levelKosten: 3 },
+            "Wunsch frei": { levelKosten: 5 }
+        },
+        "Elke": {
+            "Massiere mich": { levelKosten: 2 },
+            "Ich will gekuschelt werden": { levelKosten: 1 },
+            "Mach mir was zu essen": { levelKosten: 3 },
+            "Wunsch frei": { levelKosten: 5 }
+        },
+        "Jamie": {
+            "Massiere mich": { levelKosten: 2 },
+            "Ich will gekuschelt werden": { levelKosten: 1 },
+            "30 Min Gaming Zeit": { levelKosten: 2 },
+            "Unendliche Spielzeit": { levelKosten: 5 }
+        }
+    };
+
+    Object.entries(spielerDaten).forEach(([spielerName, fähigkeiten]) => {
+        firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).get()
+            .then((snapshot) => {
+                if (!snapshot.exists()) {
+                    console.log(`Standardfähigkeiten für ${spielerName} werden gespeichert.`);
+                    firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).set(fähigkeiten)
+                        .then(() => console.log(`Spezialfähigkeiten für ${spielerName} erfolgreich gespeichert.`))
+                        .catch((error) => console.error(`Fehler beim Speichern der Spezialfähigkeiten für ${spielerName}:`, error));
+                } else {
+                    console.log(`Spezialfähigkeiten für ${spielerName} existieren bereits.`);
+                }
+            })
+            .catch((error) => console.error(`Fehler beim Abrufen der Spezialfähigkeiten für ${spielerName}:`, error));
+    });
+}
+
 
 
 aktualisiereLayout();
