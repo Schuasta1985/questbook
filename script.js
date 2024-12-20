@@ -6,21 +6,25 @@ let isAdmin = false;
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
-    
-    initialisiereSpezialfähigkeitenFürAlleSpieler(); // Spezialfähigkeiten für alle Spieler prüfen und speichern
-    
+
+    // Erstelle Logbuch und Button nur einmal
     erstelleLogbuch(); 
+    
+    // Logbuch verstecken
     const logbuchContainer = document.getElementById("logbuch-container");
     if (logbuchContainer) {
         logbuchContainer.style.display = "none";
     }
+
     const logbuchButton = document.getElementById("logbuch-button");
     if (logbuchButton) {
         logbuchButton.style.display = "none"; // Button beim Start ausblenden
     }
+
     setTimeout(() => {
         steuerungLogbuch(false); // Zusätzliche Sicherheit für das Logbuch
     }, 0);
+
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
@@ -34,14 +38,7 @@ window.onload = function () {
     zeigeStartseite();
     ladeLogbuch();
     ladeAktionen();
-    initialisiereSpezialfähigkeiten();
 };
-
-// Startseite initialisieren
-function initialisiereSpezialfähigkeiten() {
-    fügeSpezialfähigkeitenButtonHinzu();
-    fügeFähigkeitenÜbersichtHinzu();
-}
 
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
@@ -140,9 +137,11 @@ function ladeLogbuch() {
 }
 
 function zeigeStartseite() {
-    console.log('zeigeStartseite() aufgerufen');
+    console.log("zeigeStartseite() aufgerufen");
 
-    const loginSection = document.getElementById('login-section');
+    steuerungLogbuch(false); // Logbuch-Button ausblenden
+
+    const loginSection = document.getElementById("login-section");
     if (loginSection) {
         loginSection.innerHTML = `
             <label for="spielerDropdown">Spieler auswählen:</label>
@@ -155,16 +154,21 @@ function zeigeStartseite() {
             <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
             <button id="benutzerLoginButton">Anmelden</button>
         `;
-        loginSection.style.display = 'block';
+        loginSection.style.display = "block";
 
-        const benutzerLoginButton = document.getElementById('benutzerLoginButton');
+        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
         if (benutzerLoginButton) {
             benutzerLoginButton.onclick = benutzerAnmeldung;
         }
     }
 
+    // Verstecke andere Sektionen
+    document.getElementById("quests-section").style.display = "none";
+    document.getElementById("xp-counter").style.display = "none";
+    document.getElementById("logout-button").style.display = "none";
+    document.getElementById("npc-login-section").style.display = "block";
+
     ladeBenutzerdaten();
-    zeigeAktionenAufStartseite(); // Zeigt die Liste der Aktionen an
 }
 
 function zeigeQuestbook() {
@@ -770,7 +774,6 @@ function zeigeAvatar() {
             return;
         }
 
-        // Avatar und Zauber-Button
         avatarContainer.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
@@ -785,25 +788,10 @@ function zeigeAvatar() {
             </div>
         `;
 
-        // Spezialfähigkeiten-Button rechts vom Avatar
-        const spezialfähigkeitenButton = document.createElement("button");
-        spezialfähigkeitenButton.textContent = "Spezialfähigkeiten";
-        spezialfähigkeitenButton.style.marginLeft = "10px";
-        spezialfähigkeitenButton.style.padding = "10px 20px";
-        spezialfähigkeitenButton.style.backgroundColor = "#FFD700";
-        spezialfähigkeitenButton.style.color = "black";
-        spezialfähigkeitenButton.style.border = "none";
-        spezialfähigkeitenButton.style.borderRadius = "5px";
-        spezialfähigkeitenButton.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.3)";
-        spezialfähigkeitenButton.style.cursor = "pointer";
-        spezialfähigkeitenButton.onclick = zeigeSpezialfähigkeitenMenu;
-
         avatarContainer.style.display = "flex";
-        avatarContainer.style.flexDirection = "row";
+        avatarContainer.style.flexDirection = "column";
         avatarContainer.style.alignItems = "center";
         avatarContainer.style.marginTop = "20px";
-
-        avatarContainer.appendChild(spezialfähigkeitenButton);
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
@@ -1203,369 +1191,6 @@ function ladeAktionen() {
             console.error("Fehler beim Laden der Aktionen:", error);
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
-// Spezialfähigkeiten: Button und Menü rechts neben dem Avatar
-function zeigeSpezialfähigkeitenMenu() {
-    const spezialfähigkeitenContainer = document.createElement('div');
-    spezialfähigkeitenContainer.id = 'spezialfähigkeiten-container';
-    spezialfähigkeitenContainer.style.position = 'absolute';
-    spezialfähigkeitenContainer.style.top = '50%';
-    spezialfähigkeitenContainer.style.left = '50%';
-    spezialfähigkeitenContainer.style.transform = 'translate(-50%, -50%)';
-    spezialfähigkeitenContainer.style.backgroundColor = 'white';
-    spezialfähigkeitenContainer.style.padding = '20px';
-    spezialfähigkeitenContainer.style.border = '2px solid black';
-    spezialfähigkeitenContainer.style.borderRadius = '10px';
-    spezialfähigkeitenContainer.style.zIndex = '1000';
-
-    const titel = document.createElement('h3');
-    titel.textContent = `Spezialfähigkeiten von ${currentUser}`;
-    spezialfähigkeitenContainer.appendChild(titel);
-
-    firebase.database().ref(`benutzer/${currentUser}/fähigkeiten`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const fähigkeiten = snapshot.val();
-                Object.entries(fähigkeiten).forEach(([name, details]) => {
-                    const button = document.createElement('button');
-                    button.textContent = `${name} (Kosten: ${details.levelKosten} Level)`;
-                    button.style.marginBottom = '10px';
-
-                    const erfolgswahrscheinlichkeit = 80 - (10 * (details.levelKosten - 1));
-                    button.title = `Erfolgswahrscheinlichkeit: ${erfolgswahrscheinlichkeit}%`;
-
-                    button.onclick = () => verwendeFähigkeit(name, details.levelKosten, erfolgswahrscheinlichkeit);
-                    spezialfähigkeitenContainer.appendChild(button);
-                });
-            } else {
-                const keineFähigkeiten = document.createElement('p');
-                keineFähigkeiten.textContent = 'Keine Spezialfähigkeiten verfügbar.';
-                spezialfähigkeitenContainer.appendChild(keineFähigkeiten);
-            }
-        })
-        .catch((error) => console.error("Fehler beim Laden der Spezialfähigkeiten:", error));
-
-    const schließenButton = document.createElement('button');
-    schließenButton.textContent = 'Schließen';
-    schließenButton.onclick = () => document.body.removeChild(spezialfähigkeitenContainer);
-    spezialfähigkeitenContainer.appendChild(schließenButton);
-
-    document.body.appendChild(spezialfähigkeitenContainer);
-}
-
-
-// Spezialfähigkeiten verwenden
-function verwendeFähigkeit(name, kosten, erfolgswahrscheinlichkeit) {
-    if (level < kosten) {
-        alert('Nicht genügend Level, um diese Fähigkeit zu verwenden.');
-        return;
-    }
-
-    const zielSpieler = prompt('Auf wen soll diese Fähigkeit angewendet werden? (Name eingeben)');
-    if (!zielSpieler) {
-        alert('Bitte gib einen gültigen Namen ein.');
-        return;
-    }
-
-    const lustigerText = generiereLustigenText(name, currentUser, zielSpieler);
-
-    // Log die Aktion in Firebase
-    firebase.database().ref('aktionen').push({
-        name,
-        ausführer: currentUser,
-        ziel: zielSpieler,
-        text: lustigerText,
-        zeitpunkt: new Date().toISOString()
-    }).then(() => {
-        console.log('Aktion erfolgreich gespeichert.');
-        ladeAktionenVonFirebase();
-    }).catch((error) => {
-        console.error('Fehler beim Speichern der Aktion:', error);
-    });
-
-    alert(lustigerText);
-}
-
-// Lustige Texte für Spezialfähigkeiten generieren
-function generiereLustigenText(fähigkeit, ausführer, ziel) {
-    const lustigeTexte = {
-        'Massiere mich': `${ausführer} zwingt ${ziel}, zur Massage anzutreten. Hände geschmeidig? Check!`,
-        'Ich will gekuschelt werden': `${ziel} drückt ${ausführer} so fest, dass selbst ein Teddy neidisch wird.`,
-        'Mach mir was zu essen': `${ziel} kocht für ${ausführer} ein 3-Sterne-Menü mit einem Hauch von Chaos.`,
-        'Wunsch frei': `${ausführer} fordert von ${ziel} einen Wunsch – mit Glitzer und Drama!`
-    };
-    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel}, und die Magie passiert.`;
-}
-
-// Animation anzeigen
-function zeigeAnimation(pfad, nachricht) {
-    const animationContainer = document.createElement('div');
-    animationContainer.style.position = 'fixed';
-    animationContainer.style.top = '0';
-    animationContainer.style.left = '0';
-    animationContainer.style.width = '100%';
-    animationContainer.style.height = '100%';
-    animationContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    animationContainer.style.display = 'flex';
-    animationContainer.style.justifyContent = 'center';
-    animationContainer.style.alignItems = 'center';
-    animationContainer.style.zIndex = '1000';
-
-    const img = document.createElement('img');
-    img.src = pfad;
-    img.style.width = '50%';
-
-    const text = document.createElement('p');
-    text.textContent = nachricht;
-    text.style.color = 'white';
-    text.style.fontSize = '20px';
-    text.style.marginTop = '20px';
-
-    animationContainer.appendChild(img);
-    animationContainer.appendChild(text);
-    document.body.appendChild(animationContainer);
-
-    setTimeout(() => {
-        document.body.removeChild(animationContainer);
-    }, 3000);
-}
-
-// Übersicht aktualisieren
-function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
-    const listeContainer = document.getElementById('fähigkeiten-übersicht');
-    if (!listeContainer) {
-        console.warn('Fähigkeiten-Übersicht nicht gefunden!');
-        return;
-    }
-
-    const eintrag = document.createElement('li');
-    eintrag.textContent = `${currentUser} hat die Fähigkeit ${name} angewandt – ${erfolg ? 'erfolgreich' : 'nicht erfolgreich'}`;
-    listeContainer.prepend(eintrag);
-}
-
-// Übersicht in die Startseite integrieren
-// Spezialfähigkeiten: Button rechts vom Avatar
-function fügeSpezialfähigkeitenButtonHinzu() {
-    const avatarContainer = document.getElementById('avatar-container');
-    if (!avatarContainer) {
-        console.warn('Avatar-Container nicht gefunden!');
-        return;
-    }
-
-    const button = document.createElement('button');
-    button.textContent = 'Spezialfähigkeiten';
-    button.style.marginLeft = '20px';
-    button.style.padding = '10px 15px';
-    button.style.backgroundColor = '#FFD700';
-    button.style.color = '#000';
-    button.style.border = 'none';
-    button.style.borderRadius = '5px';
-    button.style.cursor = 'pointer';
-    button.onclick = zeigeSpezialfähigkeitenMenu;
-
-    avatarContainer.style.display = 'flex';
-    avatarContainer.style.alignItems = 'center';
-    avatarContainer.appendChild(button);
-}
-
-function initialisiereSpezialfähigkeitenFürAlleSpieler() {
-    const spielerDaten = {
-        "Thomas": {
-            "Massiere mich": { levelKosten: 2 },
-            "Ich will gekuschelt werden": { levelKosten: 1 },
-            "Mach mir was zu essen": { levelKosten: 3 },
-            "Wunsch frei": { levelKosten: 5 }
-        },
-        "Elke": {
-            "Massiere mich": { levelKosten: 2 },
-            "Ich will gekuschelt werden": { levelKosten: 1 },
-            "Mach mir was zu essen": { levelKosten: 3 },
-            "Wunsch frei": { levelKosten: 5 }
-        },
-        "Jamie": {
-            "Massiere mich": { levelKosten: 2 },
-            "Ich will gekuschelt werden": { levelKosten: 1 },
-            "30 Min Gaming Zeit": { levelKosten: 2 },
-            "Unendliche Spielzeit": { levelKosten: 5 }
-        }
-    };
-
-    Object.entries(spielerDaten).forEach(([spielerName, fähigkeiten]) => {
-        firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).once('value')
-            .then((snapshot) => {
-                if (!snapshot.exists()) {
-                    return firebase.database().ref(`benutzer/${spielerName}/fähigkeiten`).set(fähigkeiten);
-                }
-            })
-            .catch((error) => console.error(`Fehler beim Initialisieren der Fähigkeiten für ${spielerName}:`, error));
-    });
-}
-
-
-function zeigeSpezialfähigkeitenMenu() {
-    const spezialfähigkeitenContainer = document.createElement('div');
-    spezialfähigkeitenContainer.id = 'spezialfähigkeiten-container';
-    spezialfähigkeitenContainer.style.position = 'absolute';
-    spezialfähigkeitenContainer.style.top = '20%';
-    spezialfähigkeitenContainer.style.right = '10%';
-    spezialfähigkeitenContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-    spezialfähigkeitenContainer.style.border = '2px solid #FFD700';
-    spezialfähigkeitenContainer.style.borderRadius = '10px';
-    spezialfähigkeitenContainer.style.padding = '20px';
-    spezialfähigkeitenContainer.style.width = '300px';
-    spezialfähigkeitenContainer.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)';
-    spezialfähigkeitenContainer.style.zIndex = '1000';
-
-    const titel = document.createElement('h3');
-    titel.textContent = `Wähle deine Spezialfähigkeit aus:`;
-    spezialfähigkeitenContainer.appendChild(titel);
-
-    firebase.database().ref(`benutzer`).get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const benutzerDaten = snapshot.val();
-            const auswahlContainer = document.createElement('select');
-
-            Object.keys(benutzerDaten).forEach((spieler) => {
-                const option = document.createElement('option');
-                option.value = spieler;
-                option.textContent = spieler;
-                auswahlContainer.appendChild(option);
-            });
-
-            spezialfähigkeitenContainer.appendChild(auswahlContainer);
-
-            // Buttons für Fähigkeiten
-            ['Massiere mich', 'Ich will gekuschelt werden', 'Mach mir was zu essen', 'Wunsch frei'].forEach((fähigkeit, index) => {
-                const button = document.createElement('button');
-                button.textContent = `${fähigkeit} (Kosten: ${index + 1} Level)`;
-                button.style.display = 'block';
-                button.style.marginTop = '10px';
-                button.style.padding = '10px';
-                button.style.backgroundColor = '#FFD700';
-                button.style.color = '#000';
-                button.style.border = 'none';
-                button.style.borderRadius = '5px';
-                button.style.cursor = 'pointer';
-
-                button.onclick = () => {
-                    const zielSpieler = auswahlContainer.value;
-                    if (!zielSpieler) {
-                        alert('Bitte wähle einen Spieler aus!');
-                        return;
-                    }
-
-                    const lustigerText = generiereLustigenText(fähigkeit, zielSpieler);
-                    alert(lustigerText);
-
-                    spezialfähigkeitenContainer.remove();
-                };
-
-                spezialfähigkeitenContainer.appendChild(button);
-            });
-        } else {
-            alert('Keine Benutzer gefunden!');
-        }
-    });
-
-    const schließenButton = document.createElement('button');
-    schließenButton.textContent = 'Schließen';
-    schließenButton.onclick = () => document.body.removeChild(spezialfähigkeitenContainer);
-    spezialfähigkeitenContainer.appendChild(schließenButton);
-
-    document.body.appendChild(spezialfähigkeitenContainer);
-}
-
-function generiereLustigenText(fähigkeit, zielSpieler) {
-    const lustigeTexte = {
-        'Massiere mich': `${zielSpieler} schwingt die magischen Hände und massiert so gut, dass selbst Steine entspannen!`,
-        'Ich will gekuschelt werden': `${zielSpieler} kuschelt so warm und weich, dass du dich wie eine Wolke fühlst!`,
-        'Mach mir was zu essen': `${zielSpieler} zaubert ein 5-Sterne-Menü aus Luft und Liebe!`,
-        'Wunsch frei': `${zielSpieler} zaubert deinen Wunsch mit einer Extraportion Glitzer und Drama!`
-    };
-    return lustigeTexte[fähigkeit] || 'Diese Fähigkeit ist so mächtig, dass selbst die Sterne staunen!';
-}
-// Spezialfähigkeiten-Log auf der Startseite
-function fügeAktionenZurStartseiteHinzu() {
-    const aktionenContainer = document.createElement('div');
-    aktionenContainer.id = 'aktionen-container';
-    aktionenContainer.style.marginTop = '20px';
-    aktionenContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
-    aktionenContainer.style.border = '2px solid #FFD700';
-    aktionenContainer.style.borderRadius = '10px';
-    aktionenContainer.style.padding = '20px';
-    aktionenContainer.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)';
-    aktionenContainer.innerHTML = '<h3>Aktionen der Spezialfähigkeiten:</h3><ul id="aktionen-list"></ul>';
-    document.getElementById('benutzer-container').appendChild(aktionenContainer);
-
-    ladeAktionenVonFirebase();
-}
-
-// Logbuch für Aktionen laden
-function ladeAktionenVonFirebase() {
-    const aktionenListe = document.getElementById('aktionen-list');
-    aktionenListe.innerHTML = ''; // Liste zurücksetzen
-
-    firebase.database().ref('aktionen').get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const aktionen = snapshot.val();
-            Object.values(aktionen).forEach((aktion) => {
-                const listItem = document.createElement('li');
-                listItem.style.marginBottom = '10px';
-                listItem.innerHTML = `
-                    <strong>${aktion.name}</strong> - ${aktion.ausführer} hat ${aktion.ziel} mit der Fähigkeit "${aktion.name}" beglückt.<br>
-                    <small>${aktion.text}</small>
-                `;
-                aktionenListe.appendChild(listItem);
-            });
-        } else {
-            console.log('Keine Aktionen gefunden.');
-        }
-    }).catch((error) => {
-        console.error('Fehler beim Laden der Aktionen:', error);
-    });
-}
-function zeigeAktionenAufStartseite() {
-    const benutzerContainer = document.getElementById("benutzer-container");
-
-    // Überprüfen, ob der Container bereits existiert
-    let aktionenContainer = document.getElementById("aktionen-container");
-    if (!aktionenContainer) {
-        aktionenContainer = document.createElement("div");
-        aktionenContainer.id = "aktionen-container";
-        aktionenContainer.style.marginTop = "20px";
-        aktionenContainer.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
-        aktionenContainer.style.border = "2px solid #FFD700";
-        aktionenContainer.style.borderRadius = "10px";
-        aktionenContainer.style.padding = "20px";
-        aktionenContainer.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.5)";
-        aktionenContainer.innerHTML = '<h3>Aktionen der Spezialfähigkeiten:</h3><ul id="aktionen-list"></ul>';
-        benutzerContainer.appendChild(aktionenContainer);
-    }
-
-    const aktionenListe = document.getElementById("aktionen-list");
-    aktionenListe.innerHTML = ""; // Liste zurücksetzen
-
-    // Aktionen aus Firebase laden
-    firebase.database().ref('aktionen').get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const aktionen = snapshot.val();
-            Object.values(aktionen).forEach((aktion) => {
-                const listItem = document.createElement("li");
-                listItem.style.marginBottom = "10px";
-                listItem.innerHTML = `
-                    <strong>${aktion.ausführer}</strong> hat die Fähigkeit 
-                    <em>"${aktion.name}"</em> auf <strong>${aktion.ziel}</strong> angewendet.<br>
-                    <small>${aktion.text}</small>
-                `;
-                aktionenListe.appendChild(listItem);
-            });
-        } else {
-            console.log("Keine Aktionen gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Aktionen:", error);
-    });
-}
-
 
 
 aktualisiereLayout();
