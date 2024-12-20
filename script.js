@@ -140,11 +140,11 @@ function ladeLogbuch() {
 }
 
 function zeigeStartseite() {
-    console.log("zeigeStartseite() aufgerufen");
+    console.log('zeigeStartseite() aufgerufen');
 
     steuerungLogbuch(false); // Logbuch-Button ausblenden
 
-    const loginSection = document.getElementById("login-section");
+    const loginSection = document.getElementById('login-section');
     if (loginSection) {
         loginSection.innerHTML = `
             <label for="spielerDropdown">Spieler auswählen:</label>
@@ -157,19 +157,16 @@ function zeigeStartseite() {
             <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
             <button id="benutzerLoginButton">Anmelden</button>
         `;
-        loginSection.style.display = "block";
+        loginSection.style.display = 'block';
 
-        const benutzerLoginButton = document.getElementById("benutzerLoginButton");
+        const benutzerLoginButton = document.getElementById('benutzerLoginButton');
         if (benutzerLoginButton) {
             benutzerLoginButton.onclick = benutzerAnmeldung;
         }
     }
 
-    // Verstecke andere Sektionen
-    document.getElementById("quests-section").style.display = "none";
-    document.getElementById("xp-counter").style.display = "none";
-    document.getElementById("logout-button").style.display = "none";
-    document.getElementById("npc-login-section").style.display = "block";
+    // Spezialfähigkeiten-Aktionen zur Startseite hinzufügen
+    fügeAktionenZurStartseiteHinzu();
 
     ladeBenutzerdaten();
 }
@@ -1252,32 +1249,40 @@ function verwendeFähigkeit(name, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    // Zufallszahl zur Erfolgsprüfung
-    const erfolg = Math.random() * 100 < erfolgswahrscheinlichkeit;
-
-    if (erfolg) {
-        // Level abziehen und Abklingzeit setzen
-        level -= kosten;
-        aktualisiereXPAnzeige();
-        firebase.database().ref(`benutzer/${currentUser}/fähigkeiten/${name}`).update({
-            letzteNutzung: new Date().toISOString()
-        });
-
-        // Erfolg-Animation anzeigen
-        zeigeAnimation('avatars/erfolg.gif', `Die Fähigkeit ${name} war erfolgreich!`);
-    } else {
-        // Level abziehen bei Misserfolg
-        level -= kosten;
-        aktualisiereXPAnzeige();
-
-        // Misserfolg-Animation anzeigen
-        zeigeAnimation('avatars/misserfolg.gif', `Die Fähigkeit ${name} war nicht erfolgreich.`);
+    const zielSpieler = prompt('Auf wen soll diese Fähigkeit angewendet werden? (Name eingeben)');
+    if (!zielSpieler) {
+        alert('Bitte gib einen gültigen Namen ein.');
+        return;
     }
 
-    // Übersicht aktualisieren
-    aktualisiereFähigkeitenÜbersicht(name, erfolg);
+    const lustigerText = generiereLustigenText(name, currentUser, zielSpieler);
+
+    // Log die Aktion in Firebase
+    firebase.database().ref('aktionen').push({
+        name,
+        ausführer: currentUser,
+        ziel: zielSpieler,
+        text: lustigerText,
+        zeitpunkt: new Date().toISOString()
+    }).then(() => {
+        console.log('Aktion erfolgreich gespeichert.');
+        ladeAktionenVonFirebase();
+    }).catch((error) => {
+        console.error('Fehler beim Speichern der Aktion:', error);
+    });
+
+    alert(lustigerText);
 }
 
+function generiereLustigenText(fähigkeit, ausführer, ziel) {
+    const lustigeTexte = {
+        'Massiere mich': `${ausführer} zwingt ${ziel}, zur Massage anzutreten. Hände geschmeidig? Check!`,
+        'Ich will gekuschelt werden': `${ziel} drückt ${ausführer} so fest, dass selbst ein Teddy neidisch wird.`,
+        'Mach mir was zu essen': `${ziel} kocht für ${ausführer} ein 3-Sterne-Menü mit einem Hauch von Chaos.`,
+        'Wunsch frei': `${ausführer} fordert von ${ziel} einen Wunsch – mit Glitzer und Drama!`
+    };
+    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel}, und die Magie passiert.`;
+}
 // Animation anzeigen
 function zeigeAnimation(pfad, nachricht) {
     const animationContainer = document.createElement('div');
@@ -1326,27 +1331,29 @@ function aktualisiereFähigkeitenÜbersicht(name, erfolg) {
 
 // Übersicht in die Startseite integrieren
 function fügeSpezialfähigkeitenButtonHinzu() {
-    const benutzerContainer = document.getElementById('benutzer-container');
-    if (!benutzerContainer) {
-        console.warn('Benutzer-Container nicht gefunden!');
+    const avatarContainer = document.getElementById('avatar-container');
+    if (!avatarContainer) {
+        console.warn('Avatar-Container nicht gefunden!');
         return;
     }
 
     const button = document.createElement('button');
     button.textContent = 'Spezialfähigkeiten';
+    button.style.marginLeft = '10px';
     button.style.padding = '10px 20px';
-    button.style.fontSize = '1rem';
     button.style.backgroundColor = '#FFD700';
-    button.style.color = '#000';
+    button.style.color = 'black';
     button.style.border = 'none';
     button.style.borderRadius = '5px';
     button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.3)';
     button.style.cursor = 'pointer';
+
     button.onclick = zeigeSpezialfähigkeitenMenu;
 
-    benutzerContainer.appendChild(button);
+    avatarContainer.style.display = 'flex';
+    avatarContainer.style.flexDirection = 'row'; // Button rechts vom Avatar
+    avatarContainer.appendChild(button);
 }
-
 function initialisiereSpezialfähigkeitenFürAlleSpieler() {
     const spielerDaten = {
         "Thomas": {
@@ -1463,5 +1470,45 @@ function generiereLustigenText(fähigkeit, zielSpieler) {
     };
     return lustigeTexte[fähigkeit] || 'Diese Fähigkeit ist so mächtig, dass selbst die Sterne staunen!';
 }
+function fügeAktionenZurStartseiteHinzu() {
+    const aktionenContainer = document.createElement('div');
+    aktionenContainer.id = 'aktionen-container';
+    aktionenContainer.style.marginTop = '20px';
+    aktionenContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+    aktionenContainer.style.border = '2px solid #FFD700';
+    aktionenContainer.style.borderRadius = '10px';
+    aktionenContainer.style.padding = '20px';
+    aktionenContainer.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)';
+    aktionenContainer.innerHTML = '<h3>Aktionen der Spezialfähigkeiten:</h3><ul id="aktionen-list"></ul>';
+    document.getElementById('benutzer-container').appendChild(aktionenContainer);
+
+    ladeAktionenVonFirebase();
+}
+
+function ladeAktionenVonFirebase() {
+    const aktionenListe = document.getElementById('aktionen-list');
+    aktionenListe.innerHTML = ''; // Liste zurücksetzen
+
+    firebase.database().ref('aktionen').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const aktionen = snapshot.val();
+            Object.values(aktionen).forEach((aktion) => {
+                const listItem = document.createElement('li');
+                listItem.style.marginBottom = '10px';
+                listItem.innerHTML = `
+                    <strong>${aktion.typ}</strong> - ${aktion.ausführer} hat ${aktion.ziel} mit der Fähigkeit "${aktion.name}" beglückt.<br>
+                    <small>${aktion.text}</small>
+                `;
+                aktionenListe.appendChild(listItem);
+            });
+        } else {
+            console.log('Keine Aktionen gefunden.');
+        }
+    }).catch((error) => {
+        console.error('Fehler beim Laden der Aktionen:', error);
+    });
+}
+
+
 
 aktualisiereLayout();
