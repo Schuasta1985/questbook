@@ -774,6 +774,7 @@ function zeigeAvatar() {
             return;
         }
 
+        // Avatar und Zauber-Button
         avatarContainer.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
@@ -788,11 +789,25 @@ function zeigeAvatar() {
             </div>
         `;
 
-        fügeSpezialfähigkeitenButtonHinzu(); // Hier den Button für Spezialfähigkeiten hinzufügen
+        // Spezialfähigkeiten-Button rechts vom Avatar
+        const spezialfähigkeitenButton = document.createElement("button");
+        spezialfähigkeitenButton.textContent = "Spezialfähigkeiten";
+        spezialfähigkeitenButton.style.marginLeft = "10px";
+        spezialfähigkeitenButton.style.padding = "10px 20px";
+        spezialfähigkeitenButton.style.backgroundColor = "#FFD700";
+        spezialfähigkeitenButton.style.color = "black";
+        spezialfähigkeitenButton.style.border = "none";
+        spezialfähigkeitenButton.style.borderRadius = "5px";
+        spezialfähigkeitenButton.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.3)";
+        spezialfähigkeitenButton.style.cursor = "pointer";
+        spezialfähigkeitenButton.onclick = zeigeSpezialfähigkeitenMenu;
+
         avatarContainer.style.display = "flex";
-        avatarContainer.style.flexDirection = "column";
+        avatarContainer.style.flexDirection = "row";
         avatarContainer.style.alignItems = "center";
         avatarContainer.style.marginTop = "20px";
+
+        avatarContainer.appendChild(spezialfähigkeitenButton);
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
     }
