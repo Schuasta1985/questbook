@@ -9,14 +9,27 @@ let isAdmin = false;
 // --------------------------------------------
 window.onload = function () {
     console.log("window.onload aufgerufen");
+
+    // Logbuch erstellen und Steuerung initialisieren
     erstelleLogbuch(); 
     steuerungLogbuch(false);
-    täglicheHPRegeneration();
-    täglicheMPRegeneration();
+
+    // Tägliche HP- und MP-Regeneration prüfen und durchführen
+    const heutigesDatum = new Date().toDateString();
+    const letzterTag = localStorage.getItem("letzteHPRegeneration");
+
+    if (letzterTag !== heutigesDatum) {
+        täglicheHPRegeneration();
+        täglicheMPRegeneration();
+        localStorage.setItem("letzteHPRegeneration", heutigesDatum);
+    }
+
+    // Startseite und weitere Funktionen laden
     zeigeStartseite();
     ladeLogbuch();
     ladeAktionen();
 };
+
 
 // 3. Logbuch-Funktionen
 // --------------------------------------------
@@ -832,24 +845,5 @@ function ausloggen() {
 // ----------------------------------------
 window.onerror = function (message, source, lineno, colno, error) {
     console.error(`Fehler: ${message} in ${source} (Zeile ${lineno}, Spalte ${colno})`);
-};
-
-// Initialisierung
-// ----------------------------------------
-window.onload = function () {
-    console.log("window.onload aufgerufen");
-    erstelleLogbuch();
-    steuerungLogbuch(false);
-
-    const heutigesDatum = new Date().toDateString();
-    const letzterTag = localStorage.getItem("letzteHPRegeneration");
-
-    if (letzterTag !== heutigesDatum) {
-        täglicheHPRegeneration();
-        täglicheMPRegeneration();
-        localStorage.setItem("letzteHPRegeneration", heutigesDatum);
-    }
-
-    zeigeStartseite();
 };
 
