@@ -675,32 +675,24 @@ function zeigeAdminFunktionen() {
             const newAdminButtonsContainer = document.createElement("div");
             newAdminButtonsContainer.id = "admin-buttons-container";
 
-            // Button: Neue Quest erstellen
             const createButton = document.createElement("button");
             createButton.textContent = "Neue Quest erstellen";
             createButton.id = "createQuestButton";
             createButton.onclick = neueQuestErstellen;
 
-            // Button: Alle Quests zurücksetzen
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Alle Quests zurücksetzen";
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
-            // Button: Fähigkeiten zurücksetzen
-            const resetAbilitiesButton = document.createElement("button");
-            resetAbilitiesButton.textContent = "Fähigkeiten zurücksetzen";
-            resetAbilitiesButton.id = "resetAbilitiesButton";
-            resetAbilitiesButton.onclick = () => {
-                const spieler = prompt("Gib den Namen des Spielers ein, dessen Fähigkeiten zurückgesetzt werden sollen:");
-                if (spieler) {
-                    setzeFähigkeitenZurück(spieler);
-                }
-            };
+            const resetLogButton = document.createElement("button");
+            resetLogButton.textContent = "Log der Spezialfähigkeiten löschen";
+            resetLogButton.id = "resetLogButton";
+            resetLogButton.onclick = löscheSpezialfähigkeitenLog;
 
             newAdminButtonsContainer.appendChild(createButton);
             newAdminButtonsContainer.appendChild(deleteButton);
-            newAdminButtonsContainer.appendChild(resetAbilitiesButton);
+            newAdminButtonsContainer.appendChild(resetLogButton);
 
             questbookContainer.appendChild(newAdminButtonsContainer);
         }
@@ -721,6 +713,7 @@ function zeigeAdminFunktionen() {
         });
     }
 }
+
 
 function questsZuruecksetzen() {
     console.log("questsZuruecksetzen() aufgerufen");
@@ -1530,6 +1523,20 @@ function initialisiereBenutzerDaten(benutzername) {
         .catch((error) => console.error("Fehler beim Initialisieren der Benutzerdaten:", error));
 }
 
+function löscheSpezialfähigkeitenLog() {
+    if (confirm("Möchtest du wirklich das gesamte Log der Spezialfähigkeiten löschen?")) {
+        firebase.database().ref("aktionen").remove()
+            .then(() => {
+                alert("Das Log der Spezialfähigkeiten wurde erfolgreich gelöscht.");
+                console.log("Log der Spezialfähigkeiten erfolgreich gelöscht.");
+                ladeAktionenLog(); // Aktualisiere die Anzeige
+            })
+            .catch((error) => {
+                console.error("Fehler beim Löschen des Logs der Spezialfähigkeiten:", error);
+                alert("Ein Fehler ist aufgetreten. Das Log konnte nicht gelöscht werden.");
+            });
+    }
+}
 
 
 aktualisiereLayout();
