@@ -524,5 +524,22 @@ button:hover {
 #aktionen-tabelle tr:hover {
     background-color: rgba(255, 215, 0, 0.2); /* Hover-Effekt */
 }
+/* Hintergrundfeld transparent machen */
+#aktionen-container {
+    background-color: rgba(255, 255, 255, 0.1); /* Weiß, aber sehr transparent */
+    border-radius: 10px; /* Abgerundete Ecken */
+    padding: 10px; /* Abstand zum Text */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Leichter Schatten für Kontrast */
+}
+
+/* Titel „Aktionen der Spezialfähigkeiten“ in Gold */
+#aktionen-titel {
+    text-align: center;
+    font-size: 1.5em; /* Größere Schrift */
+    color: #FFD700; /* Goldene Schriftfarbe */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9); /* Starker Schatten für besseren Kontrast */
+    margin-bottom: 10px; /* Abstand zur Tabelle */
+}
+
 
 
