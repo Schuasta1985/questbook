@@ -490,13 +490,14 @@ button:hover {
 #zauber-menu button:hover {
     background-color: #FFC107;
 }
+
 /* Anpassung der Tabelle im Stil der Benutzerübersicht */
 #aktionen-tabelle {
-    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund ähnlich der Benutzerübersicht */
+    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund wie Benutzerübersicht */
     color: #FFD700; /* Goldene Schriftfarbe */
     border-collapse: collapse; /* Entfernt doppelte Ränder */
-    width: 60%; /* Schmale Breite */
-    margin: 20px auto; /* Zentriert die Tabelle */
+    width: 50%; /* Kleinere Breite für kompaktere Darstellung */
+    margin: 20px auto; /* Zentriert die Tabelle auf der Seite */
     border: 2px solid #FFD700; /* Goldene Umrandung */
     border-radius: 10px; /* Abgerundete Ecken */
     overflow: hidden; /* Rundung bleibt erhalten */
@@ -507,7 +508,7 @@ button:hover {
     border: 1px solid #FFD700; /* Goldene Rahmenfarbe */
     padding: 10px; /* Polsterung für besseren Abstand */
     text-align: center; /* Zentrierter Text */
-    font-size: 1em; /* Standardgröße für Text */
+    font-size: 1em; /* Einheitliche Schriftgröße */
     font-family: Arial, sans-serif; /* Gleiche Schriftart wie Benutzerübersicht */
 }
 
@@ -515,24 +516,24 @@ button:hover {
     background-color: rgba(50, 50, 50, 0.9); /* Dunkler Hintergrund für die Kopfzeile */
     color: #FFD700; /* Goldene Schriftfarbe */
     font-weight: bold; /* Fett für Überschriften */
-    text-transform: uppercase; /* Großbuchstaben wie in der Benutzerübersicht */
+    text-transform: uppercase; /* Großbuchstaben wie Benutzerübersicht */
 }
 
 #aktionen-tabelle tr:nth-child(even) {
-    background-color: rgba(44, 44, 44, 0.9); /* Leichte Variation für gerade Zeilen */
+    background-color: rgba(44, 44, 44, 0.9); /* Abwechselnde Farben für Zeilen */
 }
 
 #aktionen-tabelle tr:hover {
-    background-color: rgba(255, 215, 0, 0.2); /* Helles Gold bei Hover-Effekt */
+    background-color: rgba(255, 215, 0, 0.2); /* Heller Goldton bei Hover-Effekt */
 }
 
-/* Verbesserung des Textes \"Aktionen der Spezialfähigkeiten\" im gleichen Stil */
+/* Verbesserung des Textes \"Aktionen der Spezialfähigkeiten\" */
 #aktionen-titel {
     text-align: center;
     font-size: 1.2em; /* Vergrößerung der Schrift */
     color: #FFD700; /* Goldene Schriftfarbe */
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Erhöht den Kontrast */
-    font-family: Arial, sans-serif; /* Gleiche Schriftart */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Kontrastreicher Text */
+    font-family: Arial, sans-serif; /* Einheitliche Schriftart */
     margin-bottom: 10px; /* Abstand zur Tabelle */
 }
 
