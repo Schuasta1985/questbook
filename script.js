@@ -1402,44 +1402,6 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             ladeAktionenLog();
         });
 }
-
-
-function generiereLustigenText(fähigkeit, ausführer, ziel) {
-    const lustigeTexte = {
-        "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
-        "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
-        "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
-        "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
-        "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-    };
-    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
-}
-
-function zeigeSpezialfähigkeitenMenu() {
-    const spezialMenu = document.createElement("div");
-    spezialMenu.id = "spezial-menu";
-
-    // HTML-Struktur anlegen
-    spezialMenu.innerHTML = `
-        <div class="menu-overlay" id="overlay"></div>
-        <div class="menu-container">
-            <h3>Spezialfähigkeiten</h3>
-            <select id="zielspieler-dropdown" class="spieler-dropdown"></select>
-            <div id="spezial-buttons-container"></div>
-        </div>
-    `;
-
-    // Spieler-Dropdown auffüllen
-    const spielerDropdown = spezialMenu.querySelector("#zielspieler-dropdown");
-    Object.keys(benutzerDaten).forEach((spieler) => {
-        if (spieler !== currentUser) {
-            const option = document.createElement("option");
-            option.value = spieler;
-            option.textContent = spieler;
-            spielerDropdown.appendChild(option);
-        }
-    });
-
 function zeigeSpezialfähigkeitenMenu() {
     // Menücontainer erstellen
     const spezialMenu = document.createElement("div");
@@ -1467,19 +1429,39 @@ function zeigeSpezialfähigkeitenMenu() {
     });
     spezialMenu.appendChild(spielerDropdown);
 
-    // Buttons für Spezialfähigkeiten
-    const fähigkeitenButtons = [
-        { name: "Massiere mich", kosten: 2 },
-        { name: "Ich will gekuschelt werden", kosten: 1 },
-        { name: "Mach mir Kaiserschmarren", kosten: 3 },
-        { name: "Ich brauche das Auto", kosten: 4 },
-        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-    ];
+    // Spezialfähigkeiten-Buttons hinzufügen, dynamisch basierend auf dem aktuellen Benutzer
+    const fähigkeitenButtonsContainer = document.createElement("div");
+    fähigkeitenButtonsContainer.id = "spezial-buttons-container";
+    spezialMenu.appendChild(fähigkeitenButtonsContainer);
 
-    fähigkeitenButtons.forEach((fähigkeit) => {
+    // Dynamische Fähigkeiten basierend auf Benutzer laden
+    const spezialFähigkeiten = {
+        Thomas: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir Kaiserschmarren", kosten: 3 },
+            { name: "Ich brauche das Auto", kosten: 4 },
+            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+        ],
+        Elke: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir was zu essen", kosten: 3 },
+            { name: "Wunsch frei", kosten: 5 },
+        ],
+        Jamie: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "30 Min Gaming Zeit", kosten: 2 },
+            { name: "Unendliche Spielzeit", kosten: 5 },
+        ],
+    };
+
+    const fähigkeiten = spezialFähigkeiten[currentUser] || [];
+    fähigkeiten.forEach((fähigkeit) => {
         const button = document.createElement("button");
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.classList.add("menu-button");
+        button.classList.add("fähigkeiten-button");
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
             if (!zielSpieler) {
@@ -1489,7 +1471,7 @@ function zeigeSpezialfähigkeitenMenu() {
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - fähigkeit.kosten * 10);
             document.body.removeChild(spezialMenu);
         };
-        spezialMenu.appendChild(button);
+        fähigkeitenButtonsContainer.appendChild(button);
     });
 
     // Button: Schließen
@@ -1502,6 +1484,18 @@ function zeigeSpezialfähigkeitenMenu() {
     // Menü zum Dokument hinzufügen
     document.body.appendChild(spezialMenu);
 }
+
+function generiereLustigenText(fähigkeit, ausführer, ziel) {
+    const lustigeTexte = {
+        "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
+        "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
+        "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
+        "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
+        "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+    };
+    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
+}
+
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
