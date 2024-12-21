@@ -491,13 +491,13 @@ button:hover {
     background-color: #FFC107;
 }
 
-/* Anpassung der Tabelle im Stil der Benutzerübersicht */
+/* Verbesserte Anpassung der Tabelle im Stil der Benutzerübersicht */
 #aktionen-tabelle {
     background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund wie Benutzerübersicht */
     color: #FFD700; /* Goldene Schriftfarbe */
     border-collapse: collapse; /* Entfernt doppelte Ränder */
-    width: 50%; /* Kleinere Breite für kompaktere Darstellung */
-    margin: 20px auto; /* Zentriert die Tabelle auf der Seite */
+    width: 50%; /* Schmale Breite für kompaktere Darstellung */
+    margin: 20px auto; /* Zentriert die Tabelle */
     border: 2px solid #FFD700; /* Goldene Umrandung */
     border-radius: 10px; /* Abgerundete Ecken */
     overflow: hidden; /* Rundung bleibt erhalten */
@@ -508,7 +508,7 @@ button:hover {
     border: 1px solid #FFD700; /* Goldene Rahmenfarbe */
     padding: 10px; /* Polsterung für besseren Abstand */
     text-align: center; /* Zentrierter Text */
-    font-size: 1em; /* Einheitliche Schriftgröße */
+    font-size: 0.9em; /* Einheitliche, etwas kleinere Schriftgröße */
     font-family: Arial, sans-serif; /* Gleiche Schriftart wie Benutzerübersicht */
 }
 
@@ -536,4 +536,3 @@ button:hover {
     font-family: Arial, sans-serif; /* Einheitliche Schriftart */
     margin-bottom: 10px; /* Abstand zur Tabelle */
 }
-
