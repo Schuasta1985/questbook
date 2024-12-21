@@ -490,5 +490,36 @@ button:hover {
 #zauber-menu button:hover {
     background-color: #FFC107;
 }
+/* Verbesserung der Tabelle für bessere Lesbarkeit */
+#aktionen-tabelle {
+    background-color: rgba(0, 0, 0, 0.8); /* Halbtransparenter schwarzer Hintergrund */
+    color: #FFD700; /* Goldene Schriftfarbe für besseren Kontrast */
+    border-collapse: collapse; /* Entfernt doppelte Ränder */
+    width: 100%; /* Nimmt die volle Breite ein */
+    margin: 10px 0; /* Abstand zur Umgebung */
+    border-radius: 10px; /* Abgerundete Ecken */
+    overflow: hidden; /* Rundung bleibt erhalten */
+}
+
+#aktionen-tabelle th, #aktionen-tabelle td {
+    border: 1px solid #FFD700; /* Goldene Rahmenfarbe */
+    padding: 10px; /* Polsterung für besseren Abstand */
+    text-align: left; /* Linksbündiger Text */
+    font-size: 1em; /* Standardgröße für Text */
+}
+
+#aktionen-tabelle th {
+    background-color: #4B3621; /* Dunkles Braun für die Kopfzeile */
+    color: #FFD700; /* Goldene Schriftfarbe */
+    font-weight: bold; /* Fett für Überschriften */
+}
+
+#aktionen-tabelle tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1); /* Leichtes Highlight für gerade Zeilen */
+}
+
+#aktionen-tabelle tr:hover {
+    background-color: rgba(255, 215, 0, 0.2); /* Helles Gold bei Hover-Effekt */
+}
 
 
