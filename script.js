@@ -1415,19 +1415,17 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
 function zeigeSpezialfähigkeitenMenu() {
-    // Erstelle das Spezialfähigkeiten-Menü
     const spezialMenu = document.createElement('div');
     spezialMenu.id = 'spezial-menu';
-    spezialMenu.classList.add('menu'); // CSS-Klasse "menu" für Styling
 
-    spezialMenu.innerHTML = `
-        <h3>Wähle deine Spezialfähigkeit aus:</h3>
-    `;
+    // Style wird in der CSS festgelegt
+    spezialMenu.classList.add('spezialfaehigkeiten-menu');
 
-    // Dropdown-Menü für Zielspieler erstellen
+    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
+
+    // Dropdown-Menü für Zielspieler
     const spielerDropdown = document.createElement('select');
     spielerDropdown.id = 'zielspieler-dropdown';
-    spielerDropdown.classList.add('dropdown'); // CSS-Klasse für Styling
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
@@ -1440,19 +1438,34 @@ function zeigeSpezialfähigkeitenMenu() {
 
     spezialMenu.appendChild(spielerDropdown);
 
-    // Buttons für Fähigkeiten hinzufügen
-    const fähigkeiten = [
-        { name: "Massiere mich", kosten: 2 },
-        { name: "Ich will gekuschelt werden", kosten: 1 },
-        { name: "Mach mir Kaiserschmarren", kosten: 3 },
-        { name: "Ich brauche das Auto", kosten: 4 },
-        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-    ];
+    // Spezialfähigkeiten basierend auf dem Benutzer
+    const fähigkeiten = {
+        Thomas: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir Kaiserschmarren", kosten: 3 },
+            { name: "Ich brauche das Auto", kosten: 4 },
+            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+        ],
+        Elke: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir was zu essen", kosten: 3 },
+            { name: "Wunsch frei", kosten: 5 },
+        ],
+        Jamie: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "30 Min Gaming Zeit", kosten: 2 },
+            { name: "Unendliche Spielzeit", kosten: 5 },
+        ],
+    };
 
-    fähigkeiten.forEach((fähigkeit) => {
+    const benutzerFähigkeiten = fähigkeiten[currentUser] || [];
+    benutzerFähigkeiten.forEach((fähigkeit) => {
         const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.classList.add('menu-button'); // CSS-Klasse "menu-button" für Styling
+        button.classList.add('fähigkeit-button');
 
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
@@ -1463,22 +1476,22 @@ function zeigeSpezialfähigkeitenMenu() {
 
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
             document.body.removeChild(spezialMenu);
+            document.body.removeChild(document.getElementById('overlay'));
         };
 
         spezialMenu.appendChild(button);
     });
 
-    // Overlay erstellen
+    // Overlay für das Schließen durch Klick außerhalb des Menüs
     const overlay = document.createElement('div');
     overlay.id = 'overlay';
-    overlay.classList.add('overlay'); // CSS-Klasse "overlay" für Styling
+    overlay.classList.add('menu-overlay');
 
     overlay.onclick = () => {
         document.body.removeChild(spezialMenu);
         document.body.removeChild(overlay);
     };
 
-    // Menü und Overlay zum Dokument hinzufügen
     document.body.appendChild(overlay);
     document.body.appendChild(spezialMenu);
 }
