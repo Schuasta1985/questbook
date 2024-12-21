@@ -1415,21 +1415,23 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
 function zeigeSpezialfähigkeitenMenu() {
-    const spezialMenu = document.createElement('div');
-    spezialMenu.id = 'spezial-menu';
+    const overlay = document.createElement("div");
+    overlay.classList.add("menu-overlay");
+    overlay.id = "spezialfähigkeiten-overlay";
 
-    // Style wird in der CSS festgelegt
-    spezialMenu.classList.add('spezialfaehigkeiten-menu');
+    const spezialMenu = document.createElement("div");
+    spezialMenu.classList.add("spezial-menu");
 
     spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
 
     // Dropdown-Menü für Zielspieler
-    const spielerDropdown = document.createElement('select');
-    spielerDropdown.id = 'zielspieler-dropdown';
+    const spielerDropdown = document.createElement("select");
+    spielerDropdown.id = "zielspieler-dropdown";
+    spielerDropdown.classList.add("spieler-dropdown");
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
-            const option = document.createElement('option');
+            const option = document.createElement("option");
             option.value = spieler;
             option.textContent = spieler;
             spielerDropdown.appendChild(option);
@@ -1438,64 +1440,64 @@ function zeigeSpezialfähigkeitenMenu() {
 
     spezialMenu.appendChild(spielerDropdown);
 
-    // Spezialfähigkeiten basierend auf dem Benutzer
-    const fähigkeiten = {
-        Thomas: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir Kaiserschmarren", kosten: 3 },
-            { name: "Ich brauche das Auto", kosten: 4 },
-            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-        ],
-        Elke: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir was zu essen", kosten: 3 },
-            { name: "Wunsch frei", kosten: 5 },
-        ],
-        Jamie: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "30 Min Gaming Zeit", kosten: 2 },
-            { name: "Unendliche Spielzeit", kosten: 5 },
-        ],
-    };
+    // Fähigkeiten abhängig vom Benutzer laden
+    const fähigkeiten = getSpezialfähigkeiten(currentUser);
 
-    const benutzerFähigkeiten = fähigkeiten[currentUser] || [];
-    benutzerFähigkeiten.forEach((fähigkeit) => {
-        const button = document.createElement('button');
+    fähigkeiten.forEach((fähigkeit) => {
+        const button = document.createElement("button");
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.classList.add('fähigkeit-button');
+        button.classList.add("spezial-button");
 
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
             if (!zielSpieler) {
-                alert('Bitte wähle einen Spieler aus!');
+                alert("Bitte wähle einen Spieler aus!");
                 return;
             }
 
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
-            document.body.removeChild(spezialMenu);
-            document.body.removeChild(document.getElementById('overlay'));
+            document.body.removeChild(overlay);
         };
 
         spezialMenu.appendChild(button);
     });
 
-    // Overlay für das Schließen durch Klick außerhalb des Menüs
-    const overlay = document.createElement('div');
-    overlay.id = 'overlay';
-    overlay.classList.add('menu-overlay');
-
-    overlay.onclick = () => {
-        document.body.removeChild(spezialMenu);
-        document.body.removeChild(overlay);
+    overlay.onclick = (event) => {
+        if (event.target === overlay) {
+            document.body.removeChild(overlay);
+        }
     };
 
+    overlay.appendChild(spezialMenu);
     document.body.appendChild(overlay);
-    document.body.appendChild(spezialMenu);
 }
 
+function getSpezialfähigkeiten(benutzername) {
+    if (benutzername === "Thomas") {
+        return [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir Kaiserschmarren", kosten: 3 },
+            { name: "Ich brauche das Auto", kosten: 4 },
+            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+        ];
+    } else if (benutzername === "Elke") {
+        return [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir was zu essen", kosten: 3 },
+            { name: "Wunsch frei", kosten: 5 },
+        ];
+    } else if (benutzername === "Jamie") {
+        return [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "30 Min Gaming Zeit", kosten: 2 },
+            { name: "Unendliche Spielzeit", kosten: 5 },
+        ];
+    }
+    return [];
+}
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
