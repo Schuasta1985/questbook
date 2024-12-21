@@ -536,3 +536,11 @@ button:hover {
     font-family: Arial, sans-serif; /* Einheitliche Schriftart */
     margin-bottom: 10px; /* Abstand zur Tabelle */
 }
+.aktionen-cell {
+    border: 1px solid #FFD700;
+    padding: 8px;
+    text-align: center;
+    color: #FFD700;
+    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund */
+}
+
