@@ -1192,5 +1192,72 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
+function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
+    firebase.database().ref("aktionen").push({
+        benutzer: benutzer,
+        ziel: ziel,
+        fähigkeit: fähigkeit,
+        zeitpunkt: zeitpunkt,
+    }).then(() => {
+        console.log("Aktion erfolgreich in Firebase gespeichert.");
+        ladeAktionenLog();
+    }).catch((error) => {
+        console.error("Fehler beim Speichern der Aktion:", error);
+    });
+}
+
+function ladeAktionenLog() {
+    const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
+    aktionenTabelle.innerHTML = ""; // Tabelle zurücksetzen
+
+    firebase.database().ref("aktionen").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const aktionen = snapshot.val();
+            Object.values(aktionen).forEach((aktion) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.zeitpunkt}</td>
+                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.benutzer}</td>
+                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.ziel}</td>
+                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.fähigkeit}</td>
+                `;
+                aktionenTabelle.appendChild(row);
+            });
+        } else {
+            console.log("Keine Aktionen gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Aktionen:", error);
+    });
+}
+
+function löscheAlteAktionen() {
+    const mitternacht = new Date();
+    mitternacht.setHours(0, 0, 0, 0);
+
+    firebase.database().ref("aktionen").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const aktionen = snapshot.val();
+            Object.keys(aktionen).forEach((key) => {
+                const aktion = aktionen[key];
+                const zeitpunkt = new Date(aktion.zeitpunkt);
+
+                if (zeitpunkt < mitternacht) {
+                    firebase.database().ref(`aktionen/${key}`).remove()
+                        .then(() => console.log(`Aktion ${key} erfolgreich gelöscht.`))
+                        .catch((error) => console.error("Fehler beim Löschen der Aktion:", error));
+                }
+            });
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Prüfen der Aktionen:", error);
+    });
+}
+
+// Löschen jeden Tag um Mitternacht
+setInterval(() => {
+    löscheAlteAktionen();
+}, 24 * 60 * 60 * 1000); // Einmal täglich
+
 
 aktualisiereLayout();
