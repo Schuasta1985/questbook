@@ -1415,62 +1415,77 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
 function zeigeSpezialfähigkeitenMenu() {
-    const overlay = document.createElement("div");
-    overlay.classList.add("menu-overlay");
-    overlay.id = "spezialfähigkeiten-overlay";
+    const spezialMenu = document.createElement('div');
+    spezialMenu.id = 'spezial-menu';
 
-    const spezialMenu = document.createElement("div");
-    spezialMenu.classList.add("spezial-menu");
+    // Standard-HTML Struktur für das Menü
+    spezialMenu.innerHTML = `
+        <div class="menu-overlay" id="overlay"></div>
+        <div class="menu-container">
+            <h3>Wähle deine Spezialfähigkeit aus:</h3>
+            <select id="zielspieler-dropdown" class="spieler-dropdown"></select>
+            <div id="spezial-buttons-container"></div>
+            <button class="menu-close-button" onclick="document.body.removeChild(document.getElementById('spezial-menu'))">Schließen</button>
+        </div>
+    `;
 
-    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
-
-    // Dropdown-Menü für Zielspieler
-    const spielerDropdown = document.createElement("select");
-    spielerDropdown.id = "zielspieler-dropdown";
-    spielerDropdown.classList.add("spieler-dropdown");
-
+    // Spieler-Dropdown auffüllen
+    const spielerDropdown = spezialMenu.querySelector('#zielspieler-dropdown');
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
-            const option = document.createElement("option");
+            const option = document.createElement('option');
             option.value = spieler;
             option.textContent = spieler;
             spielerDropdown.appendChild(option);
         }
     });
 
-    spezialMenu.appendChild(spielerDropdown);
+    // Buttons für Spezialfähigkeiten erstellen
+    const spezialFähigkeiten = {
+        Thomas: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir Kaiserschmarren", kosten: 3 },
+            { name: "Ich brauche das Auto", kosten: 4 },
+            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+        ],
+        Elke: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "Mach mir was zu essen", kosten: 3 },
+            { name: "Wunsch frei", kosten: 5 },
+        ],
+        Jamie: [
+            { name: "Massiere mich", kosten: 2 },
+            { name: "Ich will gekuschelt werden", kosten: 1 },
+            { name: "30 Min Gaming Zeit", kosten: 2 },
+            { name: "Unendliche Spielzeit", kosten: 5 },
+        ],
+    };
 
-    // Fähigkeiten abhängig vom Benutzer laden
-    const fähigkeiten = getSpezialfähigkeiten(currentUser);
+    const fähigkeitenButtonsContainer = spezialMenu.querySelector('#spezial-buttons-container');
+    const fähigkeiten = spezialFähigkeiten[currentUser] || [];
 
     fähigkeiten.forEach((fähigkeit) => {
-        const button = document.createElement("button");
+        const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.classList.add("spezial-button");
-
+        button.className = 'fähigkeiten-button';
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
             if (!zielSpieler) {
-                alert("Bitte wähle einen Spieler aus!");
+                alert('Bitte wähle einen Spieler aus!');
                 return;
             }
 
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
-            document.body.removeChild(overlay);
+            document.body.removeChild(spezialMenu);
         };
-
-        spezialMenu.appendChild(button);
+        fähigkeitenButtonsContainer.appendChild(button);
     });
 
-    overlay.onclick = (event) => {
-        if (event.target === overlay) {
-            document.body.removeChild(overlay);
-        }
-    };
-
-    overlay.appendChild(spezialMenu);
-    document.body.appendChild(overlay);
+    document.body.appendChild(spezialMenu);
 }
+
 
 function getSpezialfähigkeiten(benutzername) {
     if (benutzername === "Thomas") {
