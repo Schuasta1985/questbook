@@ -1416,17 +1416,24 @@ function zeigeSpezialfähigkeitenMenu() {
 
     // Dropdown-Menü für Spieler erstellen
     const spielerDropdown = document.createElement("select");
-    spielerDropdown.id = "spezial-spieler-dropdown";
+    spielerDropdown.id = "zielspieler-dropdown"; // Konsistente ID
     spielerDropdown.classList.add("dropdown"); // CSS-Klasse für Styling
 
-    Object.keys(benutzerDaten).forEach((spieler) => {
-        if (spieler !== currentUser) {
+    // Spieler zum Dropdown hinzufügen
+    const verfügbareSpieler = Object.keys(benutzerDaten).filter((spieler) => spieler !== currentUser);
+    if (verfügbareSpieler.length === 0) {
+        const keineOption = document.createElement("option");
+        keineOption.value = "";
+        keineOption.textContent = "Kein Spieler verfügbar";
+        spielerDropdown.appendChild(keineOption);
+    } else {
+        verfügbareSpieler.forEach((spieler) => {
             const option = document.createElement("option");
             option.value = spieler;
             option.textContent = spieler;
             spielerDropdown.appendChild(option);
-        }
-    });
+        });
+    }
     spezialMenu.appendChild(spielerDropdown);
 
     // Spezialfähigkeiten-Buttons hinzufügen, dynamisch basierend auf dem aktuellen Benutzer
