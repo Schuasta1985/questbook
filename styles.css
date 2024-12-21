@@ -599,3 +599,47 @@ button:hover {
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9); /* Dunkler Schatten für bessere Lesbarkeit */
     margin-bottom: 10px; /* Abstand nach unten */
 }
+
+#spezialfaehigkeiten-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9); /* Dunkler, transparenter Hintergrund */
+    border: 2px solid #FFD700; /* Goldener Rahmen */
+    border-radius: 15px; /* Abgerundete Ecken */
+    padding: 15px;
+    width: 80%; /* Passt auf alle Bildschirmgrößen */
+    max-width: 320px; /* Maximalbreite für Desktop */
+    text-align: center; /* Zentrierter Text */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
+}
+
+#spezialfaehigkeiten-menu button {
+    display: block;
+    margin: 8px auto;
+    padding: 8px;
+    font-size: 0.9em;
+    background: linear-gradient(to bottom, #FFD700, #DAA520); /* Glanzeffekt */
+    color: black;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 240px;
+}
+
+#spezialfaehigkeiten-menu button:hover {
+    background: linear-gradient(to bottom, #FFC107, #FFB400); /* Hellerer Hover-Ton */
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+#spezialfaehigkeiten-menu h3 {
+    color: #FFD700; /* Goldene Farbe für Sichtbarkeit */
+    font-size: 1.2em; /* Größere Schrift */
+    font-weight: bold; /* Fettschrift */
+    text-align: center; /* Zentrierung */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9); /* Dunkler Schatten für bessere Lesbarkeit */
+    margin-bottom: 10px; /* Abstand nach unten */
+}
