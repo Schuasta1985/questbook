@@ -469,25 +469,25 @@ button:hover {
     background-color: rgba(0, 0, 0, 0.9); /* Dunkler, transparenter Hintergrund */
     border: 2px solid #FFD700; /* Goldener Rahmen */
     border-radius: 15px; /* Abgerundete Ecken */
-    padding: 20px;
-    width: 90%; /* Passt auf alle Bildschirmgrößen */
-    max-width: 400px; /* Maximalbreite für Desktop */
+    padding: 15px;
+    width: 80%; /* Passt auf alle Bildschirmgrößen */
+    max-width: 320px; /* Maximalbreite für Desktop */
     text-align: center; /* Zentrierter Text */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
 }
 
 #zauber-menu button {
     display: block;
-    margin: 10px auto;
-    padding: 15px;
-    font-size: 1.2em;
+    margin: 8px auto;
+    padding: 8px;
+    font-size: 0.9em;
     background: linear-gradient(to bottom, #FFD700, #DAA520); /* Glanzeffekt */
     color: black;
     border: none;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
     width: 90%;
-    max-width: 300px;
+    max-width: 240px;
 }
 
 #zauber-menu button:hover {
@@ -565,14 +565,15 @@ button:hover {
 }
 #zauber-menu select {
     width: 100%;
-    padding: 10px;
-    font-size: 1.1em;
+    padding: 8px;
+    font-size: 1em;
     background: rgba(0, 0, 0, 0.8); /* Dunkler Hintergrund */
     color: #FFD700; /* Goldene Schrift */
     border: 2px solid #FFD700;
     border-radius: 10px;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
     margin-bottom: 15px;
+    max-width: 240px;
 }
 
 #zauber-menu h1 {
@@ -592,9 +593,9 @@ button:hover {
 
 #zauber-menu h3 {
     color: #FFD700; /* Goldene Farbe für Sichtbarkeit */
-    font-size: 1.5em; /* Größere Schrift */
+    font-size: 1.2em; /* Größere Schrift */
     font-weight: bold; /* Fettschrift */
     text-align: center; /* Zentrierung */
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9); /* Dunkler Schatten für bessere Lesbarkeit */
-    margin-bottom: 20px; /* Abstand nach unten */
+    margin-bottom: 10px; /* Abstand nach unten */
 }
