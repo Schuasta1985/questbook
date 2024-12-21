@@ -490,13 +490,14 @@ button:hover {
 #zauber-menu button:hover {
     background-color: #FFC107;
 }
-/* Verbesserung der Tabelle für bessere Lesbarkeit */
+/* Anpassung der Tabelle im Stil der Benutzerübersicht */
 #aktionen-tabelle {
-    background-color: rgba(0, 0, 0, 0.7); /* Halbtransparenter schwarzer Hintergrund */
-    color: #FFD700; /* Goldene Schriftfarbe für besseren Kontrast */
+    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund ähnlich der Benutzerübersicht */
+    color: #FFD700; /* Goldene Schriftfarbe */
     border-collapse: collapse; /* Entfernt doppelte Ränder */
-    width: 80%; /* Reduzierte Breite */
+    width: 60%; /* Schmale Breite */
     margin: 20px auto; /* Zentriert die Tabelle */
+    border: 2px solid #FFD700; /* Goldene Umrandung */
     border-radius: 10px; /* Abgerundete Ecken */
     overflow: hidden; /* Rundung bleibt erhalten */
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Leichter Schatten */
@@ -505,22 +506,33 @@ button:hover {
 #aktionen-tabelle th, #aktionen-tabelle td {
     border: 1px solid #FFD700; /* Goldene Rahmenfarbe */
     padding: 10px; /* Polsterung für besseren Abstand */
-    text-align: left; /* Linksbündiger Text */
+    text-align: center; /* Zentrierter Text */
     font-size: 1em; /* Standardgröße für Text */
+    font-family: Arial, sans-serif; /* Gleiche Schriftart wie Benutzerübersicht */
 }
 
 #aktionen-tabelle th {
-    background-color: rgba(75, 54, 33, 0.9); /* Dunkles Braun für die Kopfzeile */
+    background-color: rgba(50, 50, 50, 0.9); /* Dunkler Hintergrund für die Kopfzeile */
     color: #FFD700; /* Goldene Schriftfarbe */
     font-weight: bold; /* Fett für Überschriften */
+    text-transform: uppercase; /* Großbuchstaben wie in der Benutzerübersicht */
 }
 
 #aktionen-tabelle tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.1); /* Leichtes Highlight für gerade Zeilen */
+    background-color: rgba(44, 44, 44, 0.9); /* Leichte Variation für gerade Zeilen */
 }
 
 #aktionen-tabelle tr:hover {
     background-color: rgba(255, 215, 0, 0.2); /* Helles Gold bei Hover-Effekt */
 }
 
+/* Verbesserung des Textes \"Aktionen der Spezialfähigkeiten\" im gleichen Stil */
+#aktionen-titel {
+    text-align: center;
+    font-size: 1.2em; /* Vergrößerung der Schrift */
+    color: #FFD700; /* Goldene Schriftfarbe */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Erhöht den Kontrast */
+    font-family: Arial, sans-serif; /* Gleiche Schriftart */
+    margin-bottom: 10px; /* Abstand zur Tabelle */
+}
 
