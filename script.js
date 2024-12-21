@@ -1256,10 +1256,10 @@ function ladeAktionenLog() {
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.zeitpunkt || "Unbekannt"}</td>
-                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.benutzer || "Unbekannt"}</td>
-                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.ziel || "Unbekannt"}</td>
-                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.fähigkeit || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${aktion.zeitpunkt || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${aktion.ziel || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${aktion.fähigkeit || "Unbekannt"}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1271,6 +1271,7 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
