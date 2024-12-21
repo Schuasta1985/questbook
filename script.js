@@ -1306,9 +1306,9 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    const zielSpieler = prompt("Wen soll diese Fähigkeit betreffen? (Name eingeben)");
+    const zielSpieler = document.getElementById("zielspieler-dropdown").value;
     if (!zielSpieler) {
-        alert("Bitte wähle einen gültigen Spieler aus.");
+        alert("Bitte wähle einen Spieler aus!");
         return;
     }
 
