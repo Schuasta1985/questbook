@@ -492,13 +492,14 @@ button:hover {
 }
 /* Verbesserung der Tabelle für bessere Lesbarkeit */
 #aktionen-tabelle {
-    background-color: rgba(0, 0, 0, 0.8); /* Halbtransparenter schwarzer Hintergrund */
+    background-color: rgba(0, 0, 0, 0.7); /* Halbtransparenter schwarzer Hintergrund */
     color: #FFD700; /* Goldene Schriftfarbe für besseren Kontrast */
     border-collapse: collapse; /* Entfernt doppelte Ränder */
-    width: 100%; /* Nimmt die volle Breite ein */
-    margin: 10px 0; /* Abstand zur Umgebung */
+    width: 80%; /* Reduzierte Breite */
+    margin: 20px auto; /* Zentriert die Tabelle */
     border-radius: 10px; /* Abgerundete Ecken */
     overflow: hidden; /* Rundung bleibt erhalten */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Leichter Schatten */
 }
 
 #aktionen-tabelle th, #aktionen-tabelle td {
@@ -509,7 +510,7 @@ button:hover {
 }
 
 #aktionen-tabelle th {
-    background-color: #4B3621; /* Dunkles Braun für die Kopfzeile */
+    background-color: rgba(75, 54, 33, 0.9); /* Dunkles Braun für die Kopfzeile */
     color: #FFD700; /* Goldene Schriftfarbe */
     font-weight: bold; /* Fett für Überschriften */
 }
