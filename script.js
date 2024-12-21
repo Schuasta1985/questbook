@@ -1351,21 +1351,26 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         const zeitpunkt = new Date().toLocaleString();
         spezialfähigkeitSpeichern(currentUser, zielSpieler, fähigkeit, zeitpunkt);
 
-        // Animation bei Erfolg/Misserfolg
+        // Eigene Animation anzeigen
         const animationOverlay = document.createElement("div");
         animationOverlay.style.position = "fixed";
         animationOverlay.style.top = "0";
         animationOverlay.style.left = "0";
         animationOverlay.style.width = "100%";
         animationOverlay.style.height = "100%";
-        animationOverlay.style.backgroundColor = erfolg ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
+        animationOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
         animationOverlay.style.display = "flex";
         animationOverlay.style.alignItems = "center";
         animationOverlay.style.justifyContent = "center";
-        animationOverlay.style.color = "#FFD700";
-        animationOverlay.style.fontSize = "2em";
         animationOverlay.style.zIndex = "1000";
-        animationOverlay.innerText = erfolg ? "Erfolg!" : "Fehlgeschlagen!";
+
+        const gif = document.createElement("img");
+        gif.src = erfolg ? "avatars/Erfolg.gif" : "avatars/Misserfolg.gif";
+        gif.style.maxWidth = "80%";
+        gif.style.maxHeight = "80%";
+        gif.alt = erfolg ? "Erfolg" : "Misserfolg";
+
+        animationOverlay.appendChild(gif);
         document.body.appendChild(animationOverlay);
 
         setTimeout(() => {
@@ -1374,7 +1379,6 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         }, 3000);
     }, 3000); // Berechnung dauert 3 Sekunden
 }
-
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
