@@ -165,9 +165,10 @@ button {
 }
 
 button:hover {
-    background-color: #B22222; /* Sattes Rot */
+    background-color: #FFD700;
+    color: black; /* Gute Lesbarkeit */
+    transform: scale(1.05);
 }
-
 /* Admin Login */
 .admin-login {
     position: fixed;
@@ -244,20 +245,21 @@ button:hover {
 
 .benutzer-grid {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .benutzer-item {
+    width: 200px; /* Breitere Karten */
+    padding: 15px;
     text-align: center;
-    border: 1px solid rgba(255, 215, 0, 0.7); /* Goldener Rahmen */
+    margin: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: 1px solid #FFD700;
     border-radius: 10px;
-    padding: 10px;
-    width: 150px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5); /* Dunklerer Schatten */
-    background-color: rgba(0, 0, 0, 0.7); /* Halbtransparenter Hintergrund */
-    color: #FFFFFF; /* Weiße Schriftfarbe */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .benutzer-item h3 {
@@ -414,9 +416,12 @@ button:hover {
 }
 
 #logbuch-list li {
-    margin-bottom: 10px; /* Abstand zwischen den Einträgen */
-    padding: 5px; /* Innerer Abstand für bessere Lesbarkeit */
-    border-bottom: 1px solid #FFD700; /* Unterstrich für Abgrenzung */
+    background-color: rgba(0, 0, 0, 0.7); /* Dunklerer Hintergrund */
+    color: #FFD700; /* Goldene Schriftfarbe */
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 #logbuch-list li:last-child {
@@ -458,17 +463,15 @@ button:hover {
 
 #zauber-menu {
     position: absolute;
+    top: 50%;
+    left: calc(100% + 20px); /* Rechts neben dem Avatar */
+    transform: translateY(-50%);
     background-color: rgba(0, 0, 0, 0.8);
-    color: #FFD700;
-    padding: 15px;
+    border: 1px solid #FFD700;
     border-radius: 10px;
-    top: 110%; /* Positioniert es unter dem Zauber-Button */
-    left: 50%;
-    transform: translateX(-50%);
+    padding: 15px;
+    width: 250px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    width: 200px; /* Breite des Menüs */
-    text-align: center;
 }
 
 #zauber-menu button {
