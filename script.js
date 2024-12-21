@@ -1241,27 +1241,35 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
 
 function ladeAktionenLog() {
     const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
+
+    if (!aktionenTabelle) {
+        console.error("Aktionen-Tabelle nicht gefunden!");
+        return;
+    }
+
     aktionenTabelle.innerHTML = ""; // Tabelle zurücksetzen
 
-    firebase.database().ref("aktionen").get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const aktionen = snapshot.val();
-            Object.values(aktionen).forEach((aktion) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.zeitpunkt}</td>
-                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.benutzer}</td>
-                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.ziel}</td>
-                    <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.fähigkeit}</td>
-                `;
-                aktionenTabelle.appendChild(row);
-            });
-        } else {
-            console.log("Keine Aktionen gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Aktionen:", error);
-    });
+    firebase.database().ref("aktionen").get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const aktionen = snapshot.val();
+                Object.values(aktionen).forEach((aktion) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.zeitpunkt || "Unbekannt"}</td>
+                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.benutzer || "Unbekannt"}</td>
+                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.ziel || "Unbekannt"}</td>
+                        <td style="border: 1px solid #FFD700; padding: 8px;">${aktion.fähigkeit || "Unbekannt"}</td>
+                    `;
+                    aktionenTabelle.appendChild(row);
+                });
+            } else {
+                console.log("Keine Aktionen gefunden.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Aktionen:", error);
+        });
 }
 
 function löscheAlteAktionen() {
