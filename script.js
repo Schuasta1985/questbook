@@ -775,12 +775,12 @@ function zeigeAvatar() {
         }
 
         avatarContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
                 <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
                 <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                        style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
+                        style="padding: 10px 20px; background-color: #FFD700; 
                                color: black; font-weight: bold; border: none; border-radius: 5px;
                                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
                     Zauber
@@ -789,8 +789,7 @@ function zeigeAvatar() {
         `;
 
         avatarContainer.style.display = "flex";
-        avatarContainer.style.flexDirection = "column";
-        avatarContainer.style.alignItems = "center";
+        avatarContainer.style.justifyContent = "center";
         avatarContainer.style.marginTop = "20px";
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
@@ -801,6 +800,8 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
+
+
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
     if (!avatarContainer) {
