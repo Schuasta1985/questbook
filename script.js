@@ -1400,24 +1400,19 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
 function zeigeSpezialfähigkeitenMenu() {
+    // Erstelle das Spezialfähigkeiten-Menü
     const spezialMenu = document.createElement('div');
     spezialMenu.id = 'spezial-menu';
-    spezialMenu.style.position = 'absolute';
-    spezialMenu.style.top = '20%';
-    spezialMenu.style.left = '50%';
-    spezialMenu.style.transform = 'translate(-50%, -50%)';
-    spezialMenu.style.backgroundColor = 'white';
-    spezialMenu.style.border = '2px solid black';
-    spezialMenu.style.borderRadius = '10px';
-    spezialMenu.style.padding = '20px';
-    spezialMenu.style.zIndex = '1000';
+    spezialMenu.classList.add('menu'); // CSS-Klasse "menu" für Styling
 
-    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
+    spezialMenu.innerHTML = `
+        <h3>Wähle deine Spezialfähigkeit aus:</h3>
+    `;
 
-    // Dropdown-Menü für Zielspieler
+    // Dropdown-Menü für Zielspieler erstellen
     const spielerDropdown = document.createElement('select');
     spielerDropdown.id = 'zielspieler-dropdown';
-    spielerDropdown.style.marginBottom = '15px';
+    spielerDropdown.classList.add('dropdown'); // CSS-Klasse für Styling
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
@@ -1430,7 +1425,7 @@ function zeigeSpezialfähigkeitenMenu() {
 
     spezialMenu.appendChild(spielerDropdown);
 
-    // Buttons für Fähigkeiten
+    // Buttons für Fähigkeiten hinzufügen
     const fähigkeiten = [
         { name: "Massiere mich", kosten: 2 },
         { name: "Ich will gekuschelt werden", kosten: 1 },
@@ -1442,13 +1437,7 @@ function zeigeSpezialfähigkeitenMenu() {
     fähigkeiten.forEach((fähigkeit) => {
         const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.style.marginTop = '10px';
-        button.style.padding = '10px';
-        button.style.backgroundColor = '#FFD700';
-        button.style.color = '#000';
-        button.style.border = 'none';
-        button.style.borderRadius = '5px';
-        button.style.cursor = 'pointer';
+        button.classList.add('menu-button'); // CSS-Klasse "menu-button" für Styling
 
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
@@ -1464,25 +1453,21 @@ function zeigeSpezialfähigkeitenMenu() {
         spezialMenu.appendChild(button);
     });
 
-    // Schließen durch Klick außerhalb des Menüs
+    // Overlay erstellen
     const overlay = document.createElement('div');
     overlay.id = 'overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    overlay.style.zIndex = '999';
+    overlay.classList.add('overlay'); // CSS-Klasse "overlay" für Styling
 
     overlay.onclick = () => {
         document.body.removeChild(spezialMenu);
         document.body.removeChild(overlay);
     };
 
+    // Menü und Overlay zum Dokument hinzufügen
     document.body.appendChild(overlay);
     document.body.appendChild(spezialMenu);
 }
+
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
