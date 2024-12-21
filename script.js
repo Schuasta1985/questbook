@@ -1255,12 +1255,13 @@ function ladeAktionenLog() {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
-                    row.className = "aktionen-row"; // Neue Testklasse
+                    const zeit = new Date(aktion.zeitpunkt).toLocaleTimeString(); // Nur Uhrzeit anzeigen
                     row.innerHTML = `
-                        <td class="aktionen-cell">${aktion.zeitpunkt || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${zeit}</td>
                         <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
                         <td class="aktionen-cell">${aktion.ziel || "Unbekannt"}</td>
                         <td class="aktionen-cell">${aktion.fähigkeit || "Unbekannt"}</td>
+                        <td class="aktionen-cell">${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1272,7 +1273,6 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
@@ -1314,71 +1314,48 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    // 3 Sekunden Berechnung simulieren
-    const randomWert = Math.random() * 100;
-    const erfolg = randomWert <= erfolgswahrscheinlichkeit;
+    // Prüfen, ob die Fähigkeit gesperrt ist
+    const heute = new Date().toDateString();
+    const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
+    firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
+        .then((snapshot) => {
+            if (snapshot.exists() && new Date(snapshot.val()).toDateString() === heute) {
+                alert("Diese Fähigkeit ist noch gesperrt.");
+                return;
+            }
 
-    const berechnungsOverlay = document.createElement("div");
-    berechnungsOverlay.id = "berechnung-overlay";
-    berechnungsOverlay.style.position = "fixed";
-    berechnungsOverlay.style.top = "0";
-    berechnungsOverlay.style.left = "0";
-    berechnungsOverlay.style.width = "100%";
-    berechnungsOverlay.style.height = "100%";
-    berechnungsOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-    berechnungsOverlay.style.color = "#FFD700";
-    berechnungsOverlay.style.display = "flex";
-    berechnungsOverlay.style.alignItems = "center";
-    berechnungsOverlay.style.justifyContent = "center";
-    berechnungsOverlay.style.zIndex = "1000";
-    berechnungsOverlay.innerText = "Berechnung läuft...";
-    document.body.appendChild(berechnungsOverlay);
+            // Erfolg oder Misserfolg berechnen
+            const randomWert = Math.random() * 100;
+            const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-    setTimeout(() => {
-        document.body.removeChild(berechnungsOverlay);
+            const text = erfolg
+                ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
+                : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
 
-        const text = erfolg
-            ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
-            : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
+            // Level-Kosten abziehen
+            level -= erfolg ? kosten : 0;
+            aktualisiereXPAnzeige();
 
-        if (erfolg) {
-            level -= kosten;
-        }
+            // Sperrzeit setzen
+            const sperrdatum = new Date();
+            sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
+            firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
 
-        aktualisiereXPAnzeige();
+            // Logbuch aktualisieren
+            firebase.database().ref("aktionen").push({
+                fähigkeit,
+                benutzer: currentUser,
+                ziel: zielSpieler,
+                erfolg,
+                zeitpunkt: new Date().toISOString(),
+            });
 
-        // Logbuch aktualisieren
-        const zeitpunkt = new Date().toLocaleString();
-        spezialfähigkeitSpeichern(currentUser, zielSpieler, fähigkeit, zeitpunkt);
-
-        // Eigene Animation anzeigen
-        const animationOverlay = document.createElement("div");
-        animationOverlay.style.position = "fixed";
-        animationOverlay.style.top = "0";
-        animationOverlay.style.left = "0";
-        animationOverlay.style.width = "100%";
-        animationOverlay.style.height = "100%";
-        animationOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-        animationOverlay.style.display = "flex";
-        animationOverlay.style.alignItems = "center";
-        animationOverlay.style.justifyContent = "center";
-        animationOverlay.style.zIndex = "1000";
-
-        const gif = document.createElement("img");
-        gif.src = erfolg ? "avatars/Erfolg.gif" : "avatars/Misserfolg.gif";
-        gif.style.maxWidth = "80%";
-        gif.style.maxHeight = "80%";
-        gif.alt = erfolg ? "Erfolg" : "Misserfolg";
-
-        animationOverlay.appendChild(gif);
-        document.body.appendChild(animationOverlay);
-
-        setTimeout(() => {
-            document.body.removeChild(animationOverlay);
-            ladeAktionenLog(); // Log aktualisieren
-        }, 3000);
-    }, 3000); // Berechnung dauert 3 Sekunden
+            // Anzeige aktualisieren
+            ladeAktionenLog();
+            alert(text);
+        });
 }
+
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
@@ -1465,5 +1442,25 @@ function zeigeSpezialfähigkeitenMenu() {
     document.body.appendChild(spezialMenu);
 }
 
+function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
+    firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const sperrdatum = new Date(snapshot.val());
+                const heute = new Date();
 
+                if (heute > sperrdatum) {
+                    callback(true); // Sperrzeit ist abgelaufen
+                } else {
+                    callback(false); // Sperrzeit noch aktiv
+                }
+            } else {
+                callback(true); // Keine Sperrzeit gesetzt
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Prüfen der Sperrzeit:", error);
+            callback(false);
+        });
+}
 aktualisiereLayout();
