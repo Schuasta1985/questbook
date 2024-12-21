@@ -491,16 +491,8 @@ button:hover {
     background-color: #FFC107;
 }
 
-/* Verbesserte Anpassung der Tabelle im Stil der Benutzerübersicht */
 #aktionen-tabelle {
-    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund */
-    color: #FFD700; /* Goldene Schriftfarbe */
-    border-collapse: collapse;
-    width: 70%; /* Angemessene Breite */
-    margin: 20px auto; /* Zentrieren */
-    border: 2px solid #FFD700; /* Goldene Rahmenfarbe */
-    border-radius: 10px;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Leichter Schatten */
+    background-color: red !important; /* Auffällige Farbe */
 }
 
 #aktionen-tabelle th, #aktionen-tabelle td {
