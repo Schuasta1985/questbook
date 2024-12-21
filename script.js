@@ -1277,11 +1277,24 @@ function ladeAktionenLog() {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
+
+                    const zeitpunkt = aktion.zeitpunkt
+                        ? new Date(aktion.zeitpunkt).toLocaleTimeString() // Zeigt nur die Uhrzeit
+                        : "Unbekannt";
+
+                    const lustigerText = generiereLustigenText(
+                        aktion.fähigkeit,
+                        aktion.benutzer || "Unbekannt",
+                        aktion.ziel || "Unbekannt"
+                    );
+
                     row.innerHTML = `
-                        <td>${aktion.zeitpunkt ? aktion.zeitpunkt.split(" ")[1] : "Unbekannt"}</td>
+                        <td>${zeitpunkt}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Unbekannt"} - ${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
+                        <td>${aktion.fähigkeit || "Unbekannt"} - ${
+                        aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"
+                    }<br><small>${lustigerText}</small></td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1293,7 +1306,6 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
