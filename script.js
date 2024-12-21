@@ -1440,59 +1440,67 @@ function zeigeSpezialfähigkeitenMenu() {
         }
     });
 
-    // Spezialfähigkeiten-Buttons hinzufügen
-    const spezialFähigkeiten = {
-        Thomas: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir Kaiserschmarren", kosten: 3 },
-            { name: "Ich brauche das Auto", kosten: 4 },
-            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-        ],
-        Elke: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir was zu essen", kosten: 3 },
-            { name: "Wunsch frei", kosten: 5 },
-        ],
-        Jamie: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "30 Min Gaming Zeit", kosten: 2 },
-            { name: "Unendliche Spielzeit", kosten: 5 },
-        ],
-    };
+function zeigeSpezialfähigkeitenMenu() {
+    // Menücontainer erstellen
+    const spezialMenu = document.createElement("div");
+    spezialMenu.id = "spezial-menu";
+    spezialMenu.classList.add("menu"); // CSS-Klasse für Styling
 
-    const fähigkeitenButtonsContainer = spezialMenu.querySelector("#spezial-buttons-container");
-    const fähigkeiten = spezialFähigkeiten[currentUser] || [];
+    // Überschrift hinzufügen
+    const heading = document.createElement("h3");
+    heading.textContent = "Spezialfähigkeiten";
+    heading.classList.add("menu-heading"); // Optional: Überschriftstyling
+    spezialMenu.appendChild(heading);
 
-    fähigkeiten.forEach((fähigkeit) => {
+    // Dropdown-Menü für Spieler erstellen
+    const spielerDropdown = document.createElement("select");
+    spielerDropdown.id = "spezial-spieler-dropdown";
+    spielerDropdown.classList.add("dropdown"); // CSS-Klasse für Styling
+
+    Object.keys(benutzerDaten).forEach((spieler) => {
+        if (spieler !== currentUser) {
+            const option = document.createElement("option");
+            option.value = spieler;
+            option.textContent = spieler;
+            spielerDropdown.appendChild(option);
+        }
+    });
+    spezialMenu.appendChild(spielerDropdown);
+
+    // Buttons für Spezialfähigkeiten
+    const fähigkeitenButtons = [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "Mach mir Kaiserschmarren", kosten: 3 },
+        { name: "Ich brauche das Auto", kosten: 4 },
+        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+    ];
+
+    fähigkeitenButtons.forEach((fähigkeit) => {
         const button = document.createElement("button");
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.className = "fähigkeiten-button";
+        button.classList.add("menu-button");
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
             if (!zielSpieler) {
                 alert("Bitte wähle einen Spieler aus!");
                 return;
             }
-
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - fähigkeit.kosten * 10);
             document.body.removeChild(spezialMenu);
         };
-        fähigkeitenButtonsContainer.appendChild(button);
+        spezialMenu.appendChild(button);
     });
 
-    document.body.appendChild(spezialMenu);
+    // Button: Schließen
+    const schließenButton = document.createElement("button");
+    schließenButton.textContent = "Schließen";
+    schließenButton.classList.add("menu-button");
+    schließenButton.onclick = () => document.body.removeChild(spezialMenu);
+    spezialMenu.appendChild(schließenButton);
 
-    // Overlay hinzufügen
-    const overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-    overlay.onclick = () => {
-        document.body.removeChild(spezialMenu);
-        document.body.removeChild(overlay);
-    };
-    document.body.appendChild(overlay);
+    // Menü zum Dokument hinzufügen
+    document.body.appendChild(spezialMenu);
 }
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
