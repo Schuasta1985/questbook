@@ -1356,7 +1356,13 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    const zielSpieler = document.getElementById("zielspieler-dropdown").value;
+    const zielSpielerDropdown = document.getElementById("zielspieler-dropdown");
+    if (!zielSpielerDropdown) {
+        alert("Fehler: Das Dropdown-Menü für Zielspieler wurde nicht gefunden!");
+        return;
+    }
+
+    const zielSpieler = zielSpielerDropdown.value;
     if (!zielSpieler) {
         alert("Bitte wähle einen Spieler aus!");
         return;
@@ -1370,26 +1376,21 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
                 return;
             }
 
-            // Erfolg oder Misserfolg berechnen
             const randomWert = Math.random() * 100;
             const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-            // Level-Kosten abziehen, unabhängig vom Erfolg
             level -= kosten;
             aktualisiereXPAnzeige();
 
             if (erfolg) {
-                // Sperrzeit nur bei Erfolg setzen
-                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
+                const sperrzeit = kosten > 3 ? 7 : 1;
                 const sperrdatum = new Date();
                 sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
                 firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
             }
 
-            // Animation zeigen
             zeigeAnimation(erfolg);
 
-            // Logbuch aktualisieren
             firebase.database().ref("aktionen").push({
                 fähigkeit,
                 benutzer: currentUser,
@@ -1398,7 +1399,6 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
                 zeitpunkt: new Date().toISOString(),
             });
 
-            // Anzeige aktualisieren
             ladeAktionenLog();
         });
 }
