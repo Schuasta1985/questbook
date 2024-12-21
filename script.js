@@ -678,18 +678,33 @@ function zeigeAdminFunktionen() {
             const newAdminButtonsContainer = document.createElement("div");
             newAdminButtonsContainer.id = "admin-buttons-container";
 
+            // Button: Neue Quest erstellen
             const createButton = document.createElement("button");
             createButton.textContent = "Neue Quest erstellen";
             createButton.id = "createQuestButton";
             createButton.onclick = neueQuestErstellen;
 
+            // Button: Alle Quests zurücksetzen
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Alle Quests zurücksetzen";
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
+            // Button: Fähigkeiten zurücksetzen
+            const resetAbilitiesButton = document.createElement("button");
+            resetAbilitiesButton.textContent = "Fähigkeiten zurücksetzen";
+            resetAbilitiesButton.id = "resetAbilitiesButton";
+            resetAbilitiesButton.onclick = () => {
+                const spieler = prompt("Gib den Namen des Spielers ein, dessen Fähigkeiten zurückgesetzt werden sollen:");
+                if (spieler) {
+                    setzeFähigkeitenZurück(spieler);
+                }
+            };
+
             newAdminButtonsContainer.appendChild(createButton);
             newAdminButtonsContainer.appendChild(deleteButton);
+            newAdminButtonsContainer.appendChild(resetAbilitiesButton);
+
             questbookContainer.appendChild(newAdminButtonsContainer);
         }
     } else {
@@ -1320,7 +1335,6 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
     firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
         .then((snapshot) => {
             const heute = new Date();
@@ -1337,10 +1351,13 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             level -= kosten;
             aktualisiereXPAnzeige();
 
-            // Sperrzeit setzen
-            const sperrdatum = new Date();
-            sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
-            firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
+            if (erfolg) {
+                // Sperrzeit nur bei Erfolg setzen
+                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
+                const sperrdatum = new Date();
+                sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
+                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
+            }
 
             // Animation zeigen
             zeigeAnimation(erfolg);
@@ -1358,6 +1375,7 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             ladeAktionenLog();
         });
 }
+
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
@@ -1490,6 +1508,22 @@ function zeigeAnimation(erfolg) {
         document.body.removeChild(animationContainer);
     }, 3000); // Animation verschwindet nach 3 Sekunden
 }
+
+function setzeFähigkeitenZurück(spieler) {
+    if (!spieler) {
+        alert("Bitte wähle einen Spieler aus, dessen Fähigkeiten zurückgesetzt werden sollen.");
+        return;
+    }
+
+    firebase.database().ref(`fähigkeiten/${spieler}`).remove()
+        .then(() => {
+            alert(`Alle Fähigkeiten von ${spieler} wurden zurückgesetzt und sind jetzt wieder verfügbar.`);
+        })
+        .catch((error) => {
+            console.error("Fehler beim Zurücksetzen der Fähigkeiten:", error);
+        });
+}
+
 
 
 aktualisiereLayout();
