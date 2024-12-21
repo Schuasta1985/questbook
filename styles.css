@@ -462,43 +462,39 @@ button:hover {
 }
 
 #zauber-menu {
-    display: flex;
-    flex-wrap: wrap; /* Buttons umbrechen, wenn nicht genug Platz vorhanden ist */
-    justify-content: center; /* Buttons zentrieren */
-    gap: 10px; /* Abstand zwischen Buttons */
     position: absolute;
     top: 50%;
-    left: calc(100% + 20px); /* Rechts neben dem Avatar */
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    border: 1px solid #FFD700;
-    border-radius: 10px;
-    padding: 15px;
-    width: 250px; /* Maximale Breite */
-    max-width: 90%; /* Passt sich auf kleinen Bildschirmen an */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Sicherstellen, dass es oben bleibt */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9); /* Dunkler, transparenter Hintergrund */
+    border: 2px solid #FFD700; /* Goldener Rahmen */
+    border-radius: 15px; /* Abgerundete Ecken */
+    padding: 20px;
+    width: 90%; /* Passt auf alle Bildschirmgrößen */
+    max-width: 400px; /* Maximalbreite für Desktop */
+    text-align: center; /* Zentrierter Text */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Schatteneffekt */
 }
 
 #zauber-menu button {
-    flex: 1 1 calc(50% - 20px); /* Zwei Buttons pro Zeile */
-    margin: 10px 5px; /* Abstand um die Buttons */
-    padding: 10px; /* Polsterung innerhalb der Buttons */
-    font-size: 1rem; /* Angenehme Schriftgröße */
-    background-color: #FFD700;
+    display: block; /* Jeder Button in einer eigenen Zeile */
+    margin: 10px auto; /* Zentrierte Position */
+    padding: 15px;
+    font-size: 1.2em; /* Größere Schriftgröße */
+    background-color: #FFD700; /* Goldener Hintergrund */
     color: black;
-    font-weight: bold;
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s, background-color 0.2s;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Schatten */
+    width: 90%; /* Breite auf mobilen Geräten */
+    max-width: 300px; /* Maximalbreite */
 }
 
 #zauber-menu button:hover {
-    background-color: #FFC107; /* Heller bei Hover */
-    transform: scale(1.05); /* Leichtes Vergrößern */
+    background-color: #FFC107; /* Etwas hellerer Goldton bei Hover */
+    transform: scale(1.05); /* Leichter Vergrößerungseffekt */
 }
+
 
 /* Verbesserte Tabelle mit dunklem Stil */
 #aktionen-tabelle {
@@ -566,17 +562,13 @@ button:hover {
     margin: 0;
     border: none;
 }
-
 #zauber-menu select {
     width: 100%; /* Volle Breite */
-    padding: 10px; /* Polsterung */
-    font-size: 1rem; /* Angenehme Schriftgröße */
-    margin-bottom: 10px; /* Abstand zum nächsten Element */
-    border: 1px solid #FFD700;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px; /* Abstand zu den Buttons */
+    padding: 10px;
+    font-size: 1.1em;
+    border: 2px solid #FFD700; /* Goldener Rahmen */
+    border-radius: 10px; /* Abgerundete Ecken */
 }
 
 
