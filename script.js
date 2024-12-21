@@ -675,23 +675,39 @@ function zeigeAdminFunktionen() {
             const newAdminButtonsContainer = document.createElement("div");
             newAdminButtonsContainer.id = "admin-buttons-container";
 
+            // Button: Neue Quest erstellen
             const createButton = document.createElement("button");
             createButton.textContent = "Neue Quest erstellen";
             createButton.id = "createQuestButton";
             createButton.onclick = neueQuestErstellen;
 
+            // Button: Alle Quests zurücksetzen
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Alle Quests zurücksetzen";
             deleteButton.id = "deleteQuestsButton";
             deleteButton.onclick = questsZuruecksetzen;
 
+            // Button: Fähigkeiten eines Benutzers zurücksetzen
+            const resetAbilitiesButton = document.createElement("button");
+            resetAbilitiesButton.textContent = "Fähigkeiten eines Benutzers zurücksetzen";
+            resetAbilitiesButton.id = "resetAbilitiesButton";
+            resetAbilitiesButton.onclick = () => {
+                const spieler = prompt("Gib den Namen des Spielers ein, dessen Fähigkeiten zurückgesetzt werden sollen:");
+                if (spieler) {
+                    setzeFähigkeitenZurück(spieler);
+                }
+            };
+
+            // Button: Log der Spezialfähigkeiten löschen
             const resetLogButton = document.createElement("button");
             resetLogButton.textContent = "Log der Spezialfähigkeiten löschen";
             resetLogButton.id = "resetLogButton";
             resetLogButton.onclick = löscheSpezialfähigkeitenLog;
 
+            // Buttons hinzufügen
             newAdminButtonsContainer.appendChild(createButton);
             newAdminButtonsContainer.appendChild(deleteButton);
+            newAdminButtonsContainer.appendChild(resetAbilitiesButton);
             newAdminButtonsContainer.appendChild(resetLogButton);
 
             questbookContainer.appendChild(newAdminButtonsContainer);
@@ -713,6 +729,7 @@ function zeigeAdminFunktionen() {
         });
     }
 }
+
 
 
 function questsZuruecksetzen() {
