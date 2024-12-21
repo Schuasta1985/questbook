@@ -589,3 +589,12 @@ button:hover {
     border-color: #FFC107; /* Hellerer Goldton beim Fokus */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
 }
+
+#zauber-menu h3 {
+    color: #FFD700; /* Goldene Farbe für Sichtbarkeit */
+    font-size: 1.5em; /* Größere Schrift */
+    font-weight: bold; /* Fettschrift */
+    text-align: center; /* Zentrierung */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9); /* Dunkler Schatten für bessere Lesbarkeit */
+    margin-bottom: 20px; /* Abstand nach unten */
+}
