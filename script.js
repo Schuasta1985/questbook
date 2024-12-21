@@ -786,10 +786,17 @@ function zeigeAvatar() {
                     Zauber
                 </button>
             </div>
+            <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
+                    style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
+                           color: black; font-weight: bold; border: none; border-radius: 5px;
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
+                Spezialfähigkeiten
+            </button>
         `;
 
         avatarContainer.style.display = "flex";
-        avatarContainer.style.justifyContent = "center";
+        avatarContainer.style.flexDirection = "column";
+        avatarContainer.style.alignItems = "center";
         avatarContainer.style.marginTop = "20px";
     } else {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
@@ -800,7 +807,6 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
-
 
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
