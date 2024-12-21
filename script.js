@@ -1314,31 +1314,67 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
+    // 3 Sekunden Berechnung simulieren
     const randomWert = Math.random() * 100;
     const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-    const text = erfolg
-        ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
-        : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
+    const berechnungsOverlay = document.createElement("div");
+    berechnungsOverlay.id = "berechnung-overlay";
+    berechnungsOverlay.style.position = "fixed";
+    berechnungsOverlay.style.top = "0";
+    berechnungsOverlay.style.left = "0";
+    berechnungsOverlay.style.width = "100%";
+    berechnungsOverlay.style.height = "100%";
+    berechnungsOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    berechnungsOverlay.style.color = "#FFD700";
+    berechnungsOverlay.style.display = "flex";
+    berechnungsOverlay.style.alignItems = "center";
+    berechnungsOverlay.style.justifyContent = "center";
+    berechnungsOverlay.style.zIndex = "1000";
+    berechnungsOverlay.innerText = "Berechnung läuft...";
+    document.body.appendChild(berechnungsOverlay);
 
-    // Level-Kosten abziehen
-    level -= erfolg ? kosten : 0;
-    aktualisiereXPAnzeige();
+    setTimeout(() => {
+        document.body.removeChild(berechnungsOverlay);
 
-    // Logbuch aktualisieren
-    firebase.database().ref("aktionen").push({
-        fähigkeit,
-        ausführer: currentUser,
-        ziel: zielSpieler,
-        text,
-        erfolg,
-        zeitpunkt: new Date().toISOString(),
-    });
+        const text = erfolg
+            ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
+            : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
 
-    // Anzeige aktualisieren
-    ladeAktionenVonFirebase();
-    alert(text);
+        if (erfolg) {
+            level -= kosten;
+        }
+
+        aktualisiereXPAnzeige();
+
+        // Logbuch aktualisieren
+        const zeitpunkt = new Date().toLocaleString();
+        spezialfähigkeitSpeichern(currentUser, zielSpieler, fähigkeit, zeitpunkt);
+
+        // Animation bei Erfolg/Misserfolg
+        const animationOverlay = document.createElement("div");
+        animationOverlay.style.position = "fixed";
+        animationOverlay.style.top = "0";
+        animationOverlay.style.left = "0";
+        animationOverlay.style.width = "100%";
+        animationOverlay.style.height = "100%";
+        animationOverlay.style.backgroundColor = erfolg ? "rgba(0, 255, 0, 0.5)" : "rgba(255, 0, 0, 0.5)";
+        animationOverlay.style.display = "flex";
+        animationOverlay.style.alignItems = "center";
+        animationOverlay.style.justifyContent = "center";
+        animationOverlay.style.color = "#FFD700";
+        animationOverlay.style.fontSize = "2em";
+        animationOverlay.style.zIndex = "1000";
+        animationOverlay.innerText = erfolg ? "Erfolg!" : "Fehlgeschlagen!";
+        document.body.appendChild(animationOverlay);
+
+        setTimeout(() => {
+            document.body.removeChild(animationOverlay);
+            ladeAktionenLog(); // Log aktualisieren
+        }, 3000);
+    }, 3000); // Berechnung dauert 3 Sekunden
 }
+
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
