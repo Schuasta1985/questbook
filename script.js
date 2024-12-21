@@ -311,18 +311,9 @@ function ladeFortschritte(callback) {
     }
 }
 
-
 function täglicheHPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. HP-Regeneration übersprungen.");
-        return;
-    }
-
-    const heutigesDatum = new Date().toDateString();
-    const letzterTag = localStorage.getItem("letzteHPRegeneration");
-
-    if (letzterTag === heutigesDatum) {
-        console.log("HP wurde heute bereits regeneriert.");
         return;
     }
 
@@ -340,7 +331,7 @@ function täglicheHPRegeneration() {
                         .then(() => {
                             console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
                             aktualisiereHPLeiste(neueHP, daten.level);
-                            localStorage.setItem("letzteHPRegeneration", heutigesDatum);
+                            localStorage.setItem("letzteHPRegeneration", new Date().toDateString());
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
@@ -356,7 +347,6 @@ function täglicheHPRegeneration() {
             console.error("Fehler beim Abrufen der Fortschrittsdaten:", error);
         });
 }
-
 function täglicheMPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. MP-Regeneration übersprungen.");
@@ -385,6 +375,7 @@ function täglicheMPRegeneration() {
             console.error("Fehler beim Abrufen der MP-Daten:", error);
         });
 }
+
 
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
@@ -1521,6 +1512,22 @@ function setzeFähigkeitenZurück(spieler) {
         .catch((error) => {
             console.error("Fehler beim Zurücksetzen der Fähigkeiten:", error);
         });
+}
+
+
+function initialisiereBenutzerDaten(benutzername) {
+    const standardWerte = {
+        hp: 100,
+        maxHP: 100,
+        mp: 50,
+        maxMP: 50,
+        level: 1,
+        xp: 0,
+    };
+
+    firebase.database().ref(`benutzer/${benutzername}/fortschritte`).set(standardWerte)
+        .then(() => console.log(`Benutzerdaten für ${benutzername} initialisiert.`))
+        .catch((error) => console.error("Fehler beim Initialisieren der Benutzerdaten:", error));
 }
 
 
