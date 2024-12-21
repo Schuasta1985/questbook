@@ -801,6 +801,32 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
+function fügeSpezialfähigkeitenButtonHinzu() {
+    const avatarContainer = document.getElementById('avatar-container');
+    if (!avatarContainer) {
+        console.warn('Avatar-Container nicht gefunden!');
+        return;
+    }
+
+    // Spezialfähigkeiten-Button
+    const spezialButton = document.createElement('button');
+    spezialButton.textContent = 'Spezialfähigkeiten';
+    spezialButton.style.marginLeft = '20px';
+    spezialButton.style.padding = '10px 20px';
+    spezialButton.style.backgroundColor = '#FFD700';
+    spezialButton.style.color = '#000';
+    spezialButton.style.border = 'none';
+    spezialButton.style.borderRadius = '5px';
+    spezialButton.style.cursor = 'pointer';
+    spezialButton.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)';
+
+    // Event für Button
+    spezialButton.onclick = () => zeigeSpezialfähigkeitenMenu();
+
+    avatarContainer.style.display = 'flex';
+    avatarContainer.style.flexDirection = 'row'; // Button rechts vom Avatar
+    avatarContainer.appendChild(spezialButton);
+}
 
 
 function ausloggen() {
@@ -1258,6 +1284,129 @@ function löscheAlteAktionen() {
 setInterval(() => {
     löscheAlteAktionen();
 }, 24 * 60 * 60 * 1000); // Einmal täglich
+
+function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
+    if (level < kosten) {
+        alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
+        return;
+    }
+
+    const zielSpieler = prompt("Wen soll diese Fähigkeit betreffen? (Name eingeben)");
+    if (!zielSpieler) {
+        alert("Bitte wähle einen gültigen Spieler aus.");
+        return;
+    }
+
+    const randomWert = Math.random() * 100;
+    const erfolg = randomWert <= erfolgswahrscheinlichkeit;
+
+    const text = erfolg
+        ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
+        : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
+
+    // Level-Kosten abziehen
+    level -= erfolg ? kosten : 0;
+    aktualisiereXPAnzeige();
+
+    // Logbuch aktualisieren
+    firebase.database().ref("aktionen").push({
+        fähigkeit,
+        ausführer: currentUser,
+        ziel: zielSpieler,
+        text,
+        erfolg,
+        zeitpunkt: new Date().toISOString(),
+    });
+
+    // Anzeige aktualisieren
+    ladeAktionenVonFirebase();
+    alert(text);
+}
+
+function generiereLustigenText(fähigkeit, ausführer, ziel) {
+    const lustigeTexte = {
+        "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
+        "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
+        "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
+        "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
+        "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+    };
+    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
+}
+function zeigeSpezialfähigkeitenMenu() {
+    const spezialMenu = document.createElement('div');
+    spezialMenu.id = 'spezial-menu';
+    spezialMenu.style.position = 'absolute';
+    spezialMenu.style.top = '20%';
+    spezialMenu.style.left = '50%';
+    spezialMenu.style.transform = 'translate(-50%, -50%)';
+    spezialMenu.style.backgroundColor = 'white';
+    spezialMenu.style.border = '2px solid black';
+    spezialMenu.style.borderRadius = '10px';
+    spezialMenu.style.padding = '20px';
+    spezialMenu.style.zIndex = '1000';
+
+    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
+
+    // Dropdown-Menü für Zielspieler
+    const spielerDropdown = document.createElement('select');
+    spielerDropdown.id = 'zielspieler-dropdown';
+    spielerDropdown.style.marginBottom = '15px';
+
+    Object.keys(benutzerDaten).forEach((spieler) => {
+        if (spieler !== currentUser) {
+            const option = document.createElement('option');
+            option.value = spieler;
+            option.textContent = spieler;
+            spielerDropdown.appendChild(option);
+        }
+    });
+
+    spezialMenu.appendChild(spielerDropdown);
+
+    // Buttons für Fähigkeiten
+    const fähigkeiten = [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "Mach mir Kaiserschmarren", kosten: 3 },
+        { name: "Ich brauche das Auto", kosten: 4 },
+        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+    ];
+
+    fähigkeiten.forEach((fähigkeit) => {
+        const button = document.createElement('button');
+        button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
+        button.style.marginTop = '10px';
+        button.style.padding = '10px';
+        button.style.backgroundColor = '#FFD700';
+        button.style.color = '#000';
+        button.style.border = 'none';
+        button.style.borderRadius = '5px';
+        button.style.cursor = 'pointer';
+
+        button.onclick = () => {
+            const zielSpieler = spielerDropdown.value;
+            if (!zielSpieler) {
+                alert('Bitte wähle einen Spieler aus!');
+                return;
+            }
+
+            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
+            document.body.removeChild(spezialMenu);
+        };
+
+        spezialMenu.appendChild(button);
+    });
+
+    // Schließen-Button
+    const schließenButton = document.createElement('button');
+    schließenButton.textContent = 'Schließen';
+    schließenButton.style.marginTop = '20px';
+    schließenButton.onclick = () => document.body.removeChild(spezialMenu);
+
+    spezialMenu.appendChild(schließenButton);
+    document.body.appendChild(spezialMenu);
+}
 
 
 aktualisiereLayout();
