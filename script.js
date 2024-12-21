@@ -312,10 +312,11 @@ function ladeFortschritte(callback) {
 }
 
 
-
-// Tägliche HP-Regeneration
 function täglicheHPRegeneration() {
-    if (!currentUser) return; // Sicherstellen, dass ein Benutzer angemeldet ist
+    if (!currentUser) {
+        console.warn("Kein Benutzer angemeldet. HP-Regeneration übersprungen.");
+        return;
+    }
 
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
@@ -337,47 +338,53 @@ function täglicheHPRegeneration() {
 
                     firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
                         .then(() => {
-                            console.log(`Tägliche HP-Regeneration abgeschlossen: ${aktuelleHP} -> ${neueHP}`);
+                            console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
                             aktualisiereHPLeiste(neueHP, daten.level);
                             localStorage.setItem("letzteHPRegeneration", heutigesDatum);
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
                         });
+                } else {
+                    console.log("HP ist bereits maximal.");
                 }
+            } else {
+                console.error("Keine Fortschrittsdaten gefunden.");
             }
         })
         .catch((error) => {
-            console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+            console.error("Fehler beim Abrufen der Fortschrittsdaten:", error);
         });
 }
 
-
 function täglicheMPRegeneration() {
-    if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const daten = snapshot.val();
-                    const maxMP = berechneMaxMP(daten.level);
-
-                    // MP auf Maximum setzen
-                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
-                        .then(() => {
-                            console.log(`Tägliche MP-Regeneration abgeschlossen: ${maxMP}`);
-                            aktualisiereMPLeiste(maxMP, daten.level);
-                        })
-                        .catch((error) => {
-                            console.error("Fehler beim Speichern der regenerierten MP:", error);
-                        });
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Laden der MP-Daten:", error);
-            });
+    if (!currentUser) {
+        console.warn("Kein Benutzer angemeldet. MP-Regeneration übersprungen.");
+        return;
     }
-}
 
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                const maxMP = berechneMaxMP(daten.level);
+
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                    .then(() => {
+                        console.log(`MP erfolgreich regeneriert: ${maxMP}`);
+                        aktualisiereMPLeiste(maxMP, daten.level);
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der regenerierten MP:", error);
+                    });
+            } else {
+                console.error("Keine Fortschrittsdaten gefunden.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Abrufen der MP-Daten:", error);
+        });
+}
 
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
@@ -1268,22 +1275,14 @@ function ladeAktionenLog() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
-                    const aktionDatum = new Date(aktion.zeitpunkt).toDateString();
-                    const heute = new Date().toDateString();
-
-                    // Nur Aktionen von heute anzeigen
-                    if (aktionDatum === heute) {
-                        const zeit = new Date(aktion.zeitpunkt).toLocaleTimeString(); // Nur Uhrzeit anzeigen
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td class="aktionen-cell">${zeit}</td>
-                            <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
-                            <td class="aktionen-cell">${aktion.ziel || "Unbekannt"}</td>
-                            <td class="aktionen-cell">${aktion.fähigkeit || "Unbekannt"}</td>
-                            <td class="aktionen-cell">${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
-                        `;
-                        aktionenTabelle.appendChild(row);
-                    }
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${aktion.zeitpunkt ? aktion.zeitpunkt.split(" ")[1] : "Unbekannt"}</td>
+                        <td>${aktion.benutzer || "Unbekannt"}</td>
+                        <td>${aktion.ziel || "Unbekannt"}</td>
+                        <td>${aktion.fähigkeit || "Unbekannt"} - ${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
+                    `;
+                    aktionenTabelle.appendChild(row);
                 });
             } else {
                 console.log("Keine Aktionen gefunden.");
@@ -1293,6 +1292,7 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
