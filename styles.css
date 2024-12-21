@@ -493,54 +493,40 @@ button:hover {
 
 /* Verbesserte Anpassung der Tabelle im Stil der Benutzerübersicht */
 #aktionen-tabelle {
-    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund wie Benutzerübersicht */
+    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund */
     color: #FFD700; /* Goldene Schriftfarbe */
-    border-collapse: collapse; /* Entfernt doppelte Ränder */
-    width: 50%; /* Schmale Breite für kompaktere Darstellung */
-    margin: 20px auto; /* Zentriert die Tabelle */
-    border: 2px solid #FFD700; /* Goldene Umrandung */
-    border-radius: 10px; /* Abgerundete Ecken */
-    overflow: hidden; /* Rundung bleibt erhalten */
+    border-collapse: collapse;
+    width: 70%; /* Angemessene Breite */
+    margin: 20px auto; /* Zentrieren */
+    border: 2px solid #FFD700; /* Goldene Rahmenfarbe */
+    border-radius: 10px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Leichter Schatten */
 }
 
 #aktionen-tabelle th, #aktionen-tabelle td {
     border: 1px solid #FFD700; /* Goldene Rahmenfarbe */
-    padding: 10px; /* Polsterung für besseren Abstand */
-    text-align: center; /* Zentrierter Text */
-    font-size: 0.9em; /* Einheitliche, etwas kleinere Schriftgröße */
-    font-family: Arial, sans-serif; /* Gleiche Schriftart wie Benutzerübersicht */
+    padding: 10px; /* Abstand */
+    text-align: center;
+    font-size: 1em;
+    font-family: Arial, sans-serif; /* Einheitliche Schriftart */
 }
 
 #aktionen-tabelle th {
-    background-color: rgba(50, 50, 50, 0.9); /* Dunkler Hintergrund für die Kopfzeile */
+    background-color: rgba(50, 50, 50, 0.9); /* Dunkler Kopfzeilen-Hintergrund */
     color: #FFD700; /* Goldene Schriftfarbe */
-    font-weight: bold; /* Fett für Überschriften */
-    text-transform: uppercase; /* Großbuchstaben wie Benutzerübersicht */
+    text-transform: uppercase;
 }
 
 #aktionen-tabelle tr:nth-child(even) {
-    background-color: rgba(44, 44, 44, 0.9); /* Abwechselnde Farben für Zeilen */
+    background-color: rgba(44, 44, 44, 0.9); /* Abwechselnde Zeilenfarbe */
 }
 
 #aktionen-tabelle tr:hover {
-    background-color: rgba(255, 215, 0, 0.2); /* Heller Goldton bei Hover-Effekt */
+    background-color: rgba(255, 215, 0, 0.2); /* Hover-Effekt */
 }
 
-/* Verbesserung des Textes \"Aktionen der Spezialfähigkeiten\" */
-#aktionen-titel {
-    text-align: center;
-    font-size: 1.2em; /* Vergrößerung der Schrift */
-    color: #FFD700; /* Goldene Schriftfarbe */
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* Kontrastreicher Text */
-    font-family: Arial, sans-serif; /* Einheitliche Schriftart */
-    margin-bottom: 10px; /* Abstand zur Tabelle */
-}
-.aktionen-cell {
-    border: 1px solid #FFD700;
-    padding: 8px;
-    text-align: center;
-    color: #FFD700;
-    background-color: rgba(33, 37, 41, 0.9); /* Dunkler Hintergrund */
+#aktionen-tabelle, #aktionen-tabelle th, #aktionen-tabelle td {
+    all: unset;
+    all: revert; /* Entfernt alle Standardstile */
 }
 
