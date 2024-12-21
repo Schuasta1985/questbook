@@ -1054,20 +1054,21 @@ function aktualisiereLayout() {
     }
 }
 function zeigeZauberMenu() {
+    // Menücontainer erstellen
     const zauberMenu = document.createElement("div");
     zauberMenu.id = "zauber-menu";
-    zauberMenu.style.position = "absolute";
-    zauberMenu.style.top = "50%";
-    zauberMenu.style.left = "50%";
-    zauberMenu.style.transform = "translate(-50%, -50%)";
-    zauberMenu.style.backgroundColor = "white";
-    zauberMenu.style.padding = "20px";
-    zauberMenu.style.border = "2px solid black";
-    zauberMenu.style.borderRadius = "10px";
+    zauberMenu.classList.add("menu"); // CSS-Klasse für Styling
 
+    // Überschrift hinzufügen
+    const heading = document.createElement("h3");
+    heading.textContent = "Zauber";
+    heading.classList.add("menu-heading"); // Optional: Überschriftstyling
+    zauberMenu.appendChild(heading);
+
+    // Dropdown-Menü für Spieler erstellen
     const spielerDropdown = document.createElement("select");
     spielerDropdown.id = "spieler-dropdown";
-    spielerDropdown.style.marginBottom = "15px";
+    spielerDropdown.classList.add("dropdown"); // CSS-Klasse für Styling
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
@@ -1077,16 +1078,30 @@ function zeigeZauberMenu() {
             spielerDropdown.appendChild(option);
         }
     });
-
-    zauberMenu.innerHTML = `
-        <h3>Zauber</h3>
-    `;
     zauberMenu.appendChild(spielerDropdown);
-    zauberMenu.innerHTML += `
-        <button onclick="schadenZufügen()">Schaden zufügen</button>
-        <button onclick="heilen()">Heilen</button>
-        <button onclick="document.body.removeChild(document.getElementById('zauber-menu'))">Schließen</button>
-    `;
+
+    // Button: Schaden zufügen
+    const schadenButton = document.createElement("button");
+    schadenButton.textContent = "Schaden zufügen";
+    schadenButton.classList.add("menu-button"); // CSS-Klasse für Styling
+    schadenButton.onclick = schadenZufügen;
+    zauberMenu.appendChild(schadenButton);
+
+    // Button: Heilen
+    const heilenButton = document.createElement("button");
+    heilenButton.textContent = "Heilen";
+    heilenButton.classList.add("menu-button"); // CSS-Klasse für Styling
+    heilenButton.onclick = heilen;
+    zauberMenu.appendChild(heilenButton);
+
+    // Button: Schließen
+    const schließenButton = document.createElement("button");
+    schließenButton.textContent = "Schließen";
+    schließenButton.classList.add("menu-button"); // CSS-Klasse für Styling
+    schließenButton.onclick = () => document.body.removeChild(zauberMenu);
+    zauberMenu.appendChild(schließenButton);
+
+    // Menü zum Dokument hinzufügen
     document.body.appendChild(zauberMenu);
 }
 
@@ -1561,6 +1576,17 @@ function löscheSpezialfähigkeitenLog() {
             });
     }
 }
+function zeigeOverlay(menuElement) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
 
+    overlay.onclick = () => {
+        document.body.removeChild(menuElement);
+        document.body.removeChild(overlay);
+    };
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(menuElement);
+}
 
 aktualisiereLayout();
