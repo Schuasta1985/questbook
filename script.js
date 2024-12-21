@@ -1254,16 +1254,22 @@ function ladeAktionenLog() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
-                    const row = document.createElement("tr");
-                    const zeit = new Date(aktion.zeitpunkt).toLocaleTimeString(); // Nur Uhrzeit anzeigen
-                    row.innerHTML = `
-                        <td class="aktionen-cell">${zeit}</td>
-                        <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
-                        <td class="aktionen-cell">${aktion.ziel || "Unbekannt"}</td>
-                        <td class="aktionen-cell">${aktion.fähigkeit || "Unbekannt"}</td>
-                        <td class="aktionen-cell">${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
-                    `;
-                    aktionenTabelle.appendChild(row);
+                    const aktionDatum = new Date(aktion.zeitpunkt).toDateString();
+                    const heute = new Date().toDateString();
+
+                    // Nur Aktionen von heute anzeigen
+                    if (aktionDatum === heute) {
+                        const zeit = new Date(aktion.zeitpunkt).toLocaleTimeString(); // Nur Uhrzeit anzeigen
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td class="aktionen-cell">${zeit}</td>
+                            <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
+                            <td class="aktionen-cell">${aktion.ziel || "Unbekannt"}</td>
+                            <td class="aktionen-cell">${aktion.fähigkeit || "Unbekannt"}</td>
+                            <td class="aktionen-cell">${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
+                        `;
+                        aktionenTabelle.appendChild(row);
+                    }
                 });
             } else {
                 console.log("Keine Aktionen gefunden.");
@@ -1314,12 +1320,11 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    // Prüfen, ob die Fähigkeit gesperrt ist
-    const heute = new Date().toDateString();
     const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
     firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
         .then((snapshot) => {
-            if (snapshot.exists() && new Date(snapshot.val()).toDateString() === heute) {
+            const heute = new Date();
+            if (snapshot.exists() && heute < new Date(snapshot.val())) {
                 alert("Diese Fähigkeit ist noch gesperrt.");
                 return;
             }
@@ -1328,18 +1333,17 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             const randomWert = Math.random() * 100;
             const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-            const text = erfolg
-                ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
-                : `${zielSpieler} hat es versucht, aber die Magie ist fehlgeschlagen.`;
-
-            // Level-Kosten abziehen
-            level -= erfolg ? kosten : 0;
+            // Level-Kosten abziehen, unabhängig vom Erfolg
+            level -= kosten;
             aktualisiereXPAnzeige();
 
             // Sperrzeit setzen
             const sperrdatum = new Date();
             sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
             firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
+
+            // Animation zeigen
+            zeigeAnimation(erfolg);
 
             // Logbuch aktualisieren
             firebase.database().ref("aktionen").push({
@@ -1352,10 +1356,8 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
 
             // Anzeige aktualisieren
             ladeAktionenLog();
-            alert(text);
         });
 }
-
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
@@ -1463,4 +1465,31 @@ function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
             callback(false);
         });
 }
+function zeigeAnimation(erfolg) {
+    const animationContainer = document.createElement("div");
+    animationContainer.style.position = "fixed";
+    animationContainer.style.top = "0";
+    animationContainer.style.left = "0";
+    animationContainer.style.width = "100%";
+    animationContainer.style.height = "100%";
+    animationContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    animationContainer.style.zIndex = "1000";
+    animationContainer.style.display = "flex";
+    animationContainer.style.justifyContent = "center";
+    animationContainer.style.alignItems = "center";
+
+    const animationImage = document.createElement("img");
+    animationImage.src = `avatars/${erfolg ? "Erfolg.gif" : "Misserfolg.gif"}`;
+    animationImage.style.maxWidth = "50%";
+    animationImage.style.maxHeight = "50%";
+
+    animationContainer.appendChild(animationImage);
+    document.body.appendChild(animationContainer);
+
+    setTimeout(() => {
+        document.body.removeChild(animationContainer);
+    }, 3000); // Animation verschwindet nach 3 Sekunden
+}
+
+
 aktualisiereLayout();
