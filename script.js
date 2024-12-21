@@ -1415,7 +1415,6 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
 
-
 function zeigeSpezialfähigkeitenMenu() {
     const spezialMenu = document.createElement("div");
     spezialMenu.id = "spezial-menu";
@@ -1427,7 +1426,6 @@ function zeigeSpezialfähigkeitenMenu() {
             <h3>Spezialfähigkeiten</h3>
             <select id="zielspieler-dropdown" class="spieler-dropdown"></select>
             <div id="spezial-buttons-container"></div>
-            <button class="menu-close-button" onclick="document.body.removeChild(document.getElementById('spezial-menu'))">Schließen</button>
         </div>
     `;
 
@@ -1486,9 +1484,16 @@ function zeigeSpezialfähigkeitenMenu() {
     });
 
     document.body.appendChild(spezialMenu);
-}
 
-    
+    // Overlay hinzufügen
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    overlay.onclick = () => {
+        document.body.removeChild(spezialMenu);
+        document.body.removeChild(overlay);
+    };
+    document.body.appendChild(overlay);
+}
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
