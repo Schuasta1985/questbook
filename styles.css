@@ -462,6 +462,10 @@ button:hover {
 }
 
 #zauber-menu {
+    display: flex;
+    flex-wrap: wrap; /* Buttons umbrechen, wenn nicht genug Platz vorhanden ist */
+    justify-content: center; /* Buttons zentrieren */
+    gap: 10px; /* Abstand zwischen Buttons */
     position: absolute;
     top: 50%;
     left: calc(100% + 20px); /* Rechts neben dem Avatar */
@@ -470,26 +474,32 @@ button:hover {
     border: 1px solid #FFD700;
     border-radius: 10px;
     padding: 15px;
-    width: 250px;
+    width: 250px; /* Maximale Breite */
+    max-width: 90%; /* Passt sich auf kleinen Bildschirmen an */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Sicherstellen, dass es oben bleibt */
 }
 
 #zauber-menu button {
-    margin: 10px 0;
-    padding: 10px;
+    flex: 1 1 calc(50% - 20px); /* Zwei Buttons pro Zeile */
+    margin: 10px 5px; /* Abstand um die Buttons */
+    padding: 10px; /* Polsterung innerhalb der Buttons */
+    font-size: 1rem; /* Angenehme Schriftgröße */
     background-color: #FFD700;
     color: black;
     font-weight: bold;
     border: none;
     border-radius: 5px;
-    width: 100%;
     cursor: pointer;
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 #zauber-menu button:hover {
-    background-color: #FFC107;
+    background-color: #FFC107; /* Heller bei Hover */
+    transform: scale(1.05); /* Leichtes Vergrößern */
 }
+
 /* Verbesserte Tabelle mit dunklem Stil */
 #aktionen-tabelle {
     background-color: rgba(33, 37, 41, 0.95); /* Dunkler Hintergrund */
@@ -557,5 +567,16 @@ button:hover {
     border: none;
 }
 
+#zauber-menu select {
+    width: 100%; /* Volle Breite */
+    padding: 10px; /* Polsterung */
+    font-size: 1rem; /* Angenehme Schriftgröße */
+    margin-bottom: 10px; /* Abstand zum nächsten Element */
+    border: 1px solid #FFD700;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+}
 
 
