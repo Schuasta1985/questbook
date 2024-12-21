@@ -1414,15 +1414,17 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
-function zeigeSpezialfähigkeitenMenu() {
-    const spezialMenu = document.createElement('div');
-    spezialMenu.id = 'spezial-menu';
 
-    // Standard-HTML Struktur für das Menü
+
+function zeigeSpezialfähigkeitenMenu() {
+    const spezialMenu = document.createElement("div");
+    spezialMenu.id = "spezial-menu";
+
+    // HTML-Struktur anlegen
     spezialMenu.innerHTML = `
         <div class="menu-overlay" id="overlay"></div>
         <div class="menu-container">
-            <h3>Wähle deine Spezialfähigkeit aus:</h3>
+            <h3>Spezialfähigkeiten</h3>
             <select id="zielspieler-dropdown" class="spieler-dropdown"></select>
             <div id="spezial-buttons-container"></div>
             <button class="menu-close-button" onclick="document.body.removeChild(document.getElementById('spezial-menu'))">Schließen</button>
@@ -1430,17 +1432,17 @@ function zeigeSpezialfähigkeitenMenu() {
     `;
 
     // Spieler-Dropdown auffüllen
-    const spielerDropdown = spezialMenu.querySelector('#zielspieler-dropdown');
+    const spielerDropdown = spezialMenu.querySelector("#zielspieler-dropdown");
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
-            const option = document.createElement('option');
+            const option = document.createElement("option");
             option.value = spieler;
             option.textContent = spieler;
             spielerDropdown.appendChild(option);
         }
     });
 
-    // Buttons für Spezialfähigkeiten erstellen
+    // Spezialfähigkeiten-Buttons hinzufügen
     const spezialFähigkeiten = {
         Thomas: [
             { name: "Massiere mich", kosten: 2 },
@@ -1463,21 +1465,21 @@ function zeigeSpezialfähigkeitenMenu() {
         ],
     };
 
-    const fähigkeitenButtonsContainer = spezialMenu.querySelector('#spezial-buttons-container');
+    const fähigkeitenButtonsContainer = spezialMenu.querySelector("#spezial-buttons-container");
     const fähigkeiten = spezialFähigkeiten[currentUser] || [];
 
     fähigkeiten.forEach((fähigkeit) => {
-        const button = document.createElement('button');
+        const button = document.createElement("button");
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.className = 'fähigkeiten-button';
+        button.className = "fähigkeiten-button";
         button.onclick = () => {
             const zielSpieler = spielerDropdown.value;
             if (!zielSpieler) {
-                alert('Bitte wähle einen Spieler aus!');
+                alert("Bitte wähle einen Spieler aus!");
                 return;
             }
 
-            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
+            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - fähigkeit.kosten * 10);
             document.body.removeChild(spezialMenu);
         };
         fähigkeitenButtonsContainer.appendChild(button);
@@ -1486,33 +1488,7 @@ function zeigeSpezialfähigkeitenMenu() {
     document.body.appendChild(spezialMenu);
 }
 
-
-function getSpezialfähigkeiten(benutzername) {
-    if (benutzername === "Thomas") {
-        return [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir Kaiserschmarren", kosten: 3 },
-            { name: "Ich brauche das Auto", kosten: 4 },
-            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-        ];
-    } else if (benutzername === "Elke") {
-        return [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir was zu essen", kosten: 3 },
-            { name: "Wunsch frei", kosten: 5 },
-        ];
-    } else if (benutzername === "Jamie") {
-        return [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "30 Min Gaming Zeit", kosten: 2 },
-            { name: "Unendliche Spielzeit", kosten: 5 },
-        ];
-    }
-    return [];
-}
+    
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
