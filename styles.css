@@ -163,11 +163,10 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
-
 button:hover {
-    background-color: #B22222; /* Sattes Rot */
+    background-color: #FFC107;
+    transform: scale(1.05);
 }
-
 /* Admin Login */
 .admin-login {
     position: fixed;
@@ -527,11 +526,45 @@ tr:hover {
     border-radius: 10px;
 }
 button {
-    margin: 10px 0;
-    padding: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
     background-color: #FFD700;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s, transform 0.2s;
 }
 
+#aktionen-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFD700;
+}
+
+#aktionen-tabelle th, #aktionen-tabelle td {
+    border: 1px solid #FFD700;
+    padding: 12px 15px;
+}
+
+#aktionen-tabelle th {
+    background-color: #333;
+    color: #FFD700;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#aktionen-tabelle tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#aktionen-tabelle tr:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
