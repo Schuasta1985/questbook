@@ -1255,6 +1255,7 @@ function ladeAktionenLog() {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
+                    row.className = "aktionen-row"; // Neue Testklasse
                     row.innerHTML = `
                         <td class="aktionen-cell">${aktion.zeitpunkt || "Unbekannt"}</td>
                         <td class="aktionen-cell">${aktion.benutzer || "Unbekannt"}</td>
