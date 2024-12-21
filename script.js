@@ -912,85 +912,59 @@ function zeigeBenutzerAufStartseite() {
     const benutzerContainer = document.getElementById("benutzer-container");
     benutzerContainer.innerHTML = "";
 
-    const table = document.createElement("table");
-    table.style.width = "100%";
-    table.style.borderCollapse = "collapse";
-
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-
-    const headers = ["Avatar", "Name", "Level", "HP", "MP"];
-    headers.forEach((headerText) => {
-        const th = document.createElement("th");
-        th.textContent = headerText;
-        th.style.border = "1px solid gold";
-        th.style.padding = "10px";
-        th.style.textAlign = "center";
-        th.style.backgroundColor = "rgba(255, 215, 0, 0.7)";
-        th.style.color = "black";
-        headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    const tbody = document.createElement("tbody");
-
     for (const [benutzername, daten] of Object.entries(benutzerDaten)) {
-        const row = document.createElement("tr");
+        const benutzerElement = document.createElement("div");
+        benutzerElement.className = "benutzer-item";
 
-        // Avatar
-        const avatarCell = document.createElement("td");
         const avatarElement = document.createElement("video");
         avatarElement.src = getAvatarForUser(benutzername);
         avatarElement.autoplay = true;
         avatarElement.loop = true;
         avatarElement.muted = true;
         avatarElement.style.width = "100px";
-        avatarCell.appendChild(avatarElement);
-        avatarCell.style.border = "1px solid gold";
-        avatarCell.style.textAlign = "center";
-        row.appendChild(avatarCell);
 
-        // Name
-        const nameCell = document.createElement("td");
-        nameCell.textContent = benutzername;
-        nameCell.style.border = "1px solid gold";
-        nameCell.style.textAlign = "center";
-        nameCell.style.fontWeight = "bold";
-        nameCell.style.color = "#FFD700";
-        row.appendChild(nameCell);
+        const nameElement = document.createElement("h3");
+        nameElement.textContent = benutzername;
 
-        // Level
-        const levelCell = document.createElement("td");
-        levelCell.textContent = `Level: ${daten.fortschritte?.level || 1}`;
-        levelCell.style.border = "1px solid gold";
-        levelCell.style.textAlign = "center";
-        row.appendChild(levelCell);
+        const levelElement = document.createElement("div");
+        levelElement.textContent = `Level: ${daten.fortschritte?.level || 1}`;
+        levelElement.style.border = "2px solid gold";
+        levelElement.style.padding = "5px";
+        levelElement.style.borderRadius = "5px";
+        levelElement.style.textAlign = "center";
 
-        // HP
-        const hpCell = document.createElement("td");
-        const aktuelleHP = daten.fortschritte?.hp || 0;
-        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
-        hpCell.textContent = `${aktuelleHP} / ${maxHP} HP`;
-        hpCell.style.border = "1px solid gold";
-        hpCell.style.textAlign = "center";
-        row.appendChild(hpCell);
-
-        // MP
-        const mpCell = document.createElement("td");
+        const mpElement = document.createElement("div");
+        mpElement.className = "mp-bar";
         const aktuelleMP = daten.fortschritte?.mp || 0;
-        const maxMP = berechneMaxMP(daten.fortschritte?.level || 1);
-        mpCell.textContent = `${aktuelleMP} / ${maxMP} MP`;
-        mpCell.style.border = "1px solid gold";
-        mpCell.style.textAlign = "center";
-        row.appendChild(mpCell);
+        const maxMP = daten.fortschritte?.maxMP || berechneMaxMP(daten.fortschritte?.level || 1);
+        const mpProzent = (aktuelleMP / maxMP) * 100;
+        mpElement.innerHTML = `
+            <div class="progress" style="width: ${mpProzent}%; background-color: blue;"></div>
+            <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
+        `;
+        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
 
-        tbody.appendChild(row);
+        const hpElement = document.createElement("div");
+        hpElement.className = "hp-bar";
+        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
+        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
+        const hpProzent = (aktuelleHP / maxHP) * 100;
+        hpElement.innerHTML = `
+            <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
+            <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
+        `;
+        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
+
+        benutzerElement.appendChild(avatarElement);
+        benutzerElement.appendChild(nameElement);
+        benutzerElement.appendChild(levelElement);
+        benutzerElement.appendChild(hpElement);
+        benutzerElement.appendChild(mpElement);
+
+        benutzerContainer.appendChild(benutzerElement);
     }
-
-    table.appendChild(tbody);
-    benutzerContainer.appendChild(table);
 }
+
 function getAvatarForUser(user) {
     if (user === "Thomas") {
         return "avatars/thomas.mp4";
