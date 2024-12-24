@@ -1294,7 +1294,7 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
         benutzer: benutzer,
         ziel: ziel,
         fähigkeit: fähigkeit,
-        zeitpunkt: zeitpunkt,
+        zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
     }).then(() => {
         console.log("Aktion erfolgreich in Firebase gespeichert.");
         ladeAktionenLog();
@@ -1302,6 +1302,7 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
         console.error("Fehler beim Speichern der Aktion:", error);
     });
 }
+
 
 function ladeAktionenLog() {
     const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
@@ -1352,11 +1353,10 @@ function ladeAktionenLog() {
 function löscheAlteAktionen() {
     console.log("löscheAlteAktionen() gestartet");
 
-    // Mitternacht von heute
-    const mitternacht = new Date();
-    mitternacht.setHours(0, 0, 0, 0);
+    // Mitternacht in UTC
+    const mitternachtUTC = new Date();
+    mitternachtUTC.setUTCHours(0, 0, 0, 0);
 
-    // Aktionen aus Firebase abrufen
     firebase.database().ref("aktionen").get().then((snapshot) => {
         if (snapshot.exists()) {
             const aktionen = snapshot.val();
@@ -1364,8 +1364,8 @@ function löscheAlteAktionen() {
                 const aktion = aktionen[key];
                 const zeitpunkt = new Date(aktion.zeitpunkt);
 
-                // Lösche Aktionen, die vor Mitternacht erstellt wurden
-                if (zeitpunkt < mitternacht) {
+                // Lösche Aktionen, die vor Mitternacht UTC erstellt wurden
+                if (zeitpunkt < mitternachtUTC) {
                     firebase.database().ref(`aktionen/${key}`).remove()
                         .then(() => console.log(`Aktion ${key} vor Mitternacht erfolgreich gelöscht.`))
                         .catch((error) => console.error(`Fehler beim Löschen von Aktion ${key}:`, error));
@@ -1378,14 +1378,6 @@ function löscheAlteAktionen() {
         console.error("Fehler beim Abrufen der Aktionen:", error);
     });
 }
-
-// Automatischer Aufruf jede Minute
-setInterval(() => {
-    const jetzt = new Date();
-    if (jetzt.getHours() === 0 && jetzt.getMinutes() === 0) {
-        löscheAlteAktionen();
-    }
-}, 60 * 1000); // Jede Minute prüfen
 
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
