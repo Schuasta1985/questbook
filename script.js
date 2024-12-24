@@ -1156,16 +1156,14 @@ function schadenZufügen() {
                     return;
                 }
 
-                // MP abziehen
                 const neueMP = daten.mp - schaden;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
-                // Zielspieler Schaden zufügen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
                             const zielDaten = zielSnapshot.val();
-                            const neueHP = Math.max(0, zielDaten.hp - schaden); // Verhindert negative HP
+                            const neueHP = Math.max(0, zielDaten.hp - schaden);
 
                             const aktion = {
                                 typ: "schaden",
@@ -1176,20 +1174,16 @@ function schadenZufügen() {
                                 zeitpunkt: new Date().toISOString(),
                             };
 
-                            // Aktion speichern
                             firebase.database().ref("aktionen").push(aktion);
 
-                            // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
-                            // Log-Eintrag
-                            ladeAktionenLog();
+                            ladeAktionenSpezialfähigkeiten();
                         }
                     });
             }
         });
 }
-
 function heilen() {
     const zielSpieler = document.getElementById("spieler-dropdown").value;
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
@@ -1214,11 +1208,9 @@ function heilen() {
                     return;
                 }
 
-                // MP abziehen
                 const neueMP = daten.mp - heilung;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
-                // Zielspieler heilen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
@@ -1230,28 +1222,21 @@ function heilen() {
                                 typ: "heilung",
                                 wert: heilung,
                                 von: currentUser,
+                                ziel: zielSpieler,
                                 begründung: begründung,
                                 zeitpunkt: new Date().toISOString(),
                             };
 
-                            // Aktion speichern
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+                            firebase.database().ref("aktionen").push(aktion);
 
-                            // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
-                            // Log-Eintrag
-                            logbuchEintrag(
-                                `Heilung (${heilung} HP)`,
-                                zielSpieler,
-                                `Begründung: ${begründung}`
-                            );
+                            ladeAktionenSpezialfähigkeiten();
                         }
                     });
             }
         });
 }
-
 
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
@@ -1291,22 +1276,23 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
-function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
+function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ = "spezial") {
+    // Aktionstyp standardmäßig auf "spezial" setzen, kann aber auch "zauber" sein
     firebase.database().ref("aktionen").push({
         benutzer: benutzer,
         ziel: ziel,
         fähigkeit: fähigkeit,
+        typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
         zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
     }).then(() => {
-        console.log("Aktion erfolgreich in Firebase gespeichert.");
-        ladeAktionenLog();
+        console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
+        ladeAktionenSpezialfähigkeiten(); // Aktualisiere Tabelle der Spezialfähigkeiten
     }).catch((error) => {
         console.error("Fehler beim Speichern der Aktion:", error);
     });
 }
 
-
-function ladeAktionenLog() {
+function ladeAktionenSpezialfähigkeiten() {
     const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
 
     if (!aktionenTabelle) {
@@ -1321,21 +1307,24 @@ function ladeAktionenLog() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
-                    const row = document.createElement("tr");
+                    // Nur Aktionen des Typs "schaden" und "heilung" anzeigen
+                    if (aktion.typ === "schaden" || aktion.typ === "heilung") {
+                        const row = document.createElement("tr");
 
-                    const zeitpunkt = aktion.zeitpunkt
-                        ? new Date(aktion.zeitpunkt).toLocaleString()
-                        : "Unbekannt";
+                        const zeitpunkt = aktion.zeitpunkt
+                            ? new Date(aktion.zeitpunkt).toLocaleString()
+                            : "Unbekannt";
 
-                    row.innerHTML = `
-                        <td>${zeitpunkt}</td>
-                        <td>${aktion.von || "Unbekannt"}</td>
-                        <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.typ}: ${aktion.wert} <br> 
-                            Grund: ${aktion.begründung || "Keine Begründung"}
-                        </td>
-                    `;
-                    aktionenTabelle.appendChild(row);
+                        row.innerHTML = `
+                            <td>${zeitpunkt}</td>
+                            <td>${aktion.von || "Unbekannt"}</td>
+                            <td>${aktion.ziel || "Unbekannt"}</td>
+                            <td>${aktion.typ === "schaden" ? "Schaden" : "Heilung"}: ${aktion.wert} HP<br> 
+                                Grund: ${aktion.begründung || "Keine Begründung"}
+                            </td>
+                        `;
+                        aktionenTabelle.appendChild(row);
+                    }
                 });
             } else {
                 console.log("Keine Aktionen gefunden.");
@@ -1345,6 +1334,7 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
 
 function löscheAlteAktionen() {
     console.log("löscheAlteAktionen() gestartet");
