@@ -54,7 +54,6 @@ function prüfeTäglicheRegeneration() {
     if (letzterTag !== heutigesDatum) {
         täglicheHPRegeneration();
         täglicheMPRegeneration();
-        löscheAlteAktionen(); // Alte Aktionen überprüfen und löschen
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
 }
@@ -1394,36 +1393,6 @@ function ladeAktionenSpezialfähigkeiten() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
-function löscheAlteAktionen() {
-    console.log("löscheAlteAktionen() gestartet");
-
-    // Mitternacht in UTC
-    const mitternachtUTC = new Date();
-    mitternachtUTC.setUTCHours(0, 0, 0, 0);
-
-    firebase.database().ref("aktionen").get().then((snapshot) => {
-        if (snapshot.exists()) {
-            const aktionen = snapshot.val();
-            Object.keys(aktionen).forEach((key) => {
-                const aktion = aktionen[key];
-                const zeitpunkt = new Date(aktion.zeitpunkt);
-
-                // Lösche Aktionen, die vor Mitternacht UTC erstellt wurden
-                if (zeitpunkt < mitternachtUTC) {
-                    firebase.database().ref(`aktionen/${key}`).remove()
-                        .then(() => console.log(`Aktion ${key} vor Mitternacht erfolgreich gelöscht.`))
-                        .catch((error) => console.error(`Fehler beim Löschen von Aktion ${key}:`, error));
-                }
-            });
-        } else {
-            console.log("Keine alten Aktionen zum Löschen gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Abrufen der Aktionen:", error);
-    });
-}
-
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
