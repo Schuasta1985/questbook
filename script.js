@@ -1349,10 +1349,13 @@ function ladeAktionenLog() {
 }
 
 function löscheAlteAktionen() {
-    console.log("löscheAlteAktionen() aufgerufen");
-    const mitternacht = new Date();
-    mitternacht.setHours(0, 0, 0, 0); // Setze die Zeit auf Mitternacht
+    console.log("löscheAlteAktionen() gestartet");
 
+    // Mitternacht von heute
+    const mitternacht = new Date();
+    mitternacht.setHours(0, 0, 0, 0);
+
+    // Aktionen aus Firebase abrufen
     firebase.database().ref("aktionen").get().then((snapshot) => {
         if (snapshot.exists()) {
             const aktionen = snapshot.val();
@@ -1360,28 +1363,29 @@ function löscheAlteAktionen() {
                 const aktion = aktionen[key];
                 const zeitpunkt = new Date(aktion.zeitpunkt);
 
+                // Lösche Aktionen, die vor Mitternacht erstellt wurden
                 if (zeitpunkt < mitternacht) {
-                    // Lösche Aktionen, die vor Mitternacht erstellt wurden
                     firebase.database().ref(`aktionen/${key}`).remove()
-                        .then(() => console.log(`Aktion ${key} erfolgreich gelöscht.`))
-                        .catch((error) => console.error("Fehler beim Löschen der Aktion:", error));
+                        .then(() => console.log(`Aktion ${key} vor Mitternacht erfolgreich gelöscht.`))
+                        .catch((error) => console.error(`Fehler beim Löschen von Aktion ${key}:`, error));
                 }
             });
         } else {
-            console.log("Keine Aktionen zum Löschen gefunden.");
+            console.log("Keine alten Aktionen zum Löschen gefunden.");
         }
     }).catch((error) => {
         console.error("Fehler beim Abrufen der Aktionen:", error);
     });
 }
 
-// Sicherstellen, dass die Funktion um Mitternacht ausgeführt wird
+// Automatischer Aufruf jede Minute
 setInterval(() => {
-    const now = new Date();
-    if (now.getHours() === 0 && now.getMinutes() === 0) {
+    const jetzt = new Date();
+    if (jetzt.getHours() === 0 && jetzt.getMinutes() === 0) {
         löscheAlteAktionen();
     }
 }, 60 * 1000); // Jede Minute prüfen
+
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
