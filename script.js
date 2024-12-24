@@ -1337,36 +1337,24 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
-function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ = "spezial") {
+function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, typ = "spezial") {
     const eintrag = {
         benutzer: benutzer,
         ziel: ziel,
         fähigkeit: fähigkeit,
-        typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
-        zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
+        typ: typ,
+        zeitpunkt: new Date().toISOString(),
     };
 
     firebase.database().ref("aktionen").push(eintrag)
         .then(() => {
-            console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
-
-            // Eintrag auch lokal im Logbuch anzeigen
-            const logbuchListe = document.getElementById("logbuch-list");
-            const listItem = document.createElement("li");
-            listItem.style.marginBottom = "10px";
-            listItem.innerHTML = `
-                <strong>${eintrag.fähigkeit} (Typ: ${eintrag.typ})</strong><br>
-                Von: ${eintrag.benutzer}<br>
-                Ziel: ${eintrag.ziel}<br>
-                Am: ${new Date(eintrag.zeitpunkt).toLocaleString()}
-            `;
-            logbuchListe.prepend(listItem);
-
-        }).catch((error) => {
+            console.log(`Aktion (${typ}) erfolgreich gespeichert.`);
+            ladeAktionenSpezialfähigkeiten(); // Tabelle aktualisieren
+        })
+        .catch((error) => {
             console.error("Fehler beim Speichern der Aktion:", error);
         });
 }
-
 
 function ladeAktionenSpezialfähigkeiten() {
     const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
@@ -1383,7 +1371,7 @@ function ladeAktionenSpezialfähigkeiten() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
 
-                Object.values(aktionen).forEach((aktion) => {
+                Object.entries(aktionen).forEach(([id, aktion]) => {
                     const row = document.createElement("tr");
 
                     const zeitpunkt = aktion.zeitpunkt
@@ -1395,6 +1383,13 @@ function ladeAktionenSpezialfähigkeiten() {
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
                         <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"} (${aktion.typ || "Unbekannt"})</td>
+                        <td>
+                            ${
+                                isAdmin
+                                    ? `<button onclick="löscheAktion('${id}')">Löschen</button>`
+                                    : ""
+                            }
+                        </td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1658,12 +1653,17 @@ function initialisiereBenutzerDaten(benutzername) {
 }
 
 function löscheSpezialfähigkeitenLog() {
+    if (!isAdmin) {
+        console.error("Nur der NPC kann das Logbuch löschen.");
+        return;
+    }
+
     if (confirm("Möchtest du wirklich das gesamte Log der Spezialfähigkeiten löschen?")) {
         firebase.database().ref("aktionen").remove()
             .then(() => {
                 alert("Das Log der Spezialfähigkeiten wurde erfolgreich gelöscht.");
                 console.log("Log der Spezialfähigkeiten erfolgreich gelöscht.");
-                ladeAktionenLog(); // Aktualisiere die Anzeige
+                ladeAktionenSpezialfähigkeiten(); // Tabelle aktualisieren
             })
             .catch((error) => {
                 console.error("Fehler beim Löschen des Logs der Spezialfähigkeiten:", error);
@@ -1671,6 +1671,7 @@ function löscheSpezialfähigkeitenLog() {
             });
     }
 }
+
 function zeigeOverlay(menuElement) {
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
