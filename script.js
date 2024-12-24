@@ -1141,6 +1141,12 @@ function schadenZufügen() {
         return;
     }
 
+    const begründung = prompt("Warum soll der Spieler Schaden erleiden?");
+    if (!begründung) {
+        alert("Bitte gib eine Begründung ein.");
+        return;
+    }
+
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -1152,9 +1158,7 @@ function schadenZufügen() {
 
                 // MP abziehen
                 const neueMP = daten.mp - schaden;
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
-                    .then(() => console.log(`MP erfolgreich abgezogen: ${neueMP}`))
-                    .catch((error) => console.error("Fehler beim MP-Update:", error));
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
                 // Zielspieler Schaden zufügen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
@@ -1167,42 +1171,26 @@ function schadenZufügen() {
                                 typ: "schaden",
                                 wert: schaden,
                                 von: currentUser,
-                                zeitpunkt: new Date().toLocaleString()
+                                begründung: begründung,
+                                zeitpunkt: new Date().toISOString(),
                             };
 
                             // Aktion speichern
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion)
-                                .then(() => console.log("Aktion erfolgreich gespeichert"))
-                                .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
                             // HP aktualisieren
-                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP)
-                                .then(() => {
-                                    console.log(`HP erfolgreich aktualisiert: ${zielSpieler} hat jetzt ${neueHP} HP`);
-                                    if (neueHP <= 0) {
-                                        // Spieler stirbt
-                                        const neuesLevel = Math.max(1, zielDaten.level - 1);
-                                        const maxHP = berechneMaxHP(neuesLevel);
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
-                                        firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).update({
-                                            level: neuesLevel,
-                                            hp: maxHP
-                                        })
-                                            .then(() => alert(`${zielSpieler} ist gestorben und hat ein Level verloren.`))
-                                            .catch((error) => console.error("Fehler beim Spieler-Tod-Update:", error));
-                                    }
-                                })
-                                .catch((error) => console.error("Fehler beim HP-Update:", error));
-                        } else {
-                            console.error("Zielspieler nicht gefunden:", zielSpieler);
+                            // Log-Eintrag
+                            logbuchEintrag(
+                                `Schaden (${schaden} HP)`,
+                                zielSpieler,
+                                `Begründung: ${begründung}`
+                            );
                         }
-                    })
-                    .catch((error) => console.error("Fehler beim Abrufen des Zielspieler-Fortschritts:", error));
-            } else {
-                console.error("Fehler beim Abrufen der aktuellen Benutzer-Fortschritte.");
+                    });
             }
-        })
-        .catch((error) => console.error("Fehler beim Abrufen der MP-Daten:", error));
+        });
 }
 
 function heilen() {
@@ -1214,6 +1202,11 @@ function heilen() {
         return;
     }
 
+    const begründung = prompt("Warum soll der Spieler geheilt werden?");
+    if (!begründung) {
+        alert("Bitte gib eine Begründung ein.");
+        return;
+    }
 
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
@@ -1240,17 +1233,29 @@ function heilen() {
                                 typ: "heilung",
                                 wert: heilung,
                                 von: currentUser,
-                                zeitpunkt: new Date().toLocaleString()
+                                begründung: begründung,
+                                zeitpunkt: new Date().toISOString(),
                             };
 
+                            // Aktion speichern
                             firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
+                            // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+
+                            // Log-Eintrag
+                            logbuchEintrag(
+                                `Heilung (${heilung} HP)`,
+                                zielSpieler,
+                                `Begründung: ${begründung}`
+                            );
                         }
                     });
             }
         });
 }
+
+
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
@@ -1322,22 +1327,16 @@ function ladeAktionenLog() {
                     const row = document.createElement("tr");
 
                     const zeitpunkt = aktion.zeitpunkt
-                        ? new Date(aktion.zeitpunkt).toLocaleTimeString() // Zeigt nur die Uhrzeit
+                        ? new Date(aktion.zeitpunkt).toLocaleString()
                         : "Unbekannt";
-
-                    const lustigerText = generiereLustigenText(
-                        aktion.fähigkeit,
-                        aktion.benutzer || "Unbekannt",
-                        aktion.ziel || "Unbekannt"
-                    );
 
                     row.innerHTML = `
                         <td>${zeitpunkt}</td>
-                        <td>${aktion.benutzer || "Unbekannt"}</td>
+                        <td>${aktion.von || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Unbekannt"} - ${
-                        aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"
-                    }<br><small>${lustigerText}</small></td>
+                        <td>${aktion.typ}: ${aktion.wert} <br> 
+                            Grund: ${aktion.begründung || "Keine Begründung"}
+                        </td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1349,6 +1348,7 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
 
 function löscheAlteAktionen() {
     console.log("löscheAlteAktionen() gestartet");
