@@ -29,6 +29,7 @@ window.onload = function () {
     if (letzterTag !== heutigesDatum) {
         täglicheHPRegeneration();
         täglicheMPRegeneration();
+        löscheAlteAktionen(); // Alte Aktionen beim Laden überprüfen und löschen
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
 
