@@ -137,7 +137,10 @@ function ladeAktionenLog() {
         return;
     }
 
-    logbuchListe.innerHTML = ""; // Liste zurücksetzen
+if (!logbuchListe.hasChildNodes()) {
+    logbuchListe.innerHTML = ""; // Liste nur zurücksetzen, wenn sie leer ist
+}
+
 
     firebase.database().ref("aktionen").get()
         .then((snapshot) => {
