@@ -7,8 +7,27 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    // Initialisiere Logbuch und verstecke den Button
+    // **Logbuch initialisieren und verstecken**
+    initialisiereLogbuch();
+
+    // **Tägliche HP- und MP-Regeneration**
+    prüfeTäglicheRegeneration();
+
+    // **Aktionen und Logbuch laden**
+    ladeAktionenLog();
+    ladeLogbuch();
+
+    // **Startseite anzeigen**
+    zeigeStartseite();
+};
+
+/**
+ * Initialisiert das Logbuch und versteckt die zugehörigen Elemente.
+ */
+function initialisiereLogbuch() {
+    console.log("Logbuch wird initialisiert...");
     erstelleLogbuch();
+
     const logbuchContainer = document.getElementById("logbuch-container");
     const logbuchButton = document.getElementById("logbuch-button");
 
@@ -21,23 +40,24 @@ window.onload = function () {
 
     // Zusätzliche Sicherheit für das Logbuch
     setTimeout(() => steuerungLogbuch(false), 0);
+}
 
-    // Tägliche HP- und MP-Regeneration prüfen
+/**
+ * Prüft, ob die tägliche HP- und MP-Regeneration durchgeführt werden muss.
+ * Führt die Regeneration durch und löscht alte Aktionen, falls erforderlich.
+ */
+function prüfeTäglicheRegeneration() {
+    console.log("Prüfung der täglichen HP- und MP-Regeneration...");
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
     if (letzterTag !== heutigesDatum) {
         täglicheHPRegeneration();
         täglicheMPRegeneration();
-        löscheAlteAktionen(); // Alte Aktionen beim Laden überprüfen und löschen
+        löscheAlteAktionen(); // Alte Aktionen überprüfen und löschen
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-
-    // Lade Aktionen und Logbuch direkt beim Start
-    ladeAktionenLog();
-    ladeLogbuch();
-    zeigeStartseite();
-};
+}
 
 
 // Logbuch nur auf der Startseite ausblenden
@@ -109,6 +129,47 @@ function logbuchEintrag(questBeschreibung, benutzername, xp) {
         });
     }
 }
+
+function ladeAktionenLog() {
+    const logbuchListe = document.getElementById("logbuch-list");
+
+    if (!logbuchListe) {
+        console.error("Logbuch-Liste nicht gefunden!");
+        return;
+    }
+
+    logbuchListe.innerHTML = ""; // Liste zurücksetzen
+
+    firebase.database().ref("aktionen").get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const aktionen = snapshot.val();
+                Object.values(aktionen).forEach((aktion) => {
+                    const listItem = document.createElement("li");
+                    listItem.style.marginBottom = "10px";
+
+                    const zeitpunkt = aktion.zeitpunkt
+                        ? new Date(aktion.zeitpunkt).toLocaleString()
+                        : "Unbekannt";
+
+                    listItem.innerHTML = `
+                        <strong>${aktion.typ === "schaden" ? "Schaden" : "Heilung"} (${aktion.wert} HP)</strong><br>
+                        Von: ${aktion.von || "Unbekannt"}<br>
+                        Ziel: ${aktion.ziel || "Unbekannt"}<br>
+                        Grund: ${aktion.begründung || "Keine Begründung"}<br>
+                        Am: ${zeitpunkt}
+                    `;
+                    logbuchListe.prepend(listItem);
+                });
+            } else {
+                console.log("Keine Aktionen im Logbuch gefunden.");
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden des Logbuchs:", error);
+        });
+}
+
 
 function ladeLogbuch() {
     firebase.database().ref("logbuch").get().then((snapshot) => {
@@ -1307,7 +1368,6 @@ function ladeAktionenSpezialfähigkeiten() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
-                    // Nur Aktionen des Typs "schaden" und "heilung" anzeigen
                     if (aktion.typ === "schaden" || aktion.typ === "heilung") {
                         const row = document.createElement("tr");
 
@@ -1334,7 +1394,6 @@ function ladeAktionenSpezialfähigkeiten() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
 
 function löscheAlteAktionen() {
     console.log("löscheAlteAktionen() gestartet");
