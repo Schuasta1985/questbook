@@ -137,11 +137,6 @@ function ladeAktionenLog() {
         return;
     }
 
-if (!logbuchListe.hasChildNodes()) {
-    logbuchListe.innerHTML = ""; // Liste nur zurücksetzen, wenn sie leer ist
-}
-
-
     firebase.database().ref("aktionen").get()
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -155,10 +150,9 @@ if (!logbuchListe.hasChildNodes()) {
                         : "Unbekannt";
 
                     listItem.innerHTML = `
-                        <strong>${aktion.typ === "schaden" ? "Schaden" : "Heilung"} (${aktion.wert} HP)</strong><br>
-                        Von: ${aktion.von || "Unbekannt"}<br>
+                        <strong>${aktion.typ === "spezial" ? aktion.fähigkeit : "Unbekannt"} (${aktion.typ})</strong><br>
+                        Von: ${aktion.benutzer || "Unbekannt"}<br>
                         Ziel: ${aktion.ziel || "Unbekannt"}<br>
-                        Grund: ${aktion.begründung || "Keine Begründung"}<br>
                         Am: ${zeitpunkt}
                     `;
                     logbuchListe.prepend(listItem);
@@ -168,7 +162,7 @@ if (!logbuchListe.hasChildNodes()) {
             }
         })
         .catch((error) => {
-            console.error("Fehler beim Laden des Logbuchs:", error);
+            console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
 
@@ -178,7 +172,10 @@ function ladeLogbuch() {
         if (snapshot.exists()) {
             const daten = snapshot.val();
             const logbuchListe = document.getElementById("logbuch-list");
-            logbuchListe.innerHTML = ""; // Liste zurücksetzen
+
+            if (!logbuchListe.hasChildNodes()) {
+                logbuchListe.innerHTML = ""; // Nur zurücksetzen, wenn keine Einträge vorhanden sind
+            }
 
             Object.values(daten).forEach((eintrag) => {
                 const listItem = document.createElement("li");
@@ -1340,20 +1337,35 @@ function ladeAktionen() {
 }
 
 function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ = "spezial") {
-    // Aktionstyp standardmäßig auf "spezial" setzen, kann aber auch "zauber" sein
-    firebase.database().ref("aktionen").push({
+    const eintrag = {
         benutzer: benutzer,
         ziel: ziel,
         fähigkeit: fähigkeit,
         typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
         zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
-    }).then(() => {
-        console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
-        ladeAktionenSpezialfähigkeiten(); // Aktualisiere Tabelle der Spezialfähigkeiten
-    }).catch((error) => {
-        console.error("Fehler beim Speichern der Aktion:", error);
-    });
+    };
+
+    firebase.database().ref("aktionen").push(eintrag)
+        .then(() => {
+            console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
+
+            // Eintrag auch lokal im Logbuch anzeigen
+            const logbuchListe = document.getElementById("logbuch-list");
+            const listItem = document.createElement("li");
+            listItem.style.marginBottom = "10px";
+            listItem.innerHTML = `
+                <strong>${eintrag.fähigkeit} (Typ: ${eintrag.typ})</strong><br>
+                Von: ${eintrag.benutzer}<br>
+                Ziel: ${eintrag.ziel}<br>
+                Am: ${new Date(eintrag.zeitpunkt).toLocaleString()}
+            `;
+            logbuchListe.prepend(listItem);
+
+        }).catch((error) => {
+            console.error("Fehler beim Speichern der Aktion:", error);
+        });
 }
+
 
 function ladeAktionenSpezialfähigkeiten() {
     const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
