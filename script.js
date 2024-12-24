@@ -1384,32 +1384,29 @@ function ladeAktionenSpezialfähigkeiten() {
                 const aktionen = snapshot.val();
 
                 Object.values(aktionen).forEach((aktion) => {
-                    if (aktion.typ === "spezial") {
-                        const row = document.createElement("tr");
+                    const row = document.createElement("tr");
 
-                        const zeitpunkt = aktion.zeitpunkt
-                            ? new Date(aktion.zeitpunkt).toLocaleString()
-                            : "Unbekannt";
+                    const zeitpunkt = aktion.zeitpunkt
+                        ? new Date(aktion.zeitpunkt).toLocaleString()
+                        : "Unbekannt";
 
-                        row.innerHTML = `
-                            <td>${zeitpunkt}</td>
-                            <td>${aktion.benutzer || "Unbekannt"}</td>
-                            <td>${aktion.ziel || "Unbekannt"}</td>
-                            <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"}</td>
-                        `;
-                        aktionenTabelle.appendChild(row);
-                    }
+                    row.innerHTML = `
+                        <td>${zeitpunkt}</td>
+                        <td>${aktion.benutzer || "Unbekannt"}</td>
+                        <td>${aktion.ziel || "Unbekannt"}</td>
+                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"} (${aktion.typ || "Unbekannt"})</td>
+                    `;
+                    aktionenTabelle.appendChild(row);
                 });
             } else {
-                console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
+                console.log("Keine Aktionen für Spezialfähigkeiten oder Zauber gefunden.");
             }
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
-            // Falls Daten nicht abrufbar sind, erneut versuchen
-            setTimeout(ladeAktionenSpezialfähigkeiten, 2000);
         });
 }
+
 
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
@@ -1686,5 +1683,7 @@ function zeigeOverlay(menuElement) {
     document.body.appendChild(overlay);
     document.body.appendChild(menuElement);
 }
+
+
 
 aktualisiereLayout();
