@@ -798,9 +798,9 @@ function zeigeAvatar() {
 
         // Avatar-Größen für jeden Benutzer definieren
         const avatarGrößen = {
-            Thomas: { width: "150px", height: "150px" },
-            Elke: { width: "130px", height: "130px" },
-            Jamie: { width: "120px", height: "120px" },
+            Thomas: { width: "170px", height: "170px" },
+            Elke: { width: "170px", height: "170px" },
+            Jamie: { width: "140px", height: "140px" },
         };
 
         // Standardgröße, falls der Benutzer nicht in der Liste ist
