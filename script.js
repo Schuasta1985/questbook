@@ -1337,24 +1337,41 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
-function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, typ = "spezial") {
+function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ = "spezial") {
+    const lustigerText = generiereLustigenText(fähigkeit, benutzer, ziel);
+
     const eintrag = {
         benutzer: benutzer || "Unbekannt",
         ziel: ziel || "Unbekannt",
-        fähigkeit: fähigkeit || "Keine Fähigkeit angegeben",
+        fähigkeit: `${lustigerText} (${typ})`,
         typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
-        zeitpunkt: new Date().toISOString(),
+        zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
     };
 
     firebase.database().ref("aktionen").push(eintrag)
         .then(() => {
             console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
-            ladeAktionenSpezialfähigkeiten(); // Aktualisiert die Anzeige
+
+            // Eintrag auch lokal im Logbuch anzeigen
+            const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
+            if (aktionenTabelle) {
+                const row = document.createElement("tr");
+                const zeitpunkt = new Date(eintrag.zeitpunkt).toLocaleString();
+
+                row.innerHTML = `
+                    <td>${zeitpunkt}</td>
+                    <td>${eintrag.benutzer}</td>
+                    <td>${eintrag.ziel}</td>
+                    <td>${eintrag.fähigkeit}</td>
+                `;
+                aktionenTabelle.prepend(row);
+            }
         })
         .catch((error) => {
             console.error("Fehler beim Speichern der Aktion:", error);
         });
 }
+
 
 function verwendeZauber(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
@@ -1434,7 +1451,7 @@ function ladeAktionenSpezialfähigkeiten() {
         });
 }
 
-function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
+function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit, istZauber = false) {
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
         return;
@@ -1452,45 +1469,53 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    const begründung = prompt("Warum soll diese Fähigkeit genutzt werden?");
-    if (!begründung) {
-        alert("Bitte gib eine Begründung ein.");
-        return;
+    // Nur für Zauber: Begründung abfragen
+    let begründung = "";
+    if (istZauber) {
+        begründung = prompt("Warum soll dieser Zauber genutzt werden?");
+        if (!begründung) {
+            alert("Bitte gib eine Begründung ein.");
+            return;
+        }
     }
 
-    // Erfolgschance berechnen
-    const randomWert = Math.random() * 100;
-    const erfolg = randomWert <= erfolgswahrscheinlichkeit;
+    // Sperrzeit prüfen und Fähigkeit ausführen
+    firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
+        .then((snapshot) => {
+            const heute = new Date();
+            if (snapshot.exists() && heute < new Date(snapshot.val())) {
+                alert("Diese Fähigkeit ist noch gesperrt.");
+                return;
+            }
 
-    level -= kosten;
-    aktualisiereXPAnzeige();
+            const randomWert = Math.random() * 100;
+            const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-    // Text generieren (Erfolg oder Misserfolg)
-    const generierterText = erfolg
-        ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
-        : `${currentUser} versucht ${fähigkeit} auf ${zielSpieler}, aber es schlägt fehl. Begründung: ${begründung}`;
+            level -= kosten;
+            aktualisiereXPAnzeige();
 
-    // Aktion speichern
-    const aktion = {
-        typ: "spezial",
-        fähigkeit,
-        benutzer: currentUser,
-        ziel: zielSpieler,
-        begründung,
-        erfolg,
-        zeitpunkt: new Date().toISOString(),
-        text: generierterText,
-    };
+            if (erfolg) {
+                const sperrzeit = kosten > 3 ? 7 : 1;
+                const sperrdatum = new Date();
+                sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
+                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
+            }
 
-    firebase.database().ref("aktionen").push(aktion)
-        .then(() => {
-            console.log("Aktion erfolgreich gespeichert:", aktion);
+            zeigeAnimation(erfolg);
+
+            firebase.database().ref("aktionen").push({
+                fähigkeit,
+                benutzer: currentUser,
+                ziel: zielSpieler,
+                erfolg,
+                zeitpunkt: new Date().toISOString(),
+                begründung: istZauber ? begründung : undefined, // Begründung nur für Zauber speichern
+            });
+
             ladeAktionenSpezialfähigkeiten();
-        })
-        .catch((error) => {
-            console.error("Fehler beim Speichern der Aktion:", error);
         });
 }
+
 
 
 function zeigeSpezialfähigkeitenMenu() {
