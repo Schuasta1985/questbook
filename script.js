@@ -1171,22 +1171,19 @@ function schadenZufügen() {
                                 typ: "schaden",
                                 wert: schaden,
                                 von: currentUser,
+                                ziel: zielSpieler,
                                 begründung: begründung,
                                 zeitpunkt: new Date().toISOString(),
                             };
 
                             // Aktion speichern
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+                            firebase.database().ref("aktionen").push(aktion);
 
                             // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
                             // Log-Eintrag
-                            logbuchEintrag(
-                                `Schaden (${schaden} HP)`,
-                                zielSpieler,
-                                `Begründung: ${begründung}`
-                            );
+                            ladeAktionenLog();
                         }
                     });
             }
@@ -1348,7 +1345,6 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
 
 function löscheAlteAktionen() {
     console.log("löscheAlteAktionen() gestartet");
