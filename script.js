@@ -7,28 +7,8 @@ let isAdmin = false;
 window.onload = function () {
     console.log("window.onload aufgerufen");
 
-    // **Logbuch initialisieren und verstecken**
-    initialisiereLogbuch();
-
-    // **Tägliche HP- und MP-Regeneration**
-    prüfeTäglicheRegeneration();
-
-    // **Aktionen und Logbuch laden**
-    ladeAktionenLog();
-    ladeLogbuch();
-
-    // **Startseite anzeigen**
-    zeigeStartseite();
-    ladeAktionenSpezialfähigkeiten(); // Aktionen direkt beim Laden der Seite anzeigen
-};
-
-/**
- * Initialisiert das Logbuch und versteckt die zugehörigen Elemente.
- */
-function initialisiereLogbuch() {
-    console.log("Logbuch wird initialisiert...");
+    // Initialisiere Logbuch und verstecke den Button
     erstelleLogbuch();
-
     const logbuchContainer = document.getElementById("logbuch-container");
     const logbuchButton = document.getElementById("logbuch-button");
 
@@ -41,14 +21,8 @@ function initialisiereLogbuch() {
 
     // Zusätzliche Sicherheit für das Logbuch
     setTimeout(() => steuerungLogbuch(false), 0);
-}
 
-/**
- * Prüft, ob die tägliche HP- und MP-Regeneration durchgeführt werden muss.
- * Führt die Regeneration durch und löscht alte Aktionen, falls erforderlich.
- */
-function prüfeTäglicheRegeneration() {
-    console.log("Prüfung der täglichen HP- und MP-Regeneration...");
+    // Tägliche HP- und MP-Regeneration prüfen
     const heutigesDatum = new Date().toDateString();
     const letzterTag = localStorage.getItem("letzteHPRegeneration");
 
@@ -57,7 +31,12 @@ function prüfeTäglicheRegeneration() {
         täglicheMPRegeneration();
         localStorage.setItem("letzteHPRegeneration", heutigesDatum);
     }
-}
+
+    // Lade Aktionen und Logbuch direkt beim Start
+    ladeAktionenLog();
+    ladeLogbuch();
+    zeigeStartseite();
+};
 
 
 // Logbuch nur auf der Startseite ausblenden
@@ -130,53 +109,12 @@ function logbuchEintrag(questBeschreibung, benutzername, xp) {
     }
 }
 
-function ladeAktionenLog() {
-    const logbuchListe = document.getElementById("logbuch-list");
-
-    if (!logbuchListe) {
-        console.error("Logbuch-Liste nicht gefunden!");
-        return;
-    }
-
-    firebase.database().ref("aktionen").get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const aktionen = snapshot.val();
-                Object.values(aktionen).forEach((aktion) => {
-                    const listItem = document.createElement("li");
-                    listItem.style.marginBottom = "10px";
-
-                    const zeitpunkt = aktion.zeitpunkt
-                        ? new Date(aktion.zeitpunkt).toLocaleString()
-                        : "Unbekannt";
-
-                    listItem.innerHTML = `
-                        <strong>${aktion.typ === "spezial" ? aktion.fähigkeit : "Unbekannt"} (${aktion.typ})</strong><br>
-                        Von: ${aktion.benutzer || "Unbekannt"}<br>
-                        Ziel: ${aktion.ziel || "Unbekannt"}<br>
-                        Am: ${zeitpunkt}
-                    `;
-                    logbuchListe.prepend(listItem);
-                });
-            } else {
-                console.log("Keine Aktionen im Logbuch gefunden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Aktionen:", error);
-        });
-}
-
-
 function ladeLogbuch() {
     firebase.database().ref("logbuch").get().then((snapshot) => {
         if (snapshot.exists()) {
             const daten = snapshot.val();
             const logbuchListe = document.getElementById("logbuch-list");
-
-            if (!logbuchListe.hasChildNodes()) {
-                logbuchListe.innerHTML = ""; // Nur zurücksetzen, wenn keine Einträge vorhanden sind
-            }
+            logbuchListe.innerHTML = ""; // Liste zurücksetzen
 
             Object.values(daten).forEach((eintrag) => {
                 const listItem = document.createElement("li");
@@ -858,36 +796,24 @@ function zeigeAvatar() {
             return;
         }
 
-        // Konfiguration für die Größe der Avatare basierend auf dem Benutzer
-        const avatarConfig = {
-            Thomas: { width: "170px", height: "170px" },
-            Elke: { width: "170px", height: "170px" },
-            Jamie: { width: "140px", height: "140px" },
-        };
-
-        // Standardgröße verwenden, falls der Benutzer nicht definiert ist
-        const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
-
         avatarContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                            style="padding: 5px 10px; background-color: #FFD700; 
-                                   color: black; font-weight: bold; border: none; border-radius: 5px;
-                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
-                        Zauber
-                    </button>
-                    <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
-                            style="padding: 5px 10px; background-color: #FFD700; 
-                                   color: black; font-weight: bold; border: none; border-radius: 5px;
-                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
-                        Spezialfähigkeiten
-                    </button>
-                </div>
+                <button id="zauber-button" onclick="zeigeZauberMenu()" 
+                        style="padding: 10px 20px; background-color: #FFD700; 
+                               color: black; font-weight: bold; border: none; border-radius: 5px;
+                               box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
+                    Zauber
+                </button>
             </div>
+            <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
+                    style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
+                           color: black; font-weight: bold; border: none; border-radius: 5px;
+                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
+                Spezialfähigkeiten
+            </button>
         `;
 
         avatarContainer.style.display = "flex";
@@ -1078,7 +1004,6 @@ function berechneMaxHP(level) {
 
 function aktualisiereHPLeiste(aktuelleHP, level) {
     const maxHP = berechneMaxHP(level);
-    aktuelleHP = Math.min(aktuelleHP, maxHP); // Begrenze aktuelle HP auf das Maximum
     const hpProgress = document.getElementById("hp-progress");
 
     if (hpProgress) {
@@ -1098,33 +1023,20 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
     }
 }
 
-
 function berechneMaxMP(level) {
     return 50 + Math.floor((level - 1) / 10) * 50;
 }
 
 function aktualisiereMPLeiste(aktuelleMP, level) {
     const maxMP = berechneMaxMP(level);
-    aktuelleMP = Math.min(aktuelleMP, maxMP); // Begrenze aktuelle MP auf das Maximum
     const mpProgress = document.getElementById("mp-progress");
 
     if (mpProgress) {
         const prozent = (aktuelleMP / maxMP) * 100;
         mpProgress.style.width = `${prozent}%`;
         mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`;
-
-        if (prozent > 75) {
-            mpProgress.style.backgroundColor = "blue";
-        } else if (prozent > 50) {
-            mpProgress.style.backgroundColor = "lightblue";
-        } else if (prozent > 25) {
-            mpProgress.style.backgroundColor = "purple";
-        } else {
-            mpProgress.style.backgroundColor = "darkblue";
-        }
     }
 }
-
 
 function berechneHPFarbe(prozent) {
     if (prozent > 75) return "green";
@@ -1142,21 +1054,20 @@ function aktualisiereLayout() {
     }
 }
 function zeigeZauberMenu() {
-    // Menücontainer erstellen
     const zauberMenu = document.createElement("div");
     zauberMenu.id = "zauber-menu";
-    zauberMenu.classList.add("menu"); // CSS-Klasse für Styling
+    zauberMenu.style.position = "absolute";
+    zauberMenu.style.top = "50%";
+    zauberMenu.style.left = "50%";
+    zauberMenu.style.transform = "translate(-50%, -50%)";
+    zauberMenu.style.backgroundColor = "white";
+    zauberMenu.style.padding = "20px";
+    zauberMenu.style.border = "2px solid black";
+    zauberMenu.style.borderRadius = "10px";
 
-    // Überschrift hinzufügen
-    const heading = document.createElement("h3");
-    heading.textContent = "Zauber";
-    heading.classList.add("menu-heading"); // Optional: Überschriftstyling
-    zauberMenu.appendChild(heading);
-
-    // Dropdown-Menü für Spieler erstellen
     const spielerDropdown = document.createElement("select");
     spielerDropdown.id = "spieler-dropdown";
-    spielerDropdown.classList.add("dropdown"); // CSS-Klasse für Styling
+    spielerDropdown.style.marginBottom = "15px";
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
@@ -1166,30 +1077,16 @@ function zeigeZauberMenu() {
             spielerDropdown.appendChild(option);
         }
     });
+
+    zauberMenu.innerHTML = `
+        <h3>Zauber</h3>
+    `;
     zauberMenu.appendChild(spielerDropdown);
-
-    // Button: Schaden zufügen
-    const schadenButton = document.createElement("button");
-    schadenButton.textContent = "Schaden zufügen";
-    schadenButton.classList.add("menu-button"); // CSS-Klasse für Styling
-    schadenButton.onclick = schadenZufügen;
-    zauberMenu.appendChild(schadenButton);
-
-    // Button: Heilen
-    const heilenButton = document.createElement("button");
-    heilenButton.textContent = "Heilen";
-    heilenButton.classList.add("menu-button"); // CSS-Klasse für Styling
-    heilenButton.onclick = heilen;
-    zauberMenu.appendChild(heilenButton);
-
-    // Button: Schließen
-    const schließenButton = document.createElement("button");
-    schließenButton.textContent = "Schließen";
-    schließenButton.classList.add("menu-button"); // CSS-Klasse für Styling
-    schließenButton.onclick = () => document.body.removeChild(zauberMenu);
-    zauberMenu.appendChild(schließenButton);
-
-    // Menü zum Dokument hinzufügen
+    zauberMenu.innerHTML += `
+        <button onclick="schadenZufügen()">Schaden zufügen</button>
+        <button onclick="heilen()">Heilen</button>
+        <button onclick="document.body.removeChild(document.getElementById('zauber-menu'))">Schließen</button>
+    `;
     document.body.appendChild(zauberMenu);
 }
 
@@ -1202,12 +1099,6 @@ function schadenZufügen() {
         return;
     }
 
-    const begründung = prompt("Warum soll der Spieler Schaden erleiden?");
-    if (!begründung) {
-        alert("Bitte gib eine Begründung ein.");
-        return;
-    }
-
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -1217,34 +1108,61 @@ function schadenZufügen() {
                     return;
                 }
 
+                // MP abziehen
                 const neueMP = daten.mp - schaden;
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
+                    .then(() => console.log(`MP erfolgreich abgezogen: ${neueMP}`))
+                    .catch((error) => console.error("Fehler beim MP-Update:", error));
 
+                // Zielspieler Schaden zufügen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
                             const zielDaten = zielSnapshot.val();
-                            const neueHP = Math.max(0, zielDaten.hp - schaden);
+                            const neueHP = Math.max(0, zielDaten.hp - schaden); // Verhindert negative HP
 
                             const aktion = {
                                 typ: "schaden",
                                 wert: schaden,
                                 von: currentUser,
-                                ziel: zielSpieler,
-                                begründung: begründung,
-                                zeitpunkt: new Date().toISOString(),
+                                zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref("aktionen").push(aktion);
+                            // Aktion speichern
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion)
+                                .then(() => console.log("Aktion erfolgreich gespeichert"))
+                                .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
 
-                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                            // HP aktualisieren
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP)
+                                .then(() => {
+                                    console.log(`HP erfolgreich aktualisiert: ${zielSpieler} hat jetzt ${neueHP} HP`);
+                                    if (neueHP <= 0) {
+                                        // Spieler stirbt
+                                        const neuesLevel = Math.max(1, zielDaten.level - 1);
+                                        const maxHP = berechneMaxHP(neuesLevel);
 
-                            ladeAktionenSpezialfähigkeiten();
+                                        firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).update({
+                                            level: neuesLevel,
+                                            hp: maxHP
+                                        })
+                                            .then(() => alert(`${zielSpieler} ist gestorben und hat ein Level verloren.`))
+                                            .catch((error) => console.error("Fehler beim Spieler-Tod-Update:", error));
+                                    }
+                                })
+                                .catch((error) => console.error("Fehler beim HP-Update:", error));
+                        } else {
+                            console.error("Zielspieler nicht gefunden:", zielSpieler);
                         }
-                    });
+                    })
+                    .catch((error) => console.error("Fehler beim Abrufen des Zielspieler-Fortschritts:", error));
+            } else {
+                console.error("Fehler beim Abrufen der aktuellen Benutzer-Fortschritte.");
             }
-        });
+        })
+        .catch((error) => console.error("Fehler beim Abrufen der MP-Daten:", error));
 }
+
 function heilen() {
     const zielSpieler = document.getElementById("spieler-dropdown").value;
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
@@ -1254,11 +1172,6 @@ function heilen() {
         return;
     }
 
-    const begründung = prompt("Warum soll der Spieler geheilt werden?");
-    if (!begründung) {
-        alert("Bitte gib eine Begründung ein.");
-        return;
-    }
 
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
@@ -1269,9 +1182,11 @@ function heilen() {
                     return;
                 }
 
+                // MP abziehen
                 const neueMP = daten.mp - heilung;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
+                // Zielspieler heilen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
@@ -1283,22 +1198,17 @@ function heilen() {
                                 typ: "heilung",
                                 wert: heilung,
                                 von: currentUser,
-                                ziel: zielSpieler,
-                                begründung: begründung,
-                                zeitpunkt: new Date().toISOString(),
+                                zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref("aktionen").push(aktion);
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
-
-                            ladeAktionenSpezialfähigkeiten();
                         }
                     });
             }
         });
 }
-
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
@@ -1337,113 +1247,46 @@ function ladeAktionen() {
         }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
 }
 
-function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ = "spezial") {
-    const lustigerText = generiereLustigenText(fähigkeit, benutzer, ziel);
-
-    const eintrag = {
-        benutzer: benutzer || "Unbekannt",
-        ziel: ziel || "Unbekannt",
-        fähigkeit: `${lustigerText} (${typ})`,
-        typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
-        zeitpunkt: new Date(zeitpunkt).toISOString(), // Zeit in ISO 8601 speichern
-    };
-
-    firebase.database().ref("aktionen").push(eintrag)
-        .then(() => {
-            console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
-
-            // Eintrag auch lokal im Logbuch anzeigen
-            const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
-            if (aktionenTabelle) {
-                const row = document.createElement("tr");
-                const zeitpunkt = new Date(eintrag.zeitpunkt).toLocaleString();
-
-                row.innerHTML = `
-                    <td>${zeitpunkt}</td>
-                    <td>${eintrag.benutzer}</td>
-                    <td>${eintrag.ziel}</td>
-                    <td>${eintrag.fähigkeit}</td>
-                `;
-                aktionenTabelle.prepend(row);
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Speichern der Aktion:", error);
-        });
+function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
+    firebase.database().ref("aktionen").push({
+        benutzer: benutzer,
+        ziel: ziel,
+        fähigkeit: fähigkeit,
+        zeitpunkt: zeitpunkt,
+    }).then(() => {
+        console.log("Aktion erfolgreich in Firebase gespeichert.");
+        ladeAktionenLog();
+    }).catch((error) => {
+        console.error("Fehler beim Speichern der Aktion:", error);
+    });
 }
 
-
-function verwendeZauber(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
-    if (level < kosten) {
-        alert("Du hast nicht genug Level, um diesen Zauber zu nutzen.");
-        return;
-    }
-
-    const zielSpieler = prompt("Auf welchen Spieler möchtest du den Zauber anwenden?");
-    if (!zielSpieler) {
-        alert("Bitte wähle einen Spieler aus!");
-        return;
-    }
-
-    const begründung = prompt("Warum möchtest du diesen Zauber anwenden?");
-    if (!begründung) {
-        alert("Eine Begründung ist erforderlich, um den Zauber zu wirken.");
-        return;
-    }
-
-    level -= kosten;
-    aktualisiereXPAnzeige();
-
-    const zufall = Math.random() * 100;
-    const erfolg = zufall <= erfolgswahrscheinlichkeit;
-
-    const zauberText = erfolg
-        ? `${zielSpieler} wurde erfolgreich verzaubert mit ${fähigkeiten}.`
-        : `${fähigkeiten} hat leider nicht funktioniert.`;
-
-    console.log(zauberText);
-
-    spezialfähigkeitSpeichern(currentUser, zielSpieler, `${fähigkeiten} - ${begründung}`, "zauber");
-
-    if (erfolg) {
-        alert("Der Zauber war erfolgreich!");
-    } else {
-        alert("Der Zauber ist fehlgeschlagen.");
-    }
-}
-
-function ladeAktionenSpezialfähigkeiten() {
-    const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
+function ladeAktionenLog() {
+    const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
 
     if (!aktionenTabelle) {
         console.error("Aktionen-Tabelle nicht gefunden!");
         return;
     }
 
-    aktionenTabelle.innerHTML = ""; // Tabelle leeren
+    aktionenTabelle.innerHTML = ""; // Tabelle zurücksetzen
 
     firebase.database().ref("aktionen").get()
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
-
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
-
-                    const zeitpunkt = aktion.zeitpunkt
-                        ? new Date(aktion.zeitpunkt).toLocaleString()
-                        : "Unbekannt";
-
                     row.innerHTML = `
-                        <td>${zeitpunkt}</td>
+                        <td>${aktion.zeitpunkt ? aktion.zeitpunkt.split(" ")[1] : "Unbekannt"}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"} (${aktion.typ || "Unbekannt"})</td>
+                        <td>${aktion.fähigkeit || "Unbekannt"} - ${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
             } else {
-                console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
+                console.log("Keine Aktionen gefunden.");
             }
         })
         .catch((error) => {
@@ -1451,35 +1294,47 @@ function ladeAktionenSpezialfähigkeiten() {
         });
 }
 
-function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit, istZauber = false) {
+
+function löscheAlteAktionen() {
+    const mitternacht = new Date();
+    mitternacht.setHours(0, 0, 0, 0);
+
+    firebase.database().ref("aktionen").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const aktionen = snapshot.val();
+            Object.keys(aktionen).forEach((key) => {
+                const aktion = aktionen[key];
+                const zeitpunkt = new Date(aktion.zeitpunkt);
+
+                if (zeitpunkt < mitternacht) {
+                    firebase.database().ref(`aktionen/${key}`).remove()
+                        .then(() => console.log(`Aktion ${key} erfolgreich gelöscht.`))
+                        .catch((error) => console.error("Fehler beim Löschen der Aktion:", error));
+                }
+            });
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Prüfen der Aktionen:", error);
+    });
+}
+
+// Löschen jeden Tag um Mitternacht
+setInterval(() => {
+    löscheAlteAktionen();
+}, 24 * 60 * 60 * 1000); // Einmal täglich
+
+function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
         return;
     }
 
-    const zielSpielerDropdown = document.getElementById("zielspieler-dropdown");
-    if (!zielSpielerDropdown) {
-        alert("Fehler: Das Dropdown-Menü für Zielspieler wurde nicht gefunden!");
-        return;
-    }
-
-    const zielSpieler = zielSpielerDropdown.value;
+    const zielSpieler = document.getElementById("zielspieler-dropdown").value;
     if (!zielSpieler) {
         alert("Bitte wähle einen Spieler aus!");
         return;
     }
 
-    // Nur für Zauber: Begründung abfragen
-    let begründung = "";
-    if (istZauber) {
-        begründung = prompt("Warum soll dieser Zauber genutzt werden?");
-        if (!begründung) {
-            alert("Bitte gib eine Begründung ein.");
-            return;
-        }
-    }
-
-    // Sperrzeit prüfen und Fähigkeit ausführen
     firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
         .then((snapshot) => {
             const heute = new Date();
@@ -1488,125 +1343,39 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit, istZa
                 return;
             }
 
+            // Erfolg oder Misserfolg berechnen
             const randomWert = Math.random() * 100;
             const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
+            // Level-Kosten abziehen, unabhängig vom Erfolg
             level -= kosten;
             aktualisiereXPAnzeige();
 
             if (erfolg) {
-                const sperrzeit = kosten > 3 ? 7 : 1;
+                // Sperrzeit nur bei Erfolg setzen
+                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
                 const sperrdatum = new Date();
                 sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
                 firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
             }
 
+            // Animation zeigen
             zeigeAnimation(erfolg);
 
+            // Logbuch aktualisieren
             firebase.database().ref("aktionen").push({
                 fähigkeit,
                 benutzer: currentUser,
                 ziel: zielSpieler,
                 erfolg,
                 zeitpunkt: new Date().toISOString(),
-                begründung: istZauber ? begründung : undefined, // Begründung nur für Zauber speichern
             });
 
-            ladeAktionenSpezialfähigkeiten();
+            // Anzeige aktualisieren
+            ladeAktionenLog();
         });
 }
 
-
-
-function zeigeSpezialfähigkeitenMenu() {
-    // Menücontainer erstellen
-    const spezialMenu = document.createElement("div");
-    spezialMenu.id = "spezial-menu";
-    spezialMenu.classList.add("menu"); // CSS-Klasse für Styling
-
-    // Überschrift hinzufügen
-    const heading = document.createElement("h3");
-    heading.textContent = "Spezialfähigkeiten";
-    heading.classList.add("menu-heading"); // Optional: Überschriftstyling
-    spezialMenu.appendChild(heading);
-
-    // Dropdown-Menü für Spieler erstellen
-    const spielerDropdown = document.createElement("select");
-    spielerDropdown.id = "zielspieler-dropdown"; // Konsistente ID
-    spielerDropdown.classList.add("dropdown"); // CSS-Klasse für Styling
-
-    // Spieler zum Dropdown hinzufügen
-    const verfügbareSpieler = Object.keys(benutzerDaten).filter((spieler) => spieler !== currentUser);
-    if (verfügbareSpieler.length === 0) {
-        const keineOption = document.createElement("option");
-        keineOption.value = "";
-        keineOption.textContent = "Kein Spieler verfügbar";
-        spielerDropdown.appendChild(keineOption);
-    } else {
-        verfügbareSpieler.forEach((spieler) => {
-            const option = document.createElement("option");
-            option.value = spieler;
-            option.textContent = spieler;
-            spielerDropdown.appendChild(option);
-        });
-    }
-    spezialMenu.appendChild(spielerDropdown);
-
-    // Spezialfähigkeiten-Buttons hinzufügen, dynamisch basierend auf dem aktuellen Benutzer
-    const fähigkeitenButtonsContainer = document.createElement("div");
-    fähigkeitenButtonsContainer.id = "spezial-buttons-container";
-    spezialMenu.appendChild(fähigkeitenButtonsContainer);
-
-    // Dynamische Fähigkeiten basierend auf Benutzer laden
-    const spezialFähigkeiten = {
-        Thomas: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir Kaiserschmarren", kosten: 3 },
-            { name: "Ich brauche das Auto", kosten: 4 },
-            { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-        ],
-        Elke: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "Mach mir was zu essen", kosten: 3 },
-            { name: "Wunsch frei", kosten: 5 },
-        ],
-        Jamie: [
-            { name: "Massiere mich", kosten: 2 },
-            { name: "Ich will gekuschelt werden", kosten: 1 },
-            { name: "30 Min Gaming Zeit", kosten: 2 },
-            { name: "Unendliche Spielzeit", kosten: 5 },
-        ],
-    };
-
-    const fähigkeiten = spezialFähigkeiten[currentUser] || [];
-    fähigkeiten.forEach((fähigkeit) => {
-        const button = document.createElement("button");
-        button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.classList.add("fähigkeiten-button");
-        button.onclick = () => {
-            const zielSpieler = spielerDropdown.value;
-            if (!zielSpieler) {
-                alert("Bitte wähle einen Spieler aus!");
-                return;
-            }
-            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - fähigkeit.kosten * 10);
-            document.body.removeChild(spezialMenu);
-        };
-        fähigkeitenButtonsContainer.appendChild(button);
-    });
-
-    // Button: Schließen
-    const schließenButton = document.createElement("button");
-    schließenButton.textContent = "Schließen";
-    schließenButton.classList.add("menu-button");
-    schließenButton.onclick = () => document.body.removeChild(spezialMenu);
-    spezialMenu.appendChild(schließenButton);
-
-    // Menü zum Dokument hinzufügen
-    document.body.appendChild(spezialMenu);
-}
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
@@ -1615,13 +1384,83 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-        "30 Min Gaming Zeit": `${ziel} genießt eine halbe Stunde ungestörtes Gaming dank ${ausführer}.`,
-        "Unendliche Spielzeit": `${ziel} spielt die ganze Nacht durch, dank ${ausführer}!`,
-        "Wunsch frei": `${ziel} erhält einen Wunsch von ${ausführer} erfüllt. Magisch!`,
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
+function zeigeSpezialfähigkeitenMenu() {
+    const spezialMenu = document.createElement('div');
+    spezialMenu.id = 'spezial-menu';
+    spezialMenu.style.position = 'absolute';
+    spezialMenu.style.top = '20%';
+    spezialMenu.style.left = '50%';
+    spezialMenu.style.transform = 'translate(-50%, -50%)';
+    spezialMenu.style.backgroundColor = 'white';
+    spezialMenu.style.border = '2px solid black';
+    spezialMenu.style.borderRadius = '10px';
+    spezialMenu.style.padding = '20px';
+    spezialMenu.style.zIndex = '1000';
 
+    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
+
+    // Dropdown-Menü für Zielspieler
+    const spielerDropdown = document.createElement('select');
+    spielerDropdown.id = 'zielspieler-dropdown';
+    spielerDropdown.style.marginBottom = '15px';
+
+    Object.keys(benutzerDaten).forEach((spieler) => {
+        if (spieler !== currentUser) {
+            const option = document.createElement('option');
+            option.value = spieler;
+            option.textContent = spieler;
+            spielerDropdown.appendChild(option);
+        }
+    });
+
+    spezialMenu.appendChild(spielerDropdown);
+
+    // Buttons für Fähigkeiten
+    const fähigkeiten = [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "Mach mir Kaiserschmarren", kosten: 3 },
+        { name: "Ich brauche das Auto", kosten: 4 },
+        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
+    ];
+
+    fähigkeiten.forEach((fähigkeit) => {
+        const button = document.createElement('button');
+        button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
+        button.style.marginTop = '10px';
+        button.style.padding = '10px';
+        button.style.backgroundColor = '#FFD700';
+        button.style.color = '#000';
+        button.style.border = 'none';
+        button.style.borderRadius = '5px';
+        button.style.cursor = 'pointer';
+
+        button.onclick = () => {
+            const zielSpieler = spielerDropdown.value;
+            if (!zielSpieler) {
+                alert('Bitte wähle einen Spieler aus!');
+                return;
+            }
+
+            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
+            document.body.removeChild(spezialMenu);
+        };
+
+        spezialMenu.appendChild(button);
+    });
+
+    // Schließen-Button
+    const schließenButton = document.createElement('button');
+    schließenButton.textContent = 'Schließen';
+    schließenButton.style.marginTop = '20px';
+    schließenButton.onclick = () => document.body.removeChild(spezialMenu);
+
+    spezialMenu.appendChild(schließenButton);
+    document.body.appendChild(spezialMenu);
+}
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
@@ -1684,22 +1523,6 @@ function setzeFähigkeitenZurück(spieler) {
             console.error("Fehler beim Zurücksetzen der Fähigkeiten:", error);
         });
 }
-function löscheAlteAktionen() {
-    console.log("Manuelles Löschen von alten Aktionen gestartet");
-
-    if (confirm("Möchtest du wirklich das gesamte Logbuch löschen? Diese Aktion kann nicht rückgängig gemacht werden!")) {
-        firebase.database().ref("aktionen").remove()
-            .then(() => {
-                alert("Das Logbuch wurde erfolgreich gelöscht.");
-                console.log("Logbuch erfolgreich gelöscht.");
-                ladeAktionenLog(); // Aktualisiere die Anzeige
-            })
-            .catch((error) => {
-                console.error("Fehler beim Löschen des Logbuchs:", error);
-                alert("Ein Fehler ist aufgetreten. Das Logbuch konnte nicht gelöscht werden.");
-            });
-    }
-}
 
 
 function initialisiereBenutzerDaten(benutzername) {
@@ -1718,17 +1541,12 @@ function initialisiereBenutzerDaten(benutzername) {
 }
 
 function löscheSpezialfähigkeitenLog() {
-    if (!isAdmin) {
-        console.error("Nur der NPC kann das Logbuch löschen.");
-        return;
-    }
-
     if (confirm("Möchtest du wirklich das gesamte Log der Spezialfähigkeiten löschen?")) {
         firebase.database().ref("aktionen").remove()
             .then(() => {
                 alert("Das Log der Spezialfähigkeiten wurde erfolgreich gelöscht.");
                 console.log("Log der Spezialfähigkeiten erfolgreich gelöscht.");
-                ladeAktionenSpezialfähigkeiten(); // Tabelle aktualisieren
+                ladeAktionenLog(); // Aktualisiere die Anzeige
             })
             .catch((error) => {
                 console.error("Fehler beim Löschen des Logs der Spezialfähigkeiten:", error);
@@ -1736,20 +1554,6 @@ function löscheSpezialfähigkeitenLog() {
             });
     }
 }
-
-function zeigeOverlay(menuElement) {
-    const overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-
-    overlay.onclick = () => {
-        document.body.removeChild(menuElement);
-        document.body.removeChild(overlay);
-    };
-
-    document.body.appendChild(overlay);
-    document.body.appendChild(menuElement);
-}
-
 
 
 aktualisiereLayout();
