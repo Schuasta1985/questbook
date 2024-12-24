@@ -1356,6 +1356,7 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, typ = "spezial")
         });
 }
 
+// Funktion: Aktionen der Spezialfähigkeiten laden und anzeigen
 function ladeAktionenSpezialfähigkeiten() {
     const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
 
@@ -1372,26 +1373,21 @@ function ladeAktionenSpezialfähigkeiten() {
                 const aktionen = snapshot.val();
 
                 Object.values(aktionen).forEach((aktion) => {
-                    const row = document.createElement("tr");
+                    if (aktion.typ === "spezial") {
+                        const row = document.createElement("tr");
 
-                    const zeitpunkt = aktion.zeitpunkt
-                        ? new Date(aktion.zeitpunkt).toLocaleString()
-                        : "Unbekannt";
+                        const zeitpunkt = aktion.zeitpunkt
+                            ? new Date(aktion.zeitpunkt).toLocaleString()
+                            : "Unbekannt";
 
-                    const generierterText = generiereLustigenText(
-                        aktion.fähigkeit || "Keine Fähigkeit angegeben",
-                        aktion.benutzer || "Unbekannt",
-                        aktion.ziel || "Unbekannt"
-                    );
-
-                    row.innerHTML = `
-                        <td>${zeitpunkt}</td>
-                        <td>${aktion.benutzer || "Unbekannt"}</td>
-                        <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${generierterText} (${aktion.typ || "Unbekannt"})</td>
-                    `;
-
-                    aktionenTabelle.appendChild(row);
+                        row.innerHTML = `
+                            <td>${zeitpunkt}</td>
+                            <td>${aktion.benutzer || "Unbekannt"}</td>
+                            <td>${aktion.ziel || "Unbekannt"}</td>
+                            <td>${aktion.text || "Keine Fähigkeit angegeben"} (${aktion.begründung || "Keine Begründung"})</td>
+                        `;
+                        aktionenTabelle.appendChild(row);
+                    }
                 });
             } else {
                 console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
@@ -1422,40 +1418,47 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
         return;
     }
 
-    firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
-        .then((snapshot) => {
-            const heute = new Date();
-            if (snapshot.exists() && heute < new Date(snapshot.val())) {
-                alert("Diese Fähigkeit ist noch gesperrt.");
-                return;
-            }
+    const begründung = prompt("Warum soll diese Fähigkeit genutzt werden?");
+    if (!begründung) {
+        alert("Bitte gib eine Begründung ein.");
+        return;
+    }
 
-            const randomWert = Math.random() * 100;
-            const erfolg = randomWert <= erfolgswahrscheinlichkeit;
+    // Erfolgschance berechnen
+    const randomWert = Math.random() * 100;
+    const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-            level -= kosten;
-            aktualisiereXPAnzeige();
+    level -= kosten;
+    aktualisiereXPAnzeige();
 
-            if (erfolg) {
-                const sperrzeit = kosten > 3 ? 7 : 1;
-                const sperrdatum = new Date();
-                sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
-                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
-            }
+    // Text generieren (Erfolg oder Misserfolg)
+    const generierterText = erfolg
+        ? generiereLustigenText(fähigkeit, currentUser, zielSpieler)
+        : `${currentUser} versucht ${fähigkeit} auf ${zielSpieler}, aber es schlägt fehl. Begründung: ${begründung}`;
 
-            zeigeAnimation(erfolg);
+    // Aktion speichern
+    const aktion = {
+        typ: "spezial",
+        fähigkeit,
+        benutzer: currentUser,
+        ziel: zielSpieler,
+        begründung,
+        erfolg,
+        zeitpunkt: new Date().toISOString(),
+        text: generierterText,
+    };
 
-            firebase.database().ref("aktionen").push({
-                fähigkeit,
-                benutzer: currentUser,
-                ziel: zielSpieler,
-                erfolg,
-                zeitpunkt: new Date().toISOString(),
-            });
-
-            ladeAktionenLog();
+    firebase.database().ref("aktionen").push(aktion)
+        .then(() => {
+            console.log("Aktion erfolgreich gespeichert:", aktion);
+            ladeAktionenSpezialfähigkeiten();
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Aktion:", error);
         });
 }
+
+
 function zeigeSpezialfähigkeitenMenu() {
     // Menücontainer erstellen
     const spezialMenu = document.createElement("div");
@@ -1553,6 +1556,9 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+        "30 Min Gaming Zeit": `${ziel} genießt eine halbe Stunde ungestörtes Gaming dank ${ausführer}.`,
+        "Unendliche Spielzeit": `${ziel} spielt die ganze Nacht durch, dank ${ausführer}!`,
+        "Wunsch frei": `${ziel} erhält einen Wunsch von ${ausführer} erfüllt. Magisch!`,
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
