@@ -796,24 +796,36 @@ function zeigeAvatar() {
             return;
         }
 
+        // Konfiguration für die Größe der Avatare basierend auf dem Benutzer
+        const avatarConfig = {
+            Thomas: { width: "170px", height: "170px" },
+            Elke: { width: "170px", height: "170px" },
+            Jamie: { width: "140px", height: "140px" },
+        };
+
+        // Standardgröße verwenden, falls der Benutzer nicht definiert ist
+        const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
+
         avatarContainer.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
-                <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                        style="padding: 10px 20px; background-color: #FFD700; 
-                               color: black; font-weight: bold; border: none; border-radius: 5px;
-                               box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
-                    Zauber
-                </button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button id="zauber-button" onclick="zeigeZauberMenu()" 
+                            style="padding: 5px 10px; background-color: #FFD700; 
+                                   color: black; font-weight: bold; border: none; border-radius: 5px;
+                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                        Zauber
+                    </button>
+                    <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
+                            style="padding: 5px 10px; background-color: #FFD700; 
+                                   color: black; font-weight: bold; border: none; border-radius: 5px;
+                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                        Spezialfähigkeiten
+                    </button>
+                </div>
             </div>
-            <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
-                    style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
-                           color: black; font-weight: bold; border: none; border-radius: 5px;
-                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
-                Spezialfähigkeiten
-            </button>
         `;
 
         avatarContainer.style.display = "flex";
@@ -829,6 +841,7 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
+
 
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
