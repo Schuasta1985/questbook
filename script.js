@@ -796,9 +796,19 @@ function zeigeAvatar() {
             return;
         }
 
+        // Avatar-Größen für jeden Benutzer definieren
+        const avatarGrößen = {
+            Thomas: { width: "150px", height: "150px" },
+            Elke: { width: "130px", height: "130px" },
+            Jamie: { width: "120px", height: "120px" },
+        };
+
+        // Standardgröße, falls der Benutzer nicht in der Liste ist
+        const { width, height } = avatarGrößen[currentUser] || { width: "100px", height: "100px" };
+
         avatarContainer.innerHTML = `
             <div style="display: flex; align-items: center; gap: 15px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);">
+                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${width}; height: ${height};">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
                 <button id="zauber-button" onclick="zeigeZauberMenu()" 
@@ -829,6 +839,7 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
+
 
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
@@ -1004,6 +1015,7 @@ function berechneMaxHP(level) {
 
 function aktualisiereHPLeiste(aktuelleHP, level) {
     const maxHP = berechneMaxHP(level);
+    aktuelleHP = Math.min(aktuelleHP, maxHP); // Begrenze aktuelle HP auf das Maximum
     const hpProgress = document.getElementById("hp-progress");
 
     if (hpProgress) {
@@ -1023,20 +1035,33 @@ function aktualisiereHPLeiste(aktuelleHP, level) {
     }
 }
 
+
 function berechneMaxMP(level) {
     return 50 + Math.floor((level - 1) / 10) * 50;
 }
 
 function aktualisiereMPLeiste(aktuelleMP, level) {
     const maxMP = berechneMaxMP(level);
+    aktuelleMP = Math.min(aktuelleMP, maxMP); // Begrenze aktuelle MP auf das Maximum
     const mpProgress = document.getElementById("mp-progress");
 
     if (mpProgress) {
         const prozent = (aktuelleMP / maxMP) * 100;
         mpProgress.style.width = `${prozent}%`;
         mpProgress.textContent = `${aktuelleMP} / ${maxMP} MP`;
+
+        if (prozent > 75) {
+            mpProgress.style.backgroundColor = "blue";
+        } else if (prozent > 50) {
+            mpProgress.style.backgroundColor = "lightblue";
+        } else if (prozent > 25) {
+            mpProgress.style.backgroundColor = "purple";
+        } else {
+            mpProgress.style.backgroundColor = "darkblue";
+        }
     }
 }
+
 
 function berechneHPFarbe(prozent) {
     if (prozent > 75) return "green";
