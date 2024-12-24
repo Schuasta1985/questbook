@@ -1609,6 +1609,22 @@ function setzeFähigkeitenZurück(spieler) {
             console.error("Fehler beim Zurücksetzen der Fähigkeiten:", error);
         });
 }
+function löscheAlteAktionen() {
+    console.log("Manuelles Löschen von alten Aktionen gestartet");
+
+    if (confirm("Möchtest du wirklich das gesamte Logbuch löschen? Diese Aktion kann nicht rückgängig gemacht werden!")) {
+        firebase.database().ref("aktionen").remove()
+            .then(() => {
+                alert("Das Logbuch wurde erfolgreich gelöscht.");
+                console.log("Logbuch erfolgreich gelöscht.");
+                ladeAktionenLog(); // Aktualisiere die Anzeige
+            })
+            .catch((error) => {
+                console.error("Fehler beim Löschen des Logbuchs:", error);
+                alert("Ein Fehler ist aufgetreten. Das Logbuch konnte nicht gelöscht werden.");
+            });
+    }
+}
 
 
 function initialisiereBenutzerDaten(benutzername) {
