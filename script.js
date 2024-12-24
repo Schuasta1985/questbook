@@ -1368,21 +1368,23 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt, typ =
 
 
 function ladeAktionenSpezialfähigkeiten() {
-    const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
+    const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
 
     if (!aktionenTabelle) {
         console.error("Aktionen-Tabelle nicht gefunden!");
         return;
     }
 
-    aktionenTabelle.innerHTML = ""; // Tabelle zurücksetzen
+    aktionenTabelle.innerHTML = ""; // Tabelle leeren
 
     firebase.database().ref("aktionen").get()
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
+
                 Object.values(aktionen).forEach((aktion) => {
-                    if (aktion.typ === "schaden" || aktion.typ === "heilung") {
+                    // Filter nur für Spezialfähigkeiten
+                    if (aktion.typ === "spezial") {
                         const row = document.createElement("tr");
 
                         const zeitpunkt = aktion.zeitpunkt
@@ -1391,17 +1393,15 @@ function ladeAktionenSpezialfähigkeiten() {
 
                         row.innerHTML = `
                             <td>${zeitpunkt}</td>
-                            <td>${aktion.von || "Unbekannt"}</td>
+                            <td>${aktion.benutzer || "Unbekannt"}</td>
                             <td>${aktion.ziel || "Unbekannt"}</td>
-                            <td>${aktion.typ === "schaden" ? "Schaden" : "Heilung"}: ${aktion.wert} HP<br> 
-                                Grund: ${aktion.begründung || "Keine Begründung"}
-                            </td>
+                            <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"}</td>
                         `;
                         aktionenTabelle.appendChild(row);
                     }
                 });
             } else {
-                console.log("Keine Aktionen gefunden.");
+                console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
             }
         })
         .catch((error) => {
