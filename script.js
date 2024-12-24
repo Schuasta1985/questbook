@@ -806,24 +806,27 @@ function zeigeAvatar() {
         // Standardgröße, falls der Benutzer nicht in der Liste ist
         const { width, height } = avatarGrößen[currentUser] || { width: "100px", height: "100px" };
 
+
         avatarContainer.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${width}; height: ${height};">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${config.width}; height: ${config.height};">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
-                <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                        style="padding: 10px 20px; background-color: #FFD700; 
-                               color: black; font-weight: bold; border: none; border-radius: 5px;
-                               box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
-                    Zauber
-                </button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                    <button id="zauber-button" onclick="zeigeZauberMenu()" 
+                            style="padding: 5px 10px; background-color: #FFD700; 
+                                   color: black; font-weight: bold; border: none; border-radius: 5px;
+                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                        Zauber
+                    </button>
+                    <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
+                            style="padding: 5px 10px; background-color: #FFD700; 
+                                   color: black; font-weight: bold; border: none; border-radius: 5px;
+                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                        Spezialfähigkeiten
+                    </button>
+                </div>
             </div>
-            <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
-                    style="margin-top: 15px; padding: 10px 20px; background-color: #FFD700; 
-                           color: black; font-weight: bold; border: none; border-radius: 5px;
-                           box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);">
-                Spezialfähigkeiten
-            </button>
         `;
 
         avatarContainer.style.display = "flex";
