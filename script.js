@@ -796,20 +796,19 @@ function zeigeAvatar() {
             return;
         }
 
-        // Avatar-Größen für jeden Benutzer definieren
-        const avatarGrößen = {
+        // Konfiguration für die Größe der Avatare basierend auf dem Benutzer
+        const avatarConfig = {
             Thomas: { width: "170px", height: "170px" },
             Elke: { width: "170px", height: "170px" },
             Jamie: { width: "140px", height: "140px" },
         };
 
-        // Standardgröße, falls der Benutzer nicht in der Liste ist
-        const { width, height } = avatarGrößen[currentUser] || { width: "100px", height: "100px" };
-
+        // Standardgröße verwenden, falls der Benutzer nicht definiert ist
+        const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
 
         avatarContainer.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${config.width}; height: ${config.height};">
+                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
                     <source src="${avatarPath}" type="video/mp4">
                 </video>
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
@@ -842,7 +841,6 @@ function zeigeAvatar() {
         questsSection.style.marginTop = "30px";
     }
 }
-
 
 function fügeSpezialfähigkeitenButtonHinzu() {
     const avatarContainer = document.getElementById('avatar-container');
