@@ -1339,24 +1339,62 @@ function ladeAktionen() {
 
 function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, typ = "spezial") {
     const eintrag = {
-        benutzer: benutzer,
-        ziel: ziel,
-        fähigkeit: fähigkeit,
-        typ: typ,
+        benutzer: benutzer || "Unbekannt",
+        ziel: ziel || "Unbekannt",
+        fähigkeit: fähigkeit || "Keine Fähigkeit angegeben",
+        typ: typ, // Differenziere zwischen Spezialfähigkeiten und Zaubern
         zeitpunkt: new Date().toISOString(),
     };
 
     firebase.database().ref("aktionen").push(eintrag)
         .then(() => {
-            console.log(`Aktion (${typ}) erfolgreich gespeichert.`);
-            ladeAktionenSpezialfähigkeiten(); // Tabelle aktualisieren
+            console.log(`Aktion (${typ}) erfolgreich in Firebase gespeichert.`);
+            ladeAktionenSpezialfähigkeiten(); // Aktualisiert die Anzeige
         })
         .catch((error) => {
             console.error("Fehler beim Speichern der Aktion:", error);
         });
 }
 
-// Funktion: Aktionen der Spezialfähigkeiten laden und anzeigen
+function verwendeZauber(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
+    if (level < kosten) {
+        alert("Du hast nicht genug Level, um diesen Zauber zu nutzen.");
+        return;
+    }
+
+    const zielSpieler = prompt("Auf welchen Spieler möchtest du den Zauber anwenden?");
+    if (!zielSpieler) {
+        alert("Bitte wähle einen Spieler aus!");
+        return;
+    }
+
+    const begründung = prompt("Warum möchtest du diesen Zauber anwenden?");
+    if (!begründung) {
+        alert("Eine Begründung ist erforderlich, um den Zauber zu wirken.");
+        return;
+    }
+
+    level -= kosten;
+    aktualisiereXPAnzeige();
+
+    const zufall = Math.random() * 100;
+    const erfolg = zufall <= erfolgswahrscheinlichkeit;
+
+    const zauberText = erfolg
+        ? `${zielSpieler} wurde erfolgreich verzaubert mit ${fähigkeiten}.`
+        : `${fähigkeiten} hat leider nicht funktioniert.`;
+
+    console.log(zauberText);
+
+    spezialfähigkeitSpeichern(currentUser, zielSpieler, `${fähigkeiten} - ${begründung}`, "zauber");
+
+    if (erfolg) {
+        alert("Der Zauber war erfolgreich!");
+    } else {
+        alert("Der Zauber ist fehlgeschlagen.");
+    }
+}
+
 function ladeAktionenSpezialfähigkeiten() {
     const aktionenTabelle = document.querySelector("#aktionen-tabelle tbody");
 
@@ -1373,21 +1411,19 @@ function ladeAktionenSpezialfähigkeiten() {
                 const aktionen = snapshot.val();
 
                 Object.values(aktionen).forEach((aktion) => {
-                    if (aktion.typ === "spezial") {
-                        const row = document.createElement("tr");
+                    const row = document.createElement("tr");
 
-                        const zeitpunkt = aktion.zeitpunkt
-                            ? new Date(aktion.zeitpunkt).toLocaleString()
-                            : "Unbekannt";
+                    const zeitpunkt = aktion.zeitpunkt
+                        ? new Date(aktion.zeitpunkt).toLocaleString()
+                        : "Unbekannt";
 
-                        row.innerHTML = `
-                            <td>${zeitpunkt}</td>
-                            <td>${aktion.benutzer || "Unbekannt"}</td>
-                            <td>${aktion.ziel || "Unbekannt"}</td>
-                            <td>${aktion.text || "Keine Fähigkeit angegeben"} (${aktion.begründung || "Keine Begründung"})</td>
-                        `;
-                        aktionenTabelle.appendChild(row);
-                    }
+                    row.innerHTML = `
+                        <td>${zeitpunkt}</td>
+                        <td>${aktion.benutzer || "Unbekannt"}</td>
+                        <td>${aktion.ziel || "Unbekannt"}</td>
+                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"} (${aktion.typ || "Unbekannt"})</td>
+                    `;
+                    aktionenTabelle.appendChild(row);
                 });
             } else {
                 console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
@@ -1395,8 +1431,6 @@ function ladeAktionenSpezialfähigkeiten() {
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
-            // Falls Daten nicht abrufbar sind, erneut versuchen
-            setTimeout(ladeAktionenSpezialfähigkeiten, 2000);
         });
 }
 
