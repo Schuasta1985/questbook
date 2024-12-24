@@ -1349,8 +1349,9 @@ function ladeAktionenLog() {
 }
 
 function löscheAlteAktionen() {
+    console.log("löscheAlteAktionen() aufgerufen");
     const mitternacht = new Date();
-    mitternacht.setHours(0, 0, 0, 0);
+    mitternacht.setHours(0, 0, 0, 0); // Setze die Zeit auf Mitternacht
 
     firebase.database().ref("aktionen").get().then((snapshot) => {
         if (snapshot.exists()) {
@@ -1360,21 +1361,27 @@ function löscheAlteAktionen() {
                 const zeitpunkt = new Date(aktion.zeitpunkt);
 
                 if (zeitpunkt < mitternacht) {
+                    // Lösche Aktionen, die vor Mitternacht erstellt wurden
                     firebase.database().ref(`aktionen/${key}`).remove()
                         .then(() => console.log(`Aktion ${key} erfolgreich gelöscht.`))
                         .catch((error) => console.error("Fehler beim Löschen der Aktion:", error));
                 }
             });
+        } else {
+            console.log("Keine Aktionen zum Löschen gefunden.");
         }
     }).catch((error) => {
-        console.error("Fehler beim Prüfen der Aktionen:", error);
+        console.error("Fehler beim Abrufen der Aktionen:", error);
     });
 }
 
-// Löschen jeden Tag um Mitternacht
+// Sicherstellen, dass die Funktion um Mitternacht ausgeführt wird
 setInterval(() => {
-    löscheAlteAktionen();
-}, 24 * 60 * 60 * 1000); // Einmal täglich
+    const now = new Date();
+    if (now.getHours() === 0 && now.getMinutes() === 0) {
+        löscheAlteAktionen();
+    }
+}, 60 * 1000); // Jede Minute prüfen
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
