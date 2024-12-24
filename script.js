@@ -19,6 +19,7 @@ window.onload = function () {
 
     // **Startseite anzeigen**
     zeigeStartseite();
+    ladeAktionenSpezialfähigkeiten(); // Aktionen direkt beim Laden der Seite anzeigen
 };
 
 /**
@@ -1383,7 +1384,6 @@ function ladeAktionenSpezialfähigkeiten() {
                 const aktionen = snapshot.val();
 
                 Object.values(aktionen).forEach((aktion) => {
-                    // Filter nur für Spezialfähigkeiten
                     if (aktion.typ === "spezial") {
                         const row = document.createElement("tr");
 
@@ -1406,8 +1406,11 @@ function ladeAktionenSpezialfähigkeiten() {
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
+            // Falls Daten nicht abrufbar sind, erneut versuchen
+            setTimeout(ladeAktionenSpezialfähigkeiten, 2000);
         });
 }
+
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
