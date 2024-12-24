@@ -1371,38 +1371,38 @@ function ladeAktionenSpezialfähigkeiten() {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
 
-                Object.entries(aktionen).forEach(([id, aktion]) => {
+                Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
 
                     const zeitpunkt = aktion.zeitpunkt
                         ? new Date(aktion.zeitpunkt).toLocaleString()
                         : "Unbekannt";
 
+                    const generierterText = generiereLustigenText(
+                        aktion.fähigkeit || "Keine Fähigkeit angegeben",
+                        aktion.benutzer || "Unbekannt",
+                        aktion.ziel || "Unbekannt"
+                    );
+
                     row.innerHTML = `
                         <td>${zeitpunkt}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"} (${aktion.typ || "Unbekannt"})</td>
-                        <td>
-                            ${
-                                isAdmin
-                                    ? `<button onclick="löscheAktion('${id}')">Löschen</button>`
-                                    : ""
-                            }
-                        </td>
+                        <td>${generierterText} (${aktion.typ || "Unbekannt"})</td>
                     `;
+
                     aktionenTabelle.appendChild(row);
                 });
             } else {
-                console.log("Keine Aktionen für Spezialfähigkeiten oder Zauber gefunden.");
+                console.log("Keine Aktionen für Spezialfähigkeiten gefunden.");
             }
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
+            // Falls Daten nicht abrufbar sind, erneut versuchen
+            setTimeout(ladeAktionenSpezialfähigkeiten, 2000);
         });
 }
-
-
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
     if (level < kosten) {
