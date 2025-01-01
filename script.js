@@ -42,7 +42,9 @@ const spezialFähigkeitenTexte = {
     Thomas: [
         { name: "Massiere mich", kosten: 2 },
         { name: "Ich will gekuschelt werden", kosten: 1 },
-        { name: "Mach mir Kaiserschmarren", kosten: 3 }
+        { name: "Mach mir Kaiserschmarren", kosten: 3 },
+        { name: "Wunsch frei", kosten: 5 },
+        { name: "Ich habe mir eine Auszeit verdient", kosten: 6 }
     ],
     Jamie: [
         { name: "Massiere mich", kosten: 2 },
@@ -54,7 +56,8 @@ const spezialFähigkeitenTexte = {
         { name: "Massiere mich", kosten: 2 },
         { name: "Ich will gekuschelt werden", kosten: 1 },
         { name: "Mach mir was zu essen", kosten: 3 },
-        { name: "Wunsch frei", kosten: 5 }
+        { name: "Wunsch frei", kosten: 5 },
+        { name: "Ich habe mir eine Auszeit verdient", kosten: 6 }
     ]
 };
 
