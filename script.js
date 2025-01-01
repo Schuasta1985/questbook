@@ -1436,11 +1436,17 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
 }
 
 function zeigeSpezialfähigkeitenMenu() {
+    // Vorheriges Menü entfernen, falls vorhanden
+    const bestehendesMenu = document.getElementById("spezial-menu");
+    if (bestehendesMenu) {
+        document.body.removeChild(bestehendesMenu);
+    }
+
     // Container erstellen
     const spezialMenu = document.createElement('div');
     spezialMenu.id = 'spezial-menu';
     spezialMenu.style.position = 'absolute';
-    spezialMenu.style.top = '20%';
+    spezialMenu.style.top = '50%';
     spezialMenu.style.left = '50%';
     spezialMenu.style.transform = 'translate(-50%, -50%)';
     spezialMenu.style.backgroundColor = 'white';
@@ -1451,10 +1457,37 @@ function zeigeSpezialfähigkeitenMenu() {
 
     spezialMenu.innerHTML = `<h3>Spezialfähigkeiten von ${currentUser}</h3>`;
 
-    // Fähigkeiten für den aktuellen Benutzer abrufen
-    const fähigkeiten = spezialFähigkeitenTexte[currentUser] || [];
+    // Dropdown für Zielspieler erstellen
+    const dropdownLabel = document.createElement("label");
+    dropdownLabel.textContent = "Zielspieler auswählen:";
+    dropdownLabel.style.display = "block";
+    dropdownLabel.style.marginBottom = "10px";
 
-    // Buttons für die Fähigkeiten erstellen
+    const spielerDropdown = document.createElement("select");
+    spielerDropdown.id = "zielspieler-dropdown";
+    spielerDropdown.style.marginBottom = "15px";
+
+    // Dropdown-Optionen hinzufügen
+    const optionDefault = document.createElement("option");
+    optionDefault.value = "";
+    optionDefault.textContent = "-- Bitte wählen --";
+    spielerDropdown.appendChild(optionDefault);
+
+    Object.keys(benutzerDaten).forEach((spieler) => {
+        if (spieler !== currentUser) {
+            const option = document.createElement("option");
+            option.value = spieler;
+            option.textContent = spieler;
+            spielerDropdown.appendChild(option);
+        }
+    });
+
+    // Dropdown und Fähigkeiten hinzufügen
+    spezialMenu.appendChild(dropdownLabel);
+    spezialMenu.appendChild(spielerDropdown);
+
+    // Buttons für die Fähigkeiten
+    const fähigkeiten = spezialFähigkeitenTexte[currentUser] || [];
     fähigkeiten.forEach(fähigkeit => {
         const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
@@ -1484,6 +1517,7 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.appendChild(schließenButton);
     document.body.appendChild(spezialMenu);
 }
+
 
 function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
     firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
