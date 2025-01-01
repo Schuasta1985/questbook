@@ -343,8 +343,14 @@ function täglicheHPRegeneration() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
+                const aktuelleHP = parseInt(daten.hp) || berechneMaxHP(daten.level);
                 const maxHP = berechneMaxHP(daten.level);
+
+                // Datenprüfung
+                if (isNaN(aktuelleHP) || isNaN(maxHP)) {
+                    console.error("Fehler: HP-Daten sind ungültig für Benutzer:", currentUser);
+                    return;
+                }
 
                 if (aktuelleHP < maxHP) {
                     const neueHP = Math.min(aktuelleHP + 100, maxHP);
@@ -354,6 +360,15 @@ function täglicheHPRegeneration() {
                             console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
                             aktualisiereHPLeiste(neueHP, daten.level);
                             localStorage.setItem("letzteHPRegeneration", new Date().toDateString());
+
+                            // Log der Regeneration speichern
+                            firebase.database().ref("regenerationLogs").push({
+                                benutzer: currentUser,
+                                typ: "HP",
+                                vorher: aktuelleHP,
+                                nachher: neueHP,
+                                zeitpunkt: new Date().toLocaleString()
+                            });
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
@@ -362,13 +377,14 @@ function täglicheHPRegeneration() {
                     console.log("HP ist bereits maximal.");
                 }
             } else {
-                console.error("Keine Fortschrittsdaten gefunden.");
+                console.error("Fehler: Keine Fortschrittsdaten gefunden für Benutzer:", currentUser);
             }
         })
         .catch((error) => {
             console.error("Fehler beim Abrufen der Fortschrittsdaten:", error);
         });
 }
+
 function täglicheMPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. MP-Regeneration übersprungen.");
@@ -379,18 +395,39 @@ function täglicheMPRegeneration() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
+                const aktuelleMP = parseInt(daten.mp) || 0;
                 const maxMP = berechneMaxMP(daten.level);
 
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
-                    .then(() => {
-                        console.log(`MP erfolgreich regeneriert: ${maxMP}`);
-                        aktualisiereMPLeiste(maxMP, daten.level);
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der regenerierten MP:", error);
-                    });
+                // Datenprüfung
+                if (isNaN(aktuelleMP) || isNaN(maxMP)) {
+                    console.error("Fehler: MP-Daten sind ungültig für Benutzer:", currentUser);
+                    return;
+                }
+
+                if (aktuelleMP < maxMP) {
+                    const neueMP = maxMP; // MP vollständig auffüllen (oder Teilregeneration einsetzen)
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
+                        .then(() => {
+                            console.log(`MP erfolgreich regeneriert: ${aktuelleMP} -> ${neueMP}`);
+                            aktualisiereMPLeiste(neueMP, daten.level);
+
+                            // Log der Regeneration speichern
+                            firebase.database().ref("regenerationLogs").push({
+                                benutzer: currentUser,
+                                typ: "MP",
+                                vorher: aktuelleMP,
+                                nachher: neueMP,
+                                zeitpunkt: new Date().toLocaleString()
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der regenerierten MP:", error);
+                        });
+                } else {
+                    console.log("MP ist bereits maximal.");
+                }
             } else {
-                console.error("Keine Fortschrittsdaten gefunden.");
+                console.error("Fehler: Keine Fortschrittsdaten gefunden für Benutzer:", currentUser);
             }
         })
         .catch((error) => {
