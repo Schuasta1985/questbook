@@ -1309,11 +1309,17 @@ function ladeAktionenLog() {
                 const aktionen = snapshot.val();
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
+
+                    // Fähigkeit mit lustigem Text oder nur dem Namen anzeigen
+                    const fähigkeitText = aktion.erfolg
+                        ? `${aktion.fähigkeit} - ${aktion.lustigerText}`
+                        : `${aktion.fähigkeit} - Fehlgeschlagen`;
+
                     row.innerHTML = `
                         <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Unbekannt"} - ${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
+                        <td>${fähigkeitText}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1384,21 +1390,27 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             level -= kosten;
             aktualisiereXPAnzeige();
 
-            // Animation zeigen
-            zeigeAnimation(erfolg);
+            let lustigerText = "";
+            if (erfolg) {
+                // Sperrzeit nur bei Erfolg setzen
+                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
+                const sperrdatum = new Date();
+                sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
+                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
 
-            // Lustigen Text generieren
-            const text = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
-            alert(text);
+                // Lustigen Text generieren
+                lustigerText = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
+            }
 
-            // Logbuch aktualisieren
+            // Logbuch aktualisieren mit oder ohne lustigem Text
             const zeitpunkt = new Date().toLocaleString();
             firebase.database().ref("aktionen").push({
                 fähigkeit,
                 benutzer: currentUser,
                 ziel: zielSpieler,
                 erfolg,
-                zeitpunkt
+                zeitpunkt,
+                lustigerText // Nur bei Erfolg gefüllt
             });
 
             // Anzeige aktualisieren
