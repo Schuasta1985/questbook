@@ -1411,16 +1411,11 @@ function ladeAktionenLog() {
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
 
-                    // Fähigkeit mit lustigem Text oder nur dem Namen anzeigen
-                    const fähigkeitText = aktion.erfolg
-                        ? `${aktion.fähigkeit} - ${aktion.lustigerText}`
-                        : `${aktion.fähigkeit} - Fehlgeschlagen`;
-
                     row.innerHTML = `
                         <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${fähigkeitText}</td>
+                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1432,8 +1427,6 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
-
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
