@@ -1464,33 +1464,32 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.style.top = '50%';
     spezialMenu.style.left = '50%';
     spezialMenu.style.transform = 'translate(-50%, -50%)';
-    spezialMenu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Dunkler, halbtransparenter Hintergrund
-    spezialMenu.style.color = '#FFD700'; // Heller Gelbton für Text
-    spezialMenu.style.padding = '20px';
-    spezialMenu.style.borderRadius = '15px'; // Abgerundete Ecken
-    spezialMenu.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)'; // Schatten
-    spezialMenu.style.textAlign = 'center'; // Zentrierter Text
+    spezialMenu.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    spezialMenu.style.border = '2px solid #FFD700';
+    spezialMenu.style.borderRadius = '10px';
+    spezialMenu.style.padding = '15px';
+    spezialMenu.style.zIndex = '1000';
+    spezialMenu.style.width = '80%';
+    spezialMenu.style.maxWidth = '500px';
+    spezialMenu.style.animation = 'fadeIn 0.5s ease-in-out'; // Animation anwenden
 
-    // Animation
-    spezialMenu.style.animation = 'fadeIn 0.3s ease-in-out';
-
-    spezialMenu.innerHTML = `<h3 style="margin-bottom: 20px;">Spezialfähigkeiten von ${currentUser}</h3>`;
+    spezialMenu.innerHTML = `<h3 style="color: #FFD700; text-align: center; margin-bottom: 10px;">Spezialfähigkeiten von ${currentUser}</h3>`;
 
     // Dropdown für Zielspieler erstellen
     const dropdownLabel = document.createElement("label");
     dropdownLabel.textContent = "Zielspieler auswählen:";
     dropdownLabel.style.display = "block";
+    dropdownLabel.style.color = "#FFD700";
     dropdownLabel.style.marginBottom = "10px";
 
     const spielerDropdown = document.createElement("select");
     spielerDropdown.id = "zielspieler-dropdown";
     spielerDropdown.style.display = "block";
-    spielerDropdown.style.width = "100%"; // Volle Breite
-    spielerDropdown.style.padding = "10px";
-    spielerDropdown.style.marginBottom = "20px";
-    spielerDropdown.style.border = "1px solid #FFD700"; // Gelber Rand
-    spielerDropdown.style.borderRadius = "5px"; // Abgerundete Ecken
-    spielerDropdown.style.fontSize = "16px";
+    spielerDropdown.style.margin = "10px auto";
+    spielerDropdown.style.width = "100%";
+    spielerDropdown.style.padding = "5px";
+    spielerDropdown.style.border = "1px solid #FFD700";
+    spielerDropdown.style.borderRadius = "5px";
 
     // Dropdown-Optionen hinzufügen
     const optionDefault = document.createElement("option");
@@ -1507,53 +1506,64 @@ function zeigeSpezialfähigkeitenMenu() {
         }
     });
 
-    // Dropdown und Fähigkeiten hinzufügen
+    // Dropdown hinzufügen
     spezialMenu.appendChild(dropdownLabel);
     spezialMenu.appendChild(spielerDropdown);
 
     // Buttons für die Fähigkeiten
     const fähigkeiten = spezialFähigkeitenTexte[currentUser] || [];
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "grid";
+    buttonContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))";
+    buttonContainer.style.gap = "10px";
+    buttonContainer.style.marginTop = "10px";
+
     fähigkeiten.forEach(fähigkeit => {
         const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
-        button.style.marginTop = '10px';
         button.style.padding = '10px';
-        button.style.width = '45%'; // Gleiche Breite wie die Dropdowns
-        button.style.margin = '10px'; // Abstand zwischen Buttons
-        button.style.fontSize = '16px';
-        button.style.backgroundColor = '#FFD700'; // Gelber Hintergrund
-        button.style.color = '#000'; // Schwarzer Text
+        button.style.backgroundColor = '#FFD700';
+        button.style.color = '#000';
         button.style.border = 'none';
         button.style.borderRadius = '5px';
         button.style.cursor = 'pointer';
-        button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)'; // Schatten
-
-        // Hover-Effekt
-        button.onmouseover = () => (button.style.backgroundColor = '#FFB800');
-        button.onmouseout = () => (button.style.backgroundColor = '#FFD700');
+        button.style.textAlign = 'center';
+        button.style.height = '50px';
+        button.style.display = 'flex';
+        button.style.justifyContent = 'center';
+        button.style.alignItems = 'center';
 
         // Event-Listener für die Buttons
         button.onclick = () => {
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
-            document.body.removeChild(spezialMenu);
+            if (spezialMenu && spezialMenu.parentNode) {
+                spezialMenu.parentNode.removeChild(spezialMenu);
+            }
         };
 
-        spezialMenu.appendChild(button);
+        buttonContainer.appendChild(button);
     });
+
+    // Buttons zum Container hinzufügen
+    spezialMenu.appendChild(buttonContainer);
 
     // Schließen-Button hinzufügen
     const schließenButton = document.createElement('button');
     schließenButton.textContent = 'Schließen';
-    schließenButton.style.marginTop = '20px';
+    schließenButton.style.marginTop = '15px';
     schließenButton.style.padding = '10px';
-    schließenButton.style.width = '100%'; // Volle Breite
-    schließenButton.style.backgroundColor = '#666'; // Dunkler Hintergrund für den Schließen-Button
-    schließenButton.style.color = '#FFF'; // Weißer Text
+    schließenButton.style.backgroundColor = '#888';
+    schließenButton.style.color = '#FFF';
     schließenButton.style.border = 'none';
     schließenButton.style.borderRadius = '5px';
     schließenButton.style.cursor = 'pointer';
+    schließenButton.style.width = '100%';
 
-    schließenButton.onclick = () => document.body.removeChild(spezialMenu);
+    schließenButton.onclick = () => {
+        if (spezialMenu && spezialMenu.parentNode) {
+            spezialMenu.parentNode.removeChild(spezialMenu);
+        }
+    };
 
     spezialMenu.appendChild(schließenButton);
     document.body.appendChild(spezialMenu);
@@ -1572,6 +1582,7 @@ style.innerHTML = `
 }
 `;
 document.head.appendChild(style);
+
 
 function zeigeAnimation(erfolg) {
     const animationContainer = document.createElement("div");
