@@ -1464,13 +1464,17 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.style.top = '50%';
     spezialMenu.style.left = '50%';
     spezialMenu.style.transform = 'translate(-50%, -50%)';
-    spezialMenu.style.backgroundColor = 'white';
-    spezialMenu.style.border = '2px solid black';
-    spezialMenu.style.borderRadius = '10px';
+    spezialMenu.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'; // Dunkler, halbtransparenter Hintergrund
+    spezialMenu.style.color = '#FFD700'; // Heller Gelbton für Text
     spezialMenu.style.padding = '20px';
-    spezialMenu.style.zIndex = '1000';
+    spezialMenu.style.borderRadius = '15px'; // Abgerundete Ecken
+    spezialMenu.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5)'; // Schatten
+    spezialMenu.style.textAlign = 'center'; // Zentrierter Text
 
-    spezialMenu.innerHTML = `<h3>Spezialfähigkeiten von ${currentUser}</h3>`;
+    // Animation
+    spezialMenu.style.animation = 'fadeIn 0.3s ease-in-out';
+
+    spezialMenu.innerHTML = `<h3 style="margin-bottom: 20px;">Spezialfähigkeiten von ${currentUser}</h3>`;
 
     // Dropdown für Zielspieler erstellen
     const dropdownLabel = document.createElement("label");
@@ -1480,7 +1484,13 @@ function zeigeSpezialfähigkeitenMenu() {
 
     const spielerDropdown = document.createElement("select");
     spielerDropdown.id = "zielspieler-dropdown";
-    spielerDropdown.style.marginBottom = "15px";
+    spielerDropdown.style.display = "block";
+    spielerDropdown.style.width = "100%"; // Volle Breite
+    spielerDropdown.style.padding = "10px";
+    spielerDropdown.style.marginBottom = "20px";
+    spielerDropdown.style.border = "1px solid #FFD700"; // Gelber Rand
+    spielerDropdown.style.borderRadius = "5px"; // Abgerundete Ecken
+    spielerDropdown.style.fontSize = "16px";
 
     // Dropdown-Optionen hinzufügen
     const optionDefault = document.createElement("option");
@@ -1508,11 +1518,19 @@ function zeigeSpezialfähigkeitenMenu() {
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
         button.style.marginTop = '10px';
         button.style.padding = '10px';
-        button.style.backgroundColor = '#FFD700';
-        button.style.color = '#000';
+        button.style.width = '45%'; // Gleiche Breite wie die Dropdowns
+        button.style.margin = '10px'; // Abstand zwischen Buttons
+        button.style.fontSize = '16px';
+        button.style.backgroundColor = '#FFD700'; // Gelber Hintergrund
+        button.style.color = '#000'; // Schwarzer Text
         button.style.border = 'none';
         button.style.borderRadius = '5px';
         button.style.cursor = 'pointer';
+        button.style.boxShadow = '0px 4px 10px rgba(0, 0, 0, 0.5)'; // Schatten
+
+        // Hover-Effekt
+        button.onmouseover = () => (button.style.backgroundColor = '#FFB800');
+        button.onmouseout = () => (button.style.backgroundColor = '#FFD700');
 
         // Event-Listener für die Buttons
         button.onclick = () => {
@@ -1527,34 +1545,33 @@ function zeigeSpezialfähigkeitenMenu() {
     const schließenButton = document.createElement('button');
     schließenButton.textContent = 'Schließen';
     schließenButton.style.marginTop = '20px';
+    schließenButton.style.padding = '10px';
+    schließenButton.style.width = '100%'; // Volle Breite
+    schließenButton.style.backgroundColor = '#666'; // Dunkler Hintergrund für den Schließen-Button
+    schließenButton.style.color = '#FFF'; // Weißer Text
+    schließenButton.style.border = 'none';
+    schließenButton.style.borderRadius = '5px';
+    schließenButton.style.cursor = 'pointer';
+
     schließenButton.onclick = () => document.body.removeChild(spezialMenu);
 
     spezialMenu.appendChild(schließenButton);
     document.body.appendChild(spezialMenu);
 }
 
-
-function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
-    firebase.database().ref(`fähigkeiten/${benutzer}/${fähigkeit}`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const sperrdatum = new Date(snapshot.val());
-                const heute = new Date();
-
-                if (heute > sperrdatum) {
-                    callback(true); // Sperrzeit ist abgelaufen
-                } else {
-                    callback(false); // Sperrzeit noch aktiv
-                }
-            } else {
-                callback(true); // Keine Sperrzeit gesetzt
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Prüfen der Sperrzeit:", error);
-            callback(false);
-        });
+// Animation (optional)
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
+`;
+document.head.appendChild(style);
 
 function zeigeAnimation(erfolg) {
     const animationContainer = document.createElement("div");
