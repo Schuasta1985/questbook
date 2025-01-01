@@ -38,6 +38,25 @@ window.onload = function () {
     zeigeStartseite();
 };
 
+const spezialFähigkeitenTexte = {
+    Thomas: [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "Mach mir Kaiserschmarren", kosten: 3 }
+    ],
+    Jamie: [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "30 Min Gaming Zeit", kosten: 2 },
+        { name: "Unendliche Spielzeit", kosten: 5 }
+    ],
+    Elke: [
+        { name: "Massiere mich", kosten: 2 },
+        { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "Mach mir was zu essen", kosten: 3 },
+        { name: "Wunsch frei", kosten: 5 }
+    ]
+};
 
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
@@ -1400,7 +1419,9 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
+
 function zeigeSpezialfähigkeitenMenu() {
+    // Container erstellen
     const spezialMenu = document.createElement('div');
     spezialMenu.id = 'spezial-menu';
     spezialMenu.style.position = 'absolute';
@@ -1413,34 +1434,13 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.style.padding = '20px';
     spezialMenu.style.zIndex = '1000';
 
-    spezialMenu.innerHTML = `<h3>Wähle deine Spezialfähigkeit aus:</h3>`;
+    spezialMenu.innerHTML = `<h3>Spezialfähigkeiten von ${currentUser}</h3>`;
 
-    // Dropdown-Menü für Zielspieler
-    const spielerDropdown = document.createElement('select');
-    spielerDropdown.id = 'zielspieler-dropdown';
-    spielerDropdown.style.marginBottom = '15px';
+    // Fähigkeiten für den aktuellen Benutzer abrufen
+    const fähigkeiten = spezialFähigkeitenTexte[currentUser] || [];
 
-    Object.keys(benutzerDaten).forEach((spieler) => {
-        if (spieler !== currentUser) {
-            const option = document.createElement('option');
-            option.value = spieler;
-            option.textContent = spieler;
-            spielerDropdown.appendChild(option);
-        }
-    });
-
-    spezialMenu.appendChild(spielerDropdown);
-
-    // Buttons für Fähigkeiten
-    const fähigkeiten = [
-        { name: "Massiere mich", kosten: 2 },
-        { name: "Ich will gekuschelt werden", kosten: 1 },
-        { name: "Mach mir Kaiserschmarren", kosten: 3 },
-        { name: "Ich brauche das Auto", kosten: 4 },
-        { name: "Ich habe mir eine Auszeit verdient", kosten: 5 },
-    ];
-
-    fähigkeiten.forEach((fähigkeit) => {
+    // Buttons für die Fähigkeiten erstellen
+    fähigkeiten.forEach(fähigkeit => {
         const button = document.createElement('button');
         button.textContent = `${fähigkeit.name} (Kosten: ${fähigkeit.kosten} Level)`;
         button.style.marginTop = '10px';
@@ -1451,13 +1451,8 @@ function zeigeSpezialfähigkeitenMenu() {
         button.style.borderRadius = '5px';
         button.style.cursor = 'pointer';
 
+        // Event-Listener für die Buttons
         button.onclick = () => {
-            const zielSpieler = spielerDropdown.value;
-            if (!zielSpieler) {
-                alert('Bitte wähle einen Spieler aus!');
-                return;
-            }
-
             verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
             document.body.removeChild(spezialMenu);
         };
@@ -1465,7 +1460,7 @@ function zeigeSpezialfähigkeitenMenu() {
         spezialMenu.appendChild(button);
     });
 
-    // Schließen-Button
+    // Schließen-Button hinzufügen
     const schließenButton = document.createElement('button');
     schließenButton.textContent = 'Schließen';
     schließenButton.style.marginTop = '20px';
@@ -1496,6 +1491,7 @@ function istFähigkeitSperrzeitAbgelaufen(benutzer, fähigkeit, callback) {
             callback(false);
         });
 }
+
 function zeigeAnimation(erfolg) {
     const animationContainer = document.createElement("div");
     animationContainer.style.position = "fixed";
