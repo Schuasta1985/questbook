@@ -1259,8 +1259,10 @@ function schadenZufügen() {
                                 zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+                            firebase.database().ref(`aktionen`).push(aktion);
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+
+                            ladeAktionenLog();
 
                             if (neueHP <= 0) {
                                 const neuesLevel = Math.max(1, zielDaten.level - 1);
@@ -1334,14 +1336,15 @@ function heilen() {
                                 zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+                            firebase.database().ref(`aktionen`).push(aktion);
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+
+                            ladeAktionenLog();
                         }
                     });
             }
         });
 }
-
 
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
