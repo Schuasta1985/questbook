@@ -1310,7 +1310,7 @@ function ladeAktionenLog() {
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${aktion.zeitpunkt ? aktion.zeitpunkt.split(" ")[1] : "Unbekannt"}</td>
+                        <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
                         <td>${aktion.fähigkeit || "Unbekannt"} - ${aktion.erfolg ? "Erfolgreich" : "Fehlgeschlagen"}</td>
@@ -1325,6 +1325,7 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
 
 
 function löscheAlteAktionen() {
@@ -1356,28 +1357,17 @@ setInterval(() => {
 }, 24 * 60 * 60 * 1000); // Einmal täglich
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
-    // Überprüfen, ob der Benutzer genügend Level hat
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
         return;
     }
 
-    // Zielspieler-Dropdown abrufen und validieren
-    const dropdown = document.getElementById("zielspieler-dropdown");
-    if (!dropdown) {
-        console.error("Fehler: 'zielspieler-dropdown' wurde nicht gefunden!");
-        alert("Ein Problem ist aufgetreten. Bitte öffne das Spezialfähigkeiten-Menü erneut.");
-        zeigeSpezialfähigkeitenMenu(); // Menü erneut öffnen
-        return;
-    }
-
-    const zielSpieler = dropdown.value;
+    const zielSpieler = document.getElementById("zielspieler-dropdown").value;
     if (!zielSpieler) {
         alert("Bitte wähle einen Spieler aus!");
         return;
     }
 
-    // Überprüfen, ob die Fähigkeit gesperrt ist
     firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
         .then((snapshot) => {
             const heute = new Date();
@@ -1394,43 +1384,39 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             level -= kosten;
             aktualisiereXPAnzeige();
 
-            if (erfolg) {
-                // Sperrzeit nur bei Erfolg setzen
-                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
-                const sperrdatum = new Date();
-                sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
-                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
-            }
-
-            // Animation zeigen (Erfolg oder Misserfolg)
+            // Animation zeigen
             zeigeAnimation(erfolg);
 
-            // Logbuch-Eintrag erstellen
+            // Lustigen Text generieren
+            const text = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
+            alert(text);
+
+            // Logbuch aktualisieren
+            const zeitpunkt = new Date().toLocaleString();
             firebase.database().ref("aktionen").push({
                 fähigkeit,
                 benutzer: currentUser,
                 ziel: zielSpieler,
                 erfolg,
-                zeitpunkt: new Date().toISOString(),
-            }).then(() => {
-                console.log("Aktion erfolgreich im Logbuch gespeichert.");
-                ladeAktionenLog(); // Aktualisiere das Logbuch
-            }).catch((error) => {
-                console.error("Fehler beim Speichern der Aktion:", error);
+                zeitpunkt
             });
-        })
-        .catch((error) => {
-            console.error("Fehler beim Überprüfen der Fähigkeitssperrzeit:", error);
+
+            // Anzeige aktualisieren
+            ladeAktionenLog();
         });
 }
+
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
         "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
         "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
         "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
+        "30 Min Gaming Zeit": `${ausführer} schenkt ${ziel} 30 Minuten pure Gaming-Freude!`,
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
+        "Unendliche Spielzeit": `${ausführer} ermöglicht ${ziel} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+         "Wunsch frei": `${ziel} erfüllt ${ausführer} einen Wunsch mit einer Prise Magie und Liebe!`
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
