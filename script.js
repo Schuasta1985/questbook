@@ -1205,14 +1205,29 @@ function zeigeZauberMenu() {
 
 
 function schadenZufügen() {
-    const zielSpieler = document.getElementById("spieler-dropdown").value;
-    const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
+    const spielerDropdown = document.getElementById("spieler-dropdown");
 
-    if (!zielSpieler || isNaN(schaden) || schaden <= 0) {
-        alert("Ungültige Eingabe.");
+    if (!spielerDropdown) {
+        alert("Das Dropdown-Menü für den Zielspieler konnte nicht gefunden werden.");
+        console.error("Fehler: Dropdown mit der ID 'spieler-dropdown' existiert nicht.");
         return;
     }
 
+    const zielSpieler = spielerDropdown.value;
+
+    if (!zielSpieler) {
+        alert("Bitte wähle einen Spieler aus!");
+        return;
+    }
+
+    const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
+
+    if (isNaN(schaden) || schaden <= 0) {
+        alert("Ungültige Eingabe. Bitte gib eine gültige Zahl ein.");
+        return;
+    }
+
+    // Rest des Codes bleibt unverändert
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -1278,15 +1293,29 @@ function schadenZufügen() {
 }
 
 function heilen() {
-    const zielSpieler = document.getElementById("spieler-dropdown").value;
-    const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
+    const spielerDropdown = document.getElementById("spieler-dropdown");
 
-    if (!zielSpieler || isNaN(heilung) || heilung <= 0) {
-        alert("Ungültige Eingabe.");
+    if (!spielerDropdown) {
+        alert("Das Dropdown-Menü für den Zielspieler konnte nicht gefunden werden.");
+        console.error("Fehler: Dropdown mit der ID 'spieler-dropdown' existiert nicht.");
         return;
     }
 
+    const zielSpieler = spielerDropdown.value;
 
+    if (!zielSpieler) {
+        alert("Bitte wähle einen Spieler aus!");
+        return;
+    }
+
+    const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
+
+    if (isNaN(heilung) || heilung <= 0) {
+        alert("Ungültige Eingabe. Bitte gib eine gültige Zahl ein.");
+        return;
+    }
+
+    // MP und Heilungslogik
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
             if (snapshot.exists()) {
@@ -1298,7 +1327,9 @@ function heilen() {
 
                 // MP abziehen
                 const neueMP = daten.mp - heilung;
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
+                    .then(() => console.log(`MP erfolgreich abgezogen: ${neueMP}`))
+                    .catch((error) => console.error("Fehler beim MP-Update:", error));
 
                 // Zielspieler heilen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
@@ -1315,14 +1346,27 @@ function heilen() {
                                 zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
+                            // Aktion speichern
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion)
+                                .then(() => console.log("Heilungsaktion erfolgreich gespeichert"))
+                                .catch((error) => console.error("Fehler beim Speichern der Heilungsaktion:", error));
 
-                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                            // HP aktualisieren
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP)
+                                .then(() => console.log(`HP erfolgreich aktualisiert: ${zielSpieler} hat jetzt ${neueHP} HP`))
+                                .catch((error) => console.error("Fehler beim HP-Update:", error));
+                        } else {
+                            console.error("Zielspieler nicht gefunden:", zielSpieler);
                         }
-                    });
+                    })
+                    .catch((error) => console.error("Fehler beim Abrufen des Zielspieler-Fortschritts:", error));
+            } else {
+                console.error("Fehler beim Abrufen der aktuellen Benutzer-Fortschritte.");
             }
-        });
+        })
+        .catch((error) => console.error("Fehler beim Abrufen der MP-Daten:", error));
 }
+
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
