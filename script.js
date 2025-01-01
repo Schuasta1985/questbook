@@ -1362,7 +1362,7 @@ setInterval(() => {
     löscheAlteAktionen();
 }, 24 * 60 * 60 * 1000); // Einmal täglich
 
-function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
+function verwendeFähigkeit(fähigkeit, kosten) {
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
         return;
@@ -1382,11 +1382,23 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
                 return;
             }
 
+            // Erfolgswahrscheinlichkeit basierend auf den Kosten
+            let erfolgswahrscheinlichkeit;
+            if (kosten === 1) {
+                erfolgswahrscheinlichkeit = 80; // 80% für Kosten 1 Level
+            } else if (kosten === 2) {
+                erfolgswahrscheinlichkeit = 70; // 70% für Kosten 2 Level
+            } else if (kosten === 3) {
+                erfolgswahrscheinlichkeit = 60; // 60% für Kosten 3 Level
+            } else {
+                erfolgswahrscheinlichkeit = 50; // 50% für Kosten 4+ Level
+            }
+
             // Erfolg oder Misserfolg berechnen
             const randomWert = Math.random() * 100;
             const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
-            // Level-Kosten abziehen, unabhängig vom Erfolg
+            // Level-Kosten abziehen
             level -= kosten;
             aktualisiereXPAnzeige();
 
@@ -1402,7 +1414,10 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
                 lustigerText = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
             }
 
-            // Logbuch aktualisieren mit oder ohne lustigem Text
+            // Animation zeigen
+            zeigeAnimation(erfolg);
+
+            // Logbuch aktualisieren
             const zeitpunkt = new Date().toLocaleString();
             firebase.database().ref("aktionen").push({
                 fähigkeit,
@@ -1417,7 +1432,6 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
             ladeAktionenLog();
         });
 }
-
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
