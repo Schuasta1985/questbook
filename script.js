@@ -1356,17 +1356,28 @@ setInterval(() => {
 }, 24 * 60 * 60 * 1000); // Einmal täglich
 
 function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
+    // Überprüfen, ob der Benutzer genügend Level hat
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
         return;
     }
 
-    const zielSpieler = document.getElementById("zielspieler-dropdown").value;
+    // Zielspieler-Dropdown abrufen und validieren
+    const dropdown = document.getElementById("zielspieler-dropdown");
+    if (!dropdown) {
+        console.error("Fehler: 'zielspieler-dropdown' wurde nicht gefunden!");
+        alert("Ein Problem ist aufgetreten. Bitte öffne das Spezialfähigkeiten-Menü erneut.");
+        zeigeSpezialfähigkeitenMenu(); // Menü erneut öffnen
+        return;
+    }
+
+    const zielSpieler = dropdown.value;
     if (!zielSpieler) {
         alert("Bitte wähle einen Spieler aus!");
         return;
     }
 
+    // Überprüfen, ob die Fähigkeit gesperrt ist
     firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
         .then((snapshot) => {
             const heute = new Date();
@@ -1391,23 +1402,27 @@ function verwendeFähigkeit(fähigkeit, kosten, erfolgswahrscheinlichkeit) {
                 firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
             }
 
-            // Animation zeigen
+            // Animation zeigen (Erfolg oder Misserfolg)
             zeigeAnimation(erfolg);
 
-            // Logbuch aktualisieren
+            // Logbuch-Eintrag erstellen
             firebase.database().ref("aktionen").push({
                 fähigkeit,
                 benutzer: currentUser,
                 ziel: zielSpieler,
                 erfolg,
                 zeitpunkt: new Date().toISOString(),
+            }).then(() => {
+                console.log("Aktion erfolgreich im Logbuch gespeichert.");
+                ladeAktionenLog(); // Aktualisiere das Logbuch
+            }).catch((error) => {
+                console.error("Fehler beim Speichern der Aktion:", error);
             });
-
-            // Anzeige aktualisieren
-            ladeAktionenLog();
+        })
+        .catch((error) => {
+            console.error("Fehler beim Überprüfen der Fähigkeitssperrzeit:", error);
         });
 }
-
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
