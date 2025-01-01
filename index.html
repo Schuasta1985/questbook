@@ -35,7 +35,7 @@
     <div id="login-section">
         <form id="spieler-login-form" onsubmit="benutzerAnmeldung(); return false;">
             <label for="spielerDropdown">Spieler auswählen:</label>
-            <select id="spielerDropdown">
+            <select id="spielerDropdown" name="username" autocomplete="username">
                 <option value="">-- Bitte wählen --</option>
                 <option value="Thomas">Thomas</option>
                 <option value="Elke">Elke</option>
@@ -112,7 +112,7 @@
     <!-- NPC Login Section -->
     <div id="npc-login-section" class="npc-login" style="position: fixed; bottom: 10px; right: 10px;">
         <form id="npc-login-form" onsubmit="npcLogin(); return false;">
-            <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
+            <input type="text" id="npcBenutzername" placeholder="NPC Benutzername" autocomplete="username">
             <input type="password" id="npcPasswort" placeholder="NPC Passwort" autocomplete="current-password">
             <button type="submit">NPC Anmelden</button>
         </form>
