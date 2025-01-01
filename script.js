@@ -1089,20 +1089,50 @@ function aktualisiereLayout() {
     }
 }
 function zeigeZauberMenu() {
-    const zauberMenu = document.createElement("div");
-    zauberMenu.id = "zauber-menu";
-    zauberMenu.style.position = "absolute";
-    zauberMenu.style.top = "50%";
-    zauberMenu.style.left = "50%";
-    zauberMenu.style.transform = "translate(-50%, -50%)";
-    zauberMenu.style.backgroundColor = "white";
-    zauberMenu.style.padding = "20px";
-    zauberMenu.style.border = "2px solid black";
-    zauberMenu.style.borderRadius = "10px";
+    // Vorheriges Menü entfernen, falls vorhanden
+    const bestehendesMenu = document.getElementById("zauber-menu");
+    if (bestehendesMenu) {
+        document.body.removeChild(bestehendesMenu);
+    }
+
+    // Container erstellen
+    const zauberMenu = document.createElement('div');
+    zauberMenu.id = 'zauber-menu';
+    zauberMenu.style.position = 'absolute';
+    zauberMenu.style.top = '50%';
+    zauberMenu.style.left = '50%';
+    zauberMenu.style.transform = 'translate(-50%, -50%)';
+    zauberMenu.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    zauberMenu.style.border = '2px solid #FFD700';
+    zauberMenu.style.borderRadius = '10px';
+    zauberMenu.style.padding = '15px';
+    zauberMenu.style.zIndex = '1000';
+    zauberMenu.style.width = '80%'; // Breite angepasst
+    zauberMenu.style.maxWidth = '500px'; // Maximale Breite
+
+    zauberMenu.innerHTML = `<h3 style="color: #FFD700; text-align: center; margin-bottom: 10px;">Zauber</h3>`;
+
+    // Dropdown für Zielspieler erstellen
+    const dropdownLabel = document.createElement("label");
+    dropdownLabel.textContent = "Zielspieler auswählen:";
+    dropdownLabel.style.display = "block";
+    dropdownLabel.style.color = "#FFD700";
+    dropdownLabel.style.marginBottom = "10px";
 
     const spielerDropdown = document.createElement("select");
-    spielerDropdown.id = "spieler-dropdown";
-    spielerDropdown.style.marginBottom = "15px";
+    spielerDropdown.id = "zielspieler-dropdown";
+    spielerDropdown.style.display = "block";
+    spielerDropdown.style.margin = "10px auto";
+    spielerDropdown.style.width = "100%";
+    spielerDropdown.style.padding = "5px";
+    spielerDropdown.style.border = "1px solid #FFD700";
+    spielerDropdown.style.borderRadius = "5px";
+
+    // Dropdown-Optionen hinzufügen
+    const optionDefault = document.createElement("option");
+    optionDefault.value = "";
+    optionDefault.textContent = "-- Bitte wählen --";
+    spielerDropdown.appendChild(optionDefault);
 
     Object.keys(benutzerDaten).forEach((spieler) => {
         if (spieler !== currentUser) {
@@ -1113,17 +1143,66 @@ function zeigeZauberMenu() {
         }
     });
 
-    zauberMenu.innerHTML = `
-        <h3>Zauber</h3>
-    `;
+    // Dropdown hinzufügen
+    zauberMenu.appendChild(dropdownLabel);
     zauberMenu.appendChild(spielerDropdown);
-    zauberMenu.innerHTML += `
-        <button onclick="schadenZufügen()">Schaden zufügen</button>
-        <button onclick="heilen()">Heilen</button>
-        <button onclick="document.body.removeChild(document.getElementById('zauber-menu'))">Schließen</button>
-    `;
+
+    // Buttons für die Zauber
+    const buttonContainer = document.createElement("div");
+    buttonContainer.style.display = "grid";
+    buttonContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))";
+    buttonContainer.style.gap = "10px";
+    buttonContainer.style.marginTop = "10px";
+
+    const zauber = [
+        { name: "Schaden zufügen", action: schadenZufügen },
+        { name: "Heilen", action: heilen }
+    ];
+
+    zauber.forEach(zauber => {
+        const button = document.createElement('button');
+        button.textContent = zauber.name;
+        button.style.padding = '10px';
+        button.style.backgroundColor = '#FFD700';
+        button.style.color = '#000';
+        button.style.border = 'none';
+        button.style.borderRadius = '5px';
+        button.style.cursor = 'pointer';
+        button.style.textAlign = 'center';
+
+        // Einheitliche Button-Größe
+        button.style.height = '50px';
+        button.style.display = 'flex';
+        button.style.justifyContent = 'center';
+        button.style.alignItems = 'center';
+
+        // Event-Listener für die Buttons
+        button.onclick = zauber.action;
+
+        buttonContainer.appendChild(button);
+    });
+
+    // Buttons zum Container hinzufügen
+    zauberMenu.appendChild(buttonContainer);
+
+    // Schließen-Button hinzufügen
+    const schließenButton = document.createElement('button');
+    schließenButton.textContent = 'Schließen';
+    schließenButton.style.marginTop = '15px';
+    schließenButton.style.padding = '10px';
+    schließenButton.style.backgroundColor = '#888';
+    schließenButton.style.color = '#FFF';
+    schließenButton.style.border = 'none';
+    schließenButton.style.borderRadius = '5px';
+    schließenButton.style.cursor = 'pointer';
+    schließenButton.style.width = '100%';
+
+    schließenButton.onclick = () => document.body.removeChild(zauberMenu);
+
+    zauberMenu.appendChild(schließenButton);
     document.body.appendChild(zauberMenu);
 }
+
 
 function schadenZufügen() {
     const zielSpieler = document.getElementById("spieler-dropdown").value;
