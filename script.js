@@ -1251,15 +1251,13 @@ function schadenZufügen() {
                             const neueHP = Math.max(0, zielDaten.hp - schaden);
 
                             const aktion = {
-                                typ: "Schaden",
-                                wert: schaden,
-                                grund: grund,
-                                von: currentUser,
-                                an: zielSpieler,
-                                zeitpunkt: new Date().toLocaleString()
+                                zeitpunkt: new Date().toLocaleString(),
+                                benutzer: currentUser,
+                                ziel: zielSpieler,
+                                fähigkeit: `Schaden: ${schaden} - Grund: ${grund}`
                             };
 
-                            firebase.database().ref(`aktionen`).push(aktion);
+                            firebase.database().ref("aktionen").push(aktion);
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
                             ladeAktionenLog();
@@ -1328,15 +1326,13 @@ function heilen() {
                             const neueHP = Math.min(zielDaten.hp + heilung, maxHP);
 
                             const aktion = {
-                                typ: "Heilung",
-                                wert: heilung,
-                                grund: grund,
-                                von: currentUser,
-                                an: zielSpieler,
-                                zeitpunkt: new Date().toLocaleString()
+                                zeitpunkt: new Date().toLocaleString(),
+                                benutzer: currentUser,
+                                ziel: zielSpieler,
+                                fähigkeit: `Heilung: ${heilung} - Grund: ${grund}`
                             };
 
-                            firebase.database().ref(`aktionen`).push(aktion);
+                            firebase.database().ref("aktionen").push(aktion);
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
 
                             ladeAktionenLog();
