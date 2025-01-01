@@ -315,6 +315,19 @@ function ladeFortschritte(callback) {
                     aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
                     maxMP = berechneMaxMP(level);
 
+                    // Überprüfung und Korrektur von HP und MP
+                    if (aktuelleHP > maxHP) {
+                        console.warn(`HP von ${currentUser} über Maximum (${aktuelleHP} > ${maxHP}). Wird korrigiert.`);
+                        aktuelleHP = maxHP;
+                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(maxHP);
+                    }
+
+                    if (aktuelleMP > maxMP) {
+                        console.warn(`MP von ${currentUser} über Maximum (${aktuelleMP} > ${maxMP}). Wird korrigiert.`);
+                        aktuelleMP = maxMP;
+                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP);
+                    }
+
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
                     aktualisiereMPLeiste(aktuelleMP, level);
@@ -332,6 +345,7 @@ function ladeFortschritte(callback) {
             });
     }
 }
+
 
 function täglicheHPRegeneration() {
     if (!currentUser) {
