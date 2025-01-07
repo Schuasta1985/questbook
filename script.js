@@ -620,9 +620,6 @@ function aktualisiereQuestImDOM(questNummer, quest) {
     }
 }
 
-// Wichtig: Keine Funktion "erstelleLogbuchSchaltfläche()" mehr!
-// Stelle sicher, dass diese Funktion nicht mehr existiert und nirgends aufgerufen wird.
-
 // Neue Quest erstellen
 function neueQuestErstellen() {
     console.log("neueQuestErstellen() aufgerufen");
@@ -751,7 +748,6 @@ function zeigeAdminFunktionen() {
         });
     }
 }
-
 
 
 function questsZuruecksetzen() {
@@ -1088,6 +1084,9 @@ function aktualisiereLayout() {
         questsSection.style.marginTop = "20px";
     }
 }
+
+// -------------------------------------------------------------------------------------
+// Zauber-Menü
 function zeigeZauberMenu() {
     // Vorheriges Menü entfernen, falls vorhanden
     const bestehendesMenu = document.getElementById("zauber-menu");
@@ -1203,10 +1202,14 @@ function zeigeZauberMenu() {
     document.body.appendChild(zauberMenu);
 }
 
-
+// -------------------------------------------------------------------------------------
+// GEÄNDERTE FUNKTION: Schaden zufügen + Grund
 function schadenZufügen() {
     const zielSpieler = document.getElementById("spieler-dropdown").value;
     const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
+
+    // NEU: Grund abfragen
+    const grund = prompt("Warum fügst du Schaden zu? (z.B. 'Weil du böse warst')");
 
     if (!zielSpieler || isNaN(schaden) || schaden <= 0) {
         alert("Ungültige Eingabe.");
@@ -1235,17 +1238,25 @@ function schadenZufügen() {
                             const zielDaten = zielSnapshot.val();
                             const neueHP = Math.max(0, zielDaten.hp - schaden); // Verhindert negative HP
 
+                            // Aktion-Objekt inkl. Grund und Ziel
                             const aktion = {
                                 typ: "schaden",
                                 wert: schaden,
+                                grund: grund,          // <--- NEU
                                 von: currentUser,
+                                ziel: zielSpieler,      // <--- NEU
                                 zeitpunkt: new Date().toLocaleString()
                             };
 
-                            // Aktion speichern
+                            // 1) Aktion beim Zielspieler speichern
                             firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion)
-                                .then(() => console.log("Aktion erfolgreich gespeichert"))
+                                .then(() => console.log("Aktion erfolgreich gespeichert (Ziel)"))
                                 .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
+
+                            // 2) Aktion zusätzlich im globalen Log "aktionen" speichern
+                            firebase.database().ref("aktionen").push(aktion)
+                                .then(() => console.log("Aktion erfolgreich gespeichert (global)"))
+                                .catch((error) => console.error("Fehler beim globalen Speichern:", error));
 
                             // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP)
@@ -1277,15 +1288,19 @@ function schadenZufügen() {
         .catch((error) => console.error("Fehler beim Abrufen der MP-Daten:", error));
 }
 
+// -------------------------------------------------------------------------------------
+// GEÄNDERTE FUNKTION: Heilen + Grund
 function heilen() {
     const zielSpieler = document.getElementById("spieler-dropdown").value;
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
+
+    // NEU: Grund abfragen
+    const grund = prompt("Warum heilst du? (z.B. 'Weil ich dich lieb habe')");
 
     if (!zielSpieler || isNaN(heilung) || heilung <= 0) {
         alert("Ungültige Eingabe.");
         return;
     }
-
 
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
@@ -1308,21 +1323,31 @@ function heilen() {
                             const maxHP = berechneMaxHP(zielDaten.level);
                             const neueHP = Math.min(zielDaten.hp + heilung, maxHP);
 
+                            // Aktion-Objekt inkl. Grund und Ziel
                             const aktion = {
                                 typ: "heilung",
                                 wert: heilung,
+                                grund: grund,         // <--- NEU
                                 von: currentUser,
+                                ziel: zielSpieler,     // <--- NEU
                                 zeitpunkt: new Date().toLocaleString()
                             };
 
+                            // 1) Aktion beim Ziel speichern
                             firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
+                            // 2) Aktion zusätzlich im globalen Log "aktionen" speichern
+                            firebase.database().ref("aktionen").push(aktion);
+
+                            // HP aktualisieren
                             firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
                         }
                     });
             }
         });
 }
+
+// -------------------------------------------------------------------------------------
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
@@ -1358,7 +1383,7 @@ function ladeAktionen() {
         })
         .catch((error) => {
             console.error("Fehler beim Laden der Aktionen:", error);
-        }); // <--- Stelle sicher, dass diese schließende Klammer vorhanden ist
+        });
 }
 
 function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
@@ -1375,6 +1400,8 @@ function spezialfähigkeitSpeichern(benutzer, ziel, fähigkeit, zeitpunkt) {
     });
 }
 
+// -------------------------------------------------------------------------------------
+// GEÄNDERT: ladeAktionenLog() zeigt jetzt auch typ=schaden/heilung + grund an
 function ladeAktionenLog() {
     const aktionenTabelle = document.getElementById("aktionen-tabelle").querySelector("tbody");
 
@@ -1389,20 +1416,37 @@ function ladeAktionenLog() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const aktionen = snapshot.val();
+
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
 
-                    // Fähigkeit mit lustigem Text oder nur dem Namen anzeigen
-                    const fähigkeitText = aktion.erfolg
-                        ? `${aktion.fähigkeit} - ${aktion.lustigerText}`
-                        : `${aktion.fähigkeit} - Fehlgeschlagen`;
+                    // Prüfen, ob es sich um eine "schaden"/"heilung"-Aktion oder um eine Spezialfähigkeit handelt
+                    if (aktion.typ === "schaden" || aktion.typ === "heilung") {
+                        // Für Schaden/Heilung
+                        let text = (aktion.typ === "schaden") ? "Schaden" : "Heilung";
+                        text += `: ${aktion.wert}`;
+                        if (aktion.grund) {
+                            text += ` (Grund: ${aktion.grund})`;
+                        }
+                        row.innerHTML = `
+                            <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
+                            <td>${aktion.von || "Unbekannt"}</td>
+                            <td>${aktion.ziel || "Unbekannt"}</td>
+                            <td>${text}</td>
+                        `;
+                    } else {
+                        // Bisherige Logik für Spezialfähigkeiten (fägigkeit + lustigerText/Fehlgeschlagen)
+                        const fähigkeitText = aktion.erfolg
+                            ? `${aktion.fähigkeit} - ${aktion.lustigerText}`
+                            : `${aktion.fähigkeit} - Fehlgeschlagen`;
+                        row.innerHTML = `
+                            <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
+                            <td>${aktion.benutzer || aktion.von || "Unbekannt"}</td>
+                            <td>${aktion.ziel || "Unbekannt"}</td>
+                            <td>${fähigkeitText}</td>
+                        `;
+                    }
 
-                    row.innerHTML = `
-                        <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
-                        <td>${aktion.benutzer || "Unbekannt"}</td>
-                        <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${fähigkeitText}</td>
-                    `;
                     aktionenTabelle.appendChild(row);
                 });
             } else {
@@ -1413,8 +1457,6 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
-
-
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
@@ -1524,7 +1566,7 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
         "Unendliche Spielzeit": `${ausführer} ermöglicht ${ziel} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-         "Wunsch frei": `${ziel} erfüllt ${ausführer} einen Wunsch mit einer Prise Magie und Liebe!`
+        "Wunsch frei": `${ziel} erfüllt ${ausführer} einen Wunsch mit einer Prise Magie und Liebe!`
     };
     return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
 }
@@ -1662,7 +1704,6 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-
 function zeigeAnimation(erfolg) {
     const animationContainer = document.createElement("div");
     animationContainer.style.position = "fixed";
@@ -1704,7 +1745,6 @@ function setzeFähigkeitenZurück(spieler) {
         });
 }
 
-
 function initialisiereBenutzerDaten(benutzername) {
     const standardWerte = {
         hp: 100,
@@ -1735,5 +1775,5 @@ function löscheSpezialfähigkeitenLog() {
     }
 }
 
-
+// Zum Schluss Layout aktualisieren
 aktualisiereLayout();
