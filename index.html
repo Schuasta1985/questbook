@@ -32,22 +32,19 @@
         <p id="welcome-text" style="font-size: 1.5em; color: #FFD700; text-shadow: 1px 1px 2px #000;">Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!</p>
     </header>
 
-<div id="login-section">
-    <form id="spieler-login-form" onsubmit="benutzerAnmeldung(); return false;">
-        <label for="spielerDropdown">Spieler auswählen:</label>
-        <!-- Verstecktes Feld für den Benutzernamen -->
-        <input type="text" id="hiddenUsername" name="username" autocomplete="username" style="display: none;">
-        
-        <select id="spielerDropdown" name="visibleUsername" autocomplete="username" onchange="document.getElementById('hiddenUsername').value = this.value;">
-            <option value="">-- Bitte wählen --</option>
-            <option value="Thomas">Thomas</option>
-            <option value="Elke">Elke</option>
-            <option value="Jamie">Jamie</option>
-        </select>
-        <input type="password" id="spielerPasswort" name="password" placeholder="Passwort eingeben" autocomplete="current-password">
-        <button type="submit">Anmelden</button>
-    </form>
-</div>
+    <div id="login-section">
+        <form onsubmit="return false;">
+            <label for="spielerDropdown">Spieler auswählen:</label>
+            <select id="spielerDropdown">
+                <option value="">-- Bitte wählen --</option>
+                <option value="Thomas">Thomas</option>
+                <option value="Elke">Elke</option>
+                <option value="Jamie">Jamie</option>
+            </select>
+            <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
+            <button type="button" onclick="benutzerAnmeldung()">Anmelden</button>
+        </form>
+    </div>
 
     <div id="benutzer-container" class="benutzer-grid"></div>
     
@@ -89,36 +86,33 @@
     <div id="level-up-container">
         <canvas id="level-up-canvas" style="display: none;"></canvas>
     </div>
-
-    <div id="aktionen-log">
-        <div id="aktionen-container">
-            <h3 id="aktionen-titel">Aktionen der Spezialfähigkeiten:</h3>
-            <table id="aktionen-tabelle">
-                <thead>
-                    <tr>
-                        <th>Zeitpunkt</th>
-                        <th>Benutzer</th>
-                        <th>Ziel</th>
-                        <th>Fähigkeit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Einträge werden hier dynamisch hinzugefügt -->
-                </tbody>
-            </table>
-        </div>
+<div id="aktionen-log">
+    <div id="aktionen-container">
+        <h3 id="aktionen-titel">Aktionen der Spezialfähigkeiten:</h3>
+        <table id="aktionen-tabelle">
+            <thead>
+                <tr>
+                    <th>Zeitpunkt</th>
+                    <th>Benutzer</th>
+                    <th>Ziel</th>
+                    <th>Fähigkeit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Einträge werden hier dynamisch hinzugefügt -->
+            </tbody>
+        </table>
     </div>
+</div>
 
     <!-- Logout Button -->
     <button id="logout-button" onclick="ausloggen()" style="display: none;">Ausloggen</button>
 
     <!-- NPC Login Section -->
     <div id="npc-login-section" class="npc-login" style="position: fixed; bottom: 10px; right: 10px;">
-        <form id="npc-login-form" onsubmit="npcLogin(); return false;">
-            <input type="text" id="npcBenutzername" placeholder="NPC Benutzername" autocomplete="username">
-            <input type="password" id="npcPasswort" placeholder="NPC Passwort" autocomplete="current-password">
-            <button type="submit">NPC Anmelden</button>
-        </form>
+        <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
+        <input type="password" id="npcPasswort" placeholder="NPC Passwort">
+        <button id="npcLoginButton" onclick="npcLogin()">NPC Anmelden</button>
     </div>
 
     <script src="script.js"></script>

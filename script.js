@@ -315,19 +315,6 @@ function ladeFortschritte(callback) {
                     aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
                     maxMP = berechneMaxMP(level);
 
-                    // Überprüfung und Korrektur von HP und MP
-                    if (aktuelleHP > maxHP) {
-                        console.warn(`HP von ${currentUser} über Maximum (${aktuelleHP} > ${maxHP}). Wird korrigiert.`);
-                        aktuelleHP = maxHP;
-                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(maxHP);
-                    }
-
-                    if (aktuelleMP > maxMP) {
-                        console.warn(`MP von ${currentUser} über Maximum (${aktuelleMP} > ${maxMP}). Wird korrigiert.`);
-                        aktuelleMP = maxMP;
-                        firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP);
-                    }
-
                     aktualisiereXPAnzeige();
                     aktualisiereHPLeiste(aktuelleHP, level);
                     aktualisiereMPLeiste(aktuelleMP, level);
@@ -346,7 +333,6 @@ function ladeFortschritte(callback) {
     }
 }
 
-
 function täglicheHPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. HP-Regeneration übersprungen.");
@@ -357,14 +343,8 @@ function täglicheHPRegeneration() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                const aktuelleHP = parseInt(daten.hp) || berechneMaxHP(daten.level);
+                const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
                 const maxHP = berechneMaxHP(daten.level);
-
-                // Datenprüfung
-                if (isNaN(aktuelleHP) || isNaN(maxHP)) {
-                    console.error("Fehler: HP-Daten sind ungültig für Benutzer:", currentUser);
-                    return;
-                }
 
                 if (aktuelleHP < maxHP) {
                     const neueHP = Math.min(aktuelleHP + 100, maxHP);
@@ -374,15 +354,6 @@ function täglicheHPRegeneration() {
                             console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
                             aktualisiereHPLeiste(neueHP, daten.level);
                             localStorage.setItem("letzteHPRegeneration", new Date().toDateString());
-
-                            // Log der Regeneration speichern
-                            firebase.database().ref("regenerationLogs").push({
-                                benutzer: currentUser,
-                                typ: "HP",
-                                vorher: aktuelleHP,
-                                nachher: neueHP,
-                                zeitpunkt: new Date().toLocaleString()
-                            });
                         })
                         .catch((error) => {
                             console.error("Fehler beim Speichern der regenerierten HP:", error);
@@ -391,14 +362,13 @@ function täglicheHPRegeneration() {
                     console.log("HP ist bereits maximal.");
                 }
             } else {
-                console.error("Fehler: Keine Fortschrittsdaten gefunden für Benutzer:", currentUser);
+                console.error("Keine Fortschrittsdaten gefunden.");
             }
         })
         .catch((error) => {
             console.error("Fehler beim Abrufen der Fortschrittsdaten:", error);
         });
 }
-
 function täglicheMPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. MP-Regeneration übersprungen.");
@@ -409,39 +379,18 @@ function täglicheMPRegeneration() {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
-                const aktuelleMP = parseInt(daten.mp) || 0;
                 const maxMP = berechneMaxMP(daten.level);
 
-                // Datenprüfung
-                if (isNaN(aktuelleMP) || isNaN(maxMP)) {
-                    console.error("Fehler: MP-Daten sind ungültig für Benutzer:", currentUser);
-                    return;
-                }
-
-                if (aktuelleMP < maxMP) {
-                    const neueMP = maxMP; // MP vollständig auffüllen (oder Teilregeneration einsetzen)
-                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
-                        .then(() => {
-                            console.log(`MP erfolgreich regeneriert: ${aktuelleMP} -> ${neueMP}`);
-                            aktualisiereMPLeiste(neueMP, daten.level);
-
-                            // Log der Regeneration speichern
-                            firebase.database().ref("regenerationLogs").push({
-                                benutzer: currentUser,
-                                typ: "MP",
-                                vorher: aktuelleMP,
-                                nachher: neueMP,
-                                zeitpunkt: new Date().toLocaleString()
-                            });
-                        })
-                        .catch((error) => {
-                            console.error("Fehler beim Speichern der regenerierten MP:", error);
-                        });
-                } else {
-                    console.log("MP ist bereits maximal.");
-                }
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                    .then(() => {
+                        console.log(`MP erfolgreich regeneriert: ${maxMP}`);
+                        aktualisiereMPLeiste(maxMP, daten.level);
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der regenerierten MP:", error);
+                    });
             } else {
-                console.error("Fehler: Keine Fortschrittsdaten gefunden für Benutzer:", currentUser);
+                console.error("Keine Fortschrittsdaten gefunden.");
             }
         })
         .catch((error) => {
@@ -1256,30 +1205,11 @@ function zeigeZauberMenu() {
 
 
 function schadenZufügen() {
-    const spielerDropdown = document.getElementById("zielspieler-dropdown");
-
-    if (!spielerDropdown) {
-        alert("Das Dropdown-Menü für den Zielspieler konnte nicht gefunden werden.");
-        return;
-    }
-
-    const zielSpieler = spielerDropdown.value;
-
-    if (!zielSpieler) {
-        alert("Bitte wähle einen Spieler aus!");
-        return;
-    }
-
-    const grund = prompt("Warum möchtest du Schaden zufügen? (z. B. weil der Spieler etwas Böses gemacht hat)");
-    if (!grund || grund.trim() === "") {
-        alert("Bitte gib einen Grund ein!");
-        return;
-    }
-
+    const zielSpieler = document.getElementById("spieler-dropdown").value;
     const schaden = parseInt(prompt("Wie viel Schaden möchtest du zufügen? (100 MP = 100 Schaden)"), 10);
 
-    if (isNaN(schaden) || schaden <= 0) {
-        alert("Ungültige Eingabe. Bitte gib eine gültige Zahl ein.");
+    if (!zielSpieler || isNaN(schaden) || schaden <= 0) {
+        alert("Ungültige Eingabe.");
         return;
     }
 
@@ -1292,70 +1222,70 @@ function schadenZufügen() {
                     return;
                 }
 
+                // MP abziehen
                 const neueMP = daten.mp - schaden;
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP)
+                    .then(() => console.log(`MP erfolgreich abgezogen: ${neueMP}`))
+                    .catch((error) => console.error("Fehler beim MP-Update:", error));
 
+                // Zielspieler Schaden zufügen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
                             const zielDaten = zielSnapshot.val();
-                            const neueHP = Math.max(0, zielDaten.hp - schaden);
+                            const neueHP = Math.max(0, zielDaten.hp - schaden); // Verhindert negative HP
 
                             const aktion = {
-                                zeitpunkt: new Date().toLocaleString(),
-                                benutzer: currentUser,
-                                ziel: zielSpieler,
-                                fähigkeit: `Schaden: ${schaden} - Grund: ${grund}`
+                                typ: "schaden",
+                                wert: schaden,
+                                von: currentUser,
+                                zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref("aktionen").push(aktion);
-                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                            // Aktion speichern
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion)
+                                .then(() => console.log("Aktion erfolgreich gespeichert"))
+                                .catch((error) => console.error("Fehler beim Speichern der Aktion:", error));
 
-                            ladeAktionenLog();
+                            // HP aktualisieren
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP)
+                                .then(() => {
+                                    console.log(`HP erfolgreich aktualisiert: ${zielSpieler} hat jetzt ${neueHP} HP`);
+                                    if (neueHP <= 0) {
+                                        // Spieler stirbt
+                                        const neuesLevel = Math.max(1, zielDaten.level - 1);
+                                        const maxHP = berechneMaxHP(neuesLevel);
 
-                            if (neueHP <= 0) {
-                                const neuesLevel = Math.max(1, zielDaten.level - 1);
-                                const maxHP = berechneMaxHP(neuesLevel);
-
-                                firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).update({
-                                    level: neuesLevel,
-                                    hp: maxHP
-                                });
-                                alert(`${zielSpieler} ist gestorben und hat ein Level verloren.`);
-                            }
+                                        firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).update({
+                                            level: neuesLevel,
+                                            hp: maxHP
+                                        })
+                                            .then(() => alert(`${zielSpieler} ist gestorben und hat ein Level verloren.`))
+                                            .catch((error) => console.error("Fehler beim Spieler-Tod-Update:", error));
+                                    }
+                                })
+                                .catch((error) => console.error("Fehler beim HP-Update:", error));
+                        } else {
+                            console.error("Zielspieler nicht gefunden:", zielSpieler);
                         }
-                    });
+                    })
+                    .catch((error) => console.error("Fehler beim Abrufen des Zielspieler-Fortschritts:", error));
+            } else {
+                console.error("Fehler beim Abrufen der aktuellen Benutzer-Fortschritte.");
             }
-        });
+        })
+        .catch((error) => console.error("Fehler beim Abrufen der MP-Daten:", error));
 }
 
 function heilen() {
-    const spielerDropdown = document.getElementById("zielspieler-dropdown");
-
-    if (!spielerDropdown) {
-        alert("Das Dropdown-Menü für den Zielspieler konnte nicht gefunden werden.");
-        return;
-    }
-
-    const zielSpieler = spielerDropdown.value;
-
-    if (!zielSpieler) {
-        alert("Bitte wähle einen Spieler aus!");
-        return;
-    }
-
-    const grund = prompt("Warum möchtest du heilen? (z. B. weil der Spieler heute brav war)");
-    if (!grund || grund.trim() === "") {
-        alert("Bitte gib einen Grund ein!");
-        return;
-    }
-
+    const zielSpieler = document.getElementById("spieler-dropdown").value;
     const heilung = parseInt(prompt("Wie viel möchtest du heilen? (100 MP = 100 HP)"), 10);
 
-    if (isNaN(heilung) || heilung <= 0) {
-        alert("Ungültige Eingabe. Bitte gib eine gültige Zahl ein.");
+    if (!zielSpieler || isNaN(heilung) || heilung <= 0) {
+        alert("Ungültige Eingabe.");
         return;
     }
+
 
     firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
         .then((snapshot) => {
@@ -1366,9 +1296,11 @@ function heilen() {
                     return;
                 }
 
+                // MP abziehen
                 const neueMP = daten.mp - heilung;
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(neueMP);
 
+                // Zielspieler heilen
                 firebase.database().ref(`benutzer/${zielSpieler}/fortschritte`).get()
                     .then((zielSnapshot) => {
                         if (zielSnapshot.exists()) {
@@ -1377,22 +1309,20 @@ function heilen() {
                             const neueHP = Math.min(zielDaten.hp + heilung, maxHP);
 
                             const aktion = {
-                                zeitpunkt: new Date().toLocaleString(),
-                                benutzer: currentUser,
-                                ziel: zielSpieler,
-                                fähigkeit: `Heilung: ${heilung} - Grund: ${grund}`
+                                typ: "heilung",
+                                wert: heilung,
+                                von: currentUser,
+                                zeitpunkt: new Date().toLocaleString()
                             };
 
-                            firebase.database().ref("aktionen").push(aktion);
-                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
+                            firebase.database().ref(`benutzer/${zielSpieler}/aktionen`).push(aktion);
 
-                            ladeAktionenLog();
+                            firebase.database().ref(`benutzer/${zielSpieler}/fortschritte/hp`).set(neueHP);
                         }
                     });
             }
         });
 }
-
 function ladeAktionen() {
     firebase.database().ref(`benutzer/${currentUser}/aktionen`).get()
         .then((snapshot) => {
@@ -1462,11 +1392,16 @@ function ladeAktionenLog() {
                 Object.values(aktionen).forEach((aktion) => {
                     const row = document.createElement("tr");
 
+                    // Fähigkeit mit lustigem Text oder nur dem Namen anzeigen
+                    const fähigkeitText = aktion.erfolg
+                        ? `${aktion.fähigkeit} - ${aktion.lustigerText}`
+                        : `${aktion.fähigkeit} - Fehlgeschlagen`;
+
                     row.innerHTML = `
                         <td>${aktion.zeitpunkt || "Zeit unbekannt"}</td>
                         <td>${aktion.benutzer || "Unbekannt"}</td>
                         <td>${aktion.ziel || "Unbekannt"}</td>
-                        <td>${aktion.fähigkeit || "Keine Fähigkeit angegeben"}</td>
+                        <td>${fähigkeitText}</td>
                     `;
                     aktionenTabelle.appendChild(row);
                 });
@@ -1478,6 +1413,8 @@ function ladeAktionenLog() {
             console.error("Fehler beim Laden der Aktionen:", error);
         });
 }
+
+
 
 function löscheAlteAktionen() {
     const mitternacht = new Date();
