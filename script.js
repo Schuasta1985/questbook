@@ -1120,7 +1120,7 @@ function zeigeZauberMenu() {
     dropdownLabel.style.marginBottom = "10px";
 
     const spielerDropdown = document.createElement("select");
-    spielerDropdown.id = "zielspieler-dropdown";
+    spielerDropdown.id = "spieler-dropdown";
     spielerDropdown.style.display = "block";
     spielerDropdown.style.margin = "10px auto";
     spielerDropdown.style.width = "100%";
