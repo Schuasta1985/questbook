@@ -1807,12 +1807,17 @@ function löscheSpezialfähigkeitenLog() {
     }
 }
 function authentifiziereBenutzer() {
-    firebase.auth().onAuthStateChanged((user) => {
+    const auth = firebase.auth();
+    if (!auth) {
+        console.error("Firebase Auth konnte nicht geladen werden.");
+        return;
+    }
+
+    auth.onAuthStateChanged((user) => {
         if (user) {
             console.log("Benutzer authentifiziert:", user.uid);
         } else {
             alert("Du musst angemeldet sein, um auf die Datenbank zuzugreifen.");
-            // Weiterleitung zur Login-Seite (falls erforderlich)
             window.location.href = "login.html";
         }
     });
