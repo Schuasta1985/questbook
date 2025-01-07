@@ -6,7 +6,6 @@ let isAdmin = false;
 
 window.onload = function () {
     console.log("window.onload aufgerufen");
-     authentifiziereBenutzer();
 
     // Initialisiere Logbuch und verstecke den Button
     erstelleLogbuch();
@@ -99,11 +98,12 @@ function erstelleLogbuch() {
 }
 
 function logbuchEintrag(questBeschreibung, benutzername, xp) {
-    console.log("logbuchEintrag() aufgerufen");
-    const zeitstempel = new Date().toLocaleString();
-
-    // Lokale Anzeige
+    console.log("Neuer Logbuch-Eintrag wird erstellt...");
     const logbuchListe = document.getElementById("logbuch-list");
+
+    const datum = new Date();
+    const zeitstempel = datum.toLocaleString();
+
     const eintrag = document.createElement("li");
     eintrag.style.marginBottom = "10px";
     eintrag.innerHTML = `
@@ -112,50 +112,49 @@ function logbuchEintrag(questBeschreibung, benutzername, xp) {
         XP: ${xp}<br>
         Am: ${zeitstempel}
     `;
+
+    // Füge den neuen Eintrag oben hinzu (chronologisch absteigend)
     logbuchListe.prepend(eintrag);
 
-    // In Firebase speichern
-    firebase.database().ref("logbuch").push({
-        quest: questBeschreibung,
-        benutzer: benutzername,
-        xp: xp,
-        zeit: zeitstempel
-    }).then(() => {
-        console.log("Eintrag erfolgreich in Firebase gespeichert.");
-    }).catch((error) => {
-        console.error("Fehler beim Speichern im Logbuch:", error.message, error.code);
-    });
+    // Optional: Eintrag in Firebase speichern (falls benötigt)
+    if (currentUser) {
+        firebase.database().ref("logbuch").push({
+            quest: questBeschreibung,
+            benutzer: benutzername,
+            xp: xp,
+            zeit: zeitstempel
+        }).then(() => {
+            console.log("Logbuch-Eintrag erfolgreich gespeichert.");
+        }).catch((error) => {
+            console.error("Fehler beim Speichern des Logbuch-Eintrags:", error);
+        });
+    }
 }
 
-
 function ladeLogbuch() {
-    console.log("ladeLogbuch() aufgerufen");
-    firebase.database().ref("logbuch").get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const daten = snapshot.val();
-                const logbuchListe = document.getElementById("logbuch-list");
-                logbuchListe.innerHTML = ""; // Liste zurücksetzen
+    firebase.database().ref("logbuch").get().then((snapshot) => {
+        if (snapshot.exists()) {
+            const daten = snapshot.val();
+            const logbuchListe = document.getElementById("logbuch-list");
+            logbuchListe.innerHTML = ""; // Liste zurücksetzen
 
-                Object.values(daten).forEach((eintrag) => {
-                    const listItem = document.createElement("li");
-                    listItem.style.marginBottom = "10px";
-                    listItem.innerHTML = `
-                        <strong>${eintrag.quest}</strong><br>
-                        Erledigt von: ${eintrag.benutzer}<br>
-                        XP: ${eintrag.xp}<br>
-                        Am: ${eintrag.zeit}
-                    `;
-                    logbuchListe.prepend(listItem); // Chronologisch absteigend
-                });
-                console.log("Logbuch erfolgreich geladen.");
-            } else {
-                console.warn("Keine Logbuch-Einträge gefunden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden des Logbuchs:", error.message, error.code);
-        });
+            Object.values(daten).forEach((eintrag) => {
+                const listItem = document.createElement("li");
+                listItem.style.marginBottom = "10px";
+                listItem.innerHTML = `
+                    <strong>${eintrag.quest}</strong><br>
+                    Erledigt von: ${eintrag.benutzer}<br>
+                    XP: ${eintrag.xp}<br>
+                    Am: ${eintrag.zeit}
+                `;
+                logbuchListe.prepend(listItem); // Chronologisch absteigend
+            });
+        } else {
+            console.log("Keine Logbuch-Einträge gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden des Logbuchs:", error);
+    });
 }
 
 function zeigeStartseite() {
@@ -284,25 +283,20 @@ function npcLogin() {
 // Benutzerfortschritte speichern in Firebase
 function speichereFortschritte() {
     if (currentUser) {
-        const benutzerPfad = `benutzer/${currentUser}/fortschritte`;
-        const daten = {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set({
             xp: xp,
             level: level,
             hp: aktuelleHP || berechneMaxHP(level),
             maxHP: maxHP || berechneMaxHP(level),
             mp: aktuelleMP || berechneMaxMP(level),
-            maxMP: maxMP || berechneMaxMP(level),
-        };
-
-        firebase.database().ref(benutzerPfad).set(daten)
-            .then(() => {
-                console.log("Fortschritte erfolgreich gespeichert:", daten);
-            })
-            .catch((error) => {
-                console.error("Fehler beim Speichern der Fortschritte:", error.message, error.code);
-            });
-    } else {
-        console.warn("Kein Benutzer angemeldet. Fortschritte können nicht gespeichert werden.");
+            maxMP: maxMP || berechneMaxMP(level)
+        })
+        .then(() => {
+            console.log("Fortschritte erfolgreich gespeichert.");
+        })
+        .catch((error) => {
+            console.error("Fehler beim Speichern der Fortschritte:", error);
+        });
     }
 }
 
@@ -1009,19 +1003,16 @@ let benutzerDaten = [];
 
 function ladeBenutzerdaten() {
     console.log("ladeBenutzerdaten() aufgerufen");
-    firebase.database().ref("benutzer").get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                benutzerDaten = snapshot.val();
-                console.log("Benutzerdaten erfolgreich geladen:", benutzerDaten);
-                zeigeBenutzerAufStartseite();
-            } else {
-                console.warn("Keine Benutzerdaten gefunden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Laden der Benutzerdaten:", error.message, error.code);
-        });
+    firebase.database().ref('benutzer').get().then((snapshot) => {
+        if (snapshot.exists()) {
+            benutzerDaten = snapshot.val();
+            zeigeBenutzerAufStartseite();
+        } else {
+            console.log("Keine Benutzerdaten gefunden.");
+        }
+    }).catch((error) => {
+        console.error("Fehler beim Laden der Benutzerdaten:", error);
+    });
 }
 
 function zeigeBenutzerAufStartseite() {
@@ -1806,23 +1797,6 @@ function löscheSpezialfähigkeitenLog() {
             });
     }
 }
-function authentifiziereBenutzer() {
-    const auth = firebase.auth();
-    if (!auth) {
-        console.error("Firebase Auth konnte nicht geladen werden.");
-        return;
-    }
-
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            console.log("Benutzer authentifiziert:", user.uid);
-        } else {
-            alert("Du musst angemeldet sein, um auf die Datenbank zuzugreifen.");
-            window.location.href = "login.html";
-        }
-    });
-}
-
 
 
 aktualisiereLayout();
