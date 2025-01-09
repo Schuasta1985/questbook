@@ -187,16 +187,10 @@ function zeigeStartseite() {
     document.getElementById("quests-section").style.display = "none";
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
-
-    // *** Hier ist die Anpassung ***
-    const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "block";
-    }
+    document.getElementById("npc-login-section").style.display = "block";
 
     ladeBenutzerdaten();
 }
-
 
 function zeigeQuestbook() {
     document.getElementById("quests-section").style.display = "block";
@@ -213,7 +207,6 @@ function zeigeQuestbook() {
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
-    // Statt direktem Zugriff erst prüfen:
     const npcLoginSection = document.getElementById("npc-login-section");
     const logbuchButton = document.getElementById("logbuch-button");
     const benutzernameInput = document.getElementById("spielerDropdown");
@@ -254,11 +247,7 @@ function benutzerAnmeldung() {
         logbuchButton.style.display = "block";
     }
 
-    // *** Hier ist die Anpassung ***
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "none";
-    }
-
+    if (npcLoginSection) npcLoginSection.style.display = "none";
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
     zeigeQuestbook();
@@ -270,7 +259,7 @@ function benutzerAnmeldung() {
     console.log("Benutzeranmeldung abgeschlossen!");
 }
 
-
+// NPC Login
 function npcLogin() {
     console.log("npcLogin() aufgerufen");
     const username = document.getElementById("npcBenutzername")?.value;
@@ -281,12 +270,7 @@ function npcLogin() {
         isAdmin = true;
         currentUser = null;
 
-        // *** Hier ist die Anpassung ***
-        const npcLoginSection = document.getElementById("npc-login-section");
-        if (npcLoginSection) {
-            npcLoginSection.style.display = "none";
-        }
-
+        document.getElementById("npc-login-section").style.display = "none";
         zeigeQuestbook();
         ladeGlobaleQuests();
         zeigeAdminFunktionen();
@@ -929,11 +913,8 @@ function ausloggen() {
     document.getElementById("xp-counter").style.display = "none";
     document.getElementById("logout-button").style.display = "none";
 
-    // *** Hier ist die Anpassung ***
     const npcLoginSection = document.getElementById("npc-login-section");
-    if (npcLoginSection) {
-        npcLoginSection.style.display = "block";
-    }
+    if (npcLoginSection) npcLoginSection.style.display = "block";
 
     const questList = document.getElementById("quests");
     if (questList) {
@@ -962,7 +943,6 @@ function ausloggen() {
 
     zeigeStartseite();
 }
-
 
 let benutzerDaten = [];
 

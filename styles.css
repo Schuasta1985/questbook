@@ -99,6 +99,7 @@ h1 {
     margin-bottom: 50px; /* Platz unter dem Avatar schaffen */
 }
 
+
 body.logged-in #quests-section {
     margin-top: 300px; /* Platz unter dem Avatar schaffen */
 }
@@ -143,6 +144,7 @@ body #login-section {
     font-size: 16px; /* Einheitliche Schriftgröße */
     text-align: center; /* Zentrierter Text */
 }
+
 
 #benutzerDropdown {
     width: 100%; /* Volle Breite innerhalb des Containers */
@@ -222,6 +224,7 @@ button:hover {
     justify-content: space-between; /* Text und Button positionieren */
     align-items: center;
 }
+
 
 /* Button für "Erledigt" am rechten Rand positionieren */
 button.erledigt-button {
@@ -430,7 +433,8 @@ button:hover {
 }
 /* Logbuch-Button direkt über dem unteren Bildschirmrand, zentriert */
 #logbuch-button {
-    position: static;
+    /* Entferne position: fixed; */
+    position: static; /* oder ganz weglassen */
     margin: 20px auto; /* z.B. unterhalb des Logins oder oben an der Seite */
     display: block;
     background-color: black;
@@ -439,21 +443,24 @@ button:hover {
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
+    /* Kein transform, kein fixed, kein hoher z-index */
 }
-/* NPC Login: Position statisch, damit er nicht überlappt */
+
+/* NPC Login immer unten rechts fixiert */
 #npc-login-section {
-    position: static; /* oder ganz entfernen, wenn du das Overlay verwendest */
+    /* Entferne position: fixed; */
+    position: static; /* oder ganz weglassen */
     bottom: auto;
     right: auto;
+    /* Behalte Hintergrund, Padding, etc. bei */
     background-color: rgba(0,0,0,0.7);
     padding: 10px;
     border-radius: 8px;
-    z-index: 1;
+    z-index: 1; /* Ein niedriger z-index, damit es nicht über anderen Elementen steht */
     width: 200px;
-    margin: 20px auto; /* z.B. zentriert platzieren */
+    margin: 20px auto; /* z.B. zentrieren oder woanders platzieren */
 }
 
-/* Zauber-Menü (falls benutzt) */
 #zauber-menu {
     position: absolute;
     top: 50%;
@@ -483,16 +490,7 @@ button:hover {
 #zauber-menu button:hover {
     background-color: #FFC107;
 }
-
 /* Verbesserte Tabelle mit dunklem Stil */
-#aktionen-tabelle-container {
-    max-width: 100%;
-    overflow-x: auto; /* Falls die Tabelle zu breit wird, kann man scrollen */
-    border: 1px solid #FFD700;
-    border-radius: 5px;
-    margin-top: 10px;
-}
-
 #aktionen-tabelle {
     background-color: rgba(33, 37, 41, 0.95); /* Dunkler Hintergrund */
     color: #FFD700; /* Goldene Schriftfarbe */
@@ -502,7 +500,6 @@ button:hover {
     border: 2px solid #FFD700; /* Goldene Umrandung */
     border-radius: 10px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5); /* Schatten */
-    table-layout: auto; /* Automatische Spaltenbreite */
 }
 
 #aktionen-tabelle th, #aktionen-tabelle td {
@@ -512,8 +509,6 @@ button:hover {
     font-size: 0.9em; /* Einheitliche Schriftgröße */
     font-family: Arial, sans-serif; /* Gleiche Schriftart wie Benutzerübersicht */
     background-color: rgba(44, 44, 44, 0.9); /* Dunkler Hintergrund für Zellen */
-    word-wrap: break-word;    /* Lange Wörter umbrechen */
-    overflow-wrap: anywhere;  /* Noch moderneres Umbrechen */
 }
 
 #aktionen-tabelle th {
@@ -551,13 +546,16 @@ button:hover {
 
 /* Allgemeiner transparenter Hintergrund für unwichtige Inhalte */
 .transparent-background {
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0); /* Vollständig transparent */
 }
 
 /* Container für Logs */
 #aktionen-log {
-    background-color: transparent;
+    background-color: transparent; /* Kein Hintergrund */
     padding: 0;
     margin: 0;
     border: none;
 }
+
+
+
