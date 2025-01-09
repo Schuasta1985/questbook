@@ -13,7 +13,7 @@
     <script>
         // Firebase-Initialisierung
         const firebaseConfig = {
-            apiKey: "AIzaSyCRB0qfBEcb8Vtvc97-61I6J0HtSnT7y2Y",
+            apiKey: "AIzaSyCRB0fBEcb8Vtvc97-61I6J0HtSnT7y2Y",
             authDomain: "questbook-3e600.firebaseapp.com",
             databaseURL: "https://questbook-3e600-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "questbook-3e600",
@@ -24,12 +24,61 @@
         };
         firebase.initializeApp(firebaseConfig);
     </script>
+
+    <!-- Kleiner Style-Block für Tabelle und NPC-Popup -->
+    <style>
+        /* Tabelle der Aktionen responsiv machen */
+        #aktionen-tabelle-container {
+            max-width: 100%;
+            overflow-x: auto; /* bei Bedarf horizontaler Scrollbalken */
+            border: 1px solid #FFD700;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        #aktionen-tabelle {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+        #aktionen-tabelle th, #aktionen-tabelle td {
+            border: 1px solid #FFD700;
+            padding: 8px;
+            color: #FFD700;
+            vertical-align: top;
+        }
+        /* Damit lange Wörter umbrechen, statt überzulaufen */
+        #aktionen-tabelle td {
+            word-wrap: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        /* NPC-Login-Popup Overlay */
+        #npc-login-popup {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 1000;
+            width: 300px;
+            max-width: 90%;
+        }
+        #npc-login-popup h4 {
+            color: #FFD700;
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1 style="font-family: 'Cinzel', serif; font-size: 3em; color: #FFD700; text-shadow: 2px 2px 5px #000;">Willkommen im Quest-Book</h1>
+        <h1 style="font-family: 'Cinzel', serif; font-size: 3em; color: #FFD700; text-shadow: 2px 2px 5px #000;">
+            Willkommen im Quest-Book
+        </h1>
         <div class="golden-line"></div>
-        <p id="welcome-text" style="font-size: 1.5em; color: #FFD700; text-shadow: 1px 1px 2px #000;">Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!</p>
+        <p id="welcome-text" style="font-size: 1.5em; color: #FFD700; text-shadow: 1px 1px 2px #000;">
+            Erledige tägliche Quests, um XP zu sammeln und dein Level zu erhöhen!
+        </p>
     </header>
 
     <div id="login-section">
@@ -80,15 +129,17 @@
     </div>
 
     <!-- Schadensmeldung -->
-    <div id="damage-message" style="display: none; background: rgba(255, 0, 0, 0.7); color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">Schaden erhalten: -20 HP (Du warst heute nicht brav!)</div>
+    <div id="damage-message" style="display: none; background: rgba(255, 0, 0, 0.7); color: white; padding: 10px; margin-top: 10px; border-radius: 5px;">
+        Schaden erhalten: -20 HP (Du warst heute nicht brav!)
+    </div>
 
     <!-- Canvas für Level-Up Animation -->
     <div id="level-up-container">
         <canvas id="level-up-canvas" style="display: none;"></canvas>
     </div>
-<div id="aktionen-log">
-    <div id="aktionen-container">
-        <h3 id="aktionen-titel">Aktionen der Spezialfähigkeiten:</h3>
+
+    <!-- Aktionen der Spezialfähigkeiten in einem scrollbaren Container -->
+    <div id="aktionen-tabelle-container">
         <table id="aktionen-tabelle">
             <thead>
                 <tr>
@@ -103,18 +154,84 @@
             </tbody>
         </table>
     </div>
-</div>
 
     <!-- Logout Button -->
     <button id="logout-button" onclick="ausloggen()" style="display: none;">Ausloggen</button>
 
-    <!-- NPC Login Section -->
+    <!-- Button zum Öffnen des NPC-Login-Popups -->
+    <button id="npcLoginToggle" style="
+        background-color: #FFD700;
+        color: black;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-left: 10px;
+        cursor: pointer;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    ">
+      NPC-Anmelden
+    </button>
+
+    <!-- Overlay-Popup für den NPC-Login -->
+    <div id="npc-login-popup">
+      <h4>NPC Login</h4>
+      <label style="color: #FFD700;">Benutzername:</label><br>
+      <input type="text" id="npcBenutzername" style="width: 100%; margin-bottom: 8px;" /><br>
+      <label style="color: #FFD700;">Passwort:</label><br>
+      <input type="password" id="npcPasswort" style="width: 100%; margin-bottom: 8px;" /><br>
+      <button onclick="npcLogin()" style="
+          background-color: #FFD700;
+          color: black;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          padding: 5px 10px;
+          cursor: pointer;
+      ">
+        Anmelden
+      </button>
+      <button onclick="toggleNpcLogin(false)" style="
+          background-color: #888;
+          color: #FFF;
+          border: none;
+          border-radius: 5px;
+          padding: 5px 10px;
+          margin-left: 10px;
+          cursor: pointer;
+      ">
+        Abbrechen
+      </button>
+    </div>
+
+    <!-- Entferne oder kommentiere den alten NPC-Login-Abschnitt -->
+    <!--
     <div id="npc-login-section" class="npc-login" style="position: fixed; bottom: 10px; right: 10px;">
         <input type="text" id="npcBenutzername" placeholder="NPC Benutzername">
         <input type="password" id="npcPasswort" placeholder="NPC Passwort">
         <button id="npcLoginButton" onclick="npcLogin()">NPC Anmelden</button>
     </div>
+    -->
 
+    <script>
+      // Funktion zum Ein-/Ausblenden des NPC-Login-Popups
+      function toggleNpcLogin(zeigen) {
+          const popup = document.getElementById("npc-login-popup");
+          if (!popup) return;
+          popup.style.display = zeigen ? "block" : "none";
+      }
+
+      window.onload = function() {
+          // Ursprünglicher onload-Inhalt aus script.js
+          // + Button für NPC-Login-Bildschirm
+          const npcButton = document.getElementById("npcLoginToggle");
+          if (npcButton) {
+              npcButton.onclick = () => toggleNpcLogin(true);
+          }
+      };
+    </script>
+
+    <!-- Dein Hauptscript -->
     <script src="script.js"></script>
 </body>
 </html>
