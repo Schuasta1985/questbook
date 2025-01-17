@@ -1509,13 +1509,13 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             // Erfolgswahrscheinlichkeit basierend auf den Kosten
             let erfolgswahrscheinlichkeit;
             if (kosten === 1) {
-                erfolgswahrscheinlichkeit = 80; // 80% für Kosten 1 Level
+                erfolgswahrscheinlichkeit = 85; // 80% für Kosten 1 Level
             } else if (kosten === 2) {
-                erfolgswahrscheinlichkeit = 70; // 70% für Kosten 2 Level
+                erfolgswahrscheinlichkeit = 80; // 70% für Kosten 2 Level
             } else if (kosten === 3) {
-                erfolgswahrscheinlichkeit = 60; // 60% für Kosten 3 Level
+                erfolgswahrscheinlichkeit = 75; // 60% für Kosten 3 Level
             } else {
-                erfolgswahrscheinlichkeit = 50; // 50% für Kosten 4+ Level
+                erfolgswahrscheinlichkeit = 70; // 50% für Kosten 4+ Level
             }
 
             // Erfolg oder Misserfolg berechnen
