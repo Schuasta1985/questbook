@@ -1564,11 +1564,12 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
         "30 Min Gaming Zeit": `${ausführer} schenkt ${ziel} 30 Minuten pure Gaming-Freude!`,
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
-        "Unendliche Spielzeit": `${ausführer} ermöglicht ${ziel} endloses Spielen – ein Traum wird wahr!`,
+        "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-        "Wunsch frei": `${ziel} erfüllt ${ausführer} einen Wunsch mit einer Prise Magie und Liebe!`
+        "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`
     };
-    return lustigeTexte[fähigkeit] || `${ausführer} nutzt ${fähigkeit} auf ${ziel} mit großem Erfolg!`;
+
+    return lustigeTexte[fähigkeit] || "Unbekannte Fähigkeit!";
 }
 
 function zeigeSpezialfähigkeitenMenu() {
