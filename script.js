@@ -1562,7 +1562,7 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
         "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
         "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
-        "30 Min Gaming Zeit": `${ausführer} schenkt ${ziel} 30 Minuten pure Gaming-Freude!`,
+        "30 Min Gaming Zeit": `${ziel}  schenkt ${ausführer} 30 Minuten pure Gaming-Freude!`,
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
         "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
