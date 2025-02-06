@@ -251,8 +251,11 @@ function benutzerAnmeldung() {
     if (benutzerContainer) benutzerContainer.style.display = "none";
 
     zeigeQuestbook();
-    ladeFortschritte();
-    täglicheHPRegeneration();
+    ladeFortschritte(() => {
+        täglicheHPRegeneration(); // HP-Regeneration erst nach erfolgreichem Laden der Fortschritte
+        täglicheMPRegeneration(); // MP-Regeneration erst nach erfolgreichem Laden der Fortschritte
+    });
+    
     zeigeAvatar();
     ladeGlobaleQuests();
 
