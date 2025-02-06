@@ -99,7 +99,6 @@ h1 {
     margin-bottom: 50px; /* Platz unter dem Avatar schaffen */
 }
 
-
 body.logged-in #quests-section {
     margin-top: 300px; /* Platz unter dem Avatar schaffen */
 }
@@ -145,7 +144,6 @@ body #login-section {
     text-align: center; /* Zentrierter Text */
 }
 
-
 #benutzerDropdown {
     width: 100%; /* Volle Breite innerhalb des Containers */
 }
@@ -153,6 +151,7 @@ body #login-section {
 #benutzerPasswort {
     width: 100%; /* Volle Breite innerhalb des Containers */
 }
+
 /* Buttons */
 button {
     background-color: #808000; /* Olivgrün */
@@ -169,6 +168,7 @@ button:hover {
     color: black; /* Gute Lesbarkeit */
     transform: scale(1.05);
 }
+
 /* Admin Login */
 .admin-login {
     position: fixed;
@@ -432,6 +432,7 @@ button:hover {
 #logbuch-list strong {
     color: #00FF00; /* Grüne Farbe für Quest-Beschreibung */
 }
+
 /* Logbuch-Button direkt über dem unteren Bildschirmrand, zentriert */
 #logbuch-button {
     /* Entferne position: fixed; */
@@ -447,7 +448,7 @@ button:hover {
     /* Kein transform, kein fixed, kein hoher z-index */
 }
 
-/* NPC Login immer unten rechts fixiert */
+/* NPC Login immer unten rechts fixiert (Desktop-Version) */
 #npc-login-section {
     position: fixed;
     bottom: 20px;
@@ -575,16 +576,21 @@ button:hover {
         word-wrap: break-word;
     }
 }
-/* Mobile Optimierung für den NPC-Login */
+
+/* Mobile Optimierung für den NPC-Login:
+   Statt unten rechts soll die NPC-Anmeldemaske fest unterhalb
+   der "Aktionen der Spezialfähigkeiten" platziert werden.
+   Den Top-Wert (hier 450px) bitte ggf. anpassen! */
 @media (max-width: 600px) {
     #npc-login-section {
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 10px !important;
-        left: auto !important;
-        width: calc(100% - 20px) !important;
-        max-width: 300px !important;
-        margin: 0 !important;
-        z-index: 9999 !important;
+        position: fixed;
+        top: 450px; /* Dieser Wert bestimmt den Abstand vom oberen Rand;
+                      passe ihn an, bis die Maske direkt unter den Aktionen liegt */
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 300px;
+        z-index: 9999;
+        box-shadow: none;
     }
 }
