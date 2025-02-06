@@ -575,3 +575,16 @@ button:hover {
         word-wrap: break-word;
     }
 }
+/* Mobile Optimierung für den NPC-Login */
+@media (max-width: 600px) {
+    #npc-login-section {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 10px !important;
+        left: auto !important;
+        width: calc(100% - 20px) !important;
+        max-width: 300px !important;
+        margin: 0 !important;
+        z-index: 9999 !important;
+    }
+}
