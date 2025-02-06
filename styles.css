@@ -1,3 +1,8 @@
+@media (max-width: 600px) {
+  body {
+    background-color: red !important;
+  }
+}
 /* Allgemeine Stile für die gesamte Seite */
 body {
     margin: 0;
