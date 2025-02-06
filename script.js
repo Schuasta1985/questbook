@@ -346,29 +346,27 @@ function täglicheHPRegeneration() {
                 const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
                 const maxHP = berechneMaxHP(daten.level);
 
-                if (aktuelleHP < maxHP) {
-                    const neueHP = Math.min(aktuelleHP + 100, maxHP);
+                // Neue tägliche HP-Regeneration auf 50 HP begrenzen
+                const neueHP = Math.min(aktuelleHP + 50, maxHP);
 
-                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
-                        .then(() => {
-                            console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
-                            aktualisiereHPLeiste(neueHP, daten.level);
-                            localStorage.setItem("letzteHPRegeneration", new Date().toDateString());
-                        })
-                        .catch((error) => {
-                            console.error("Fehler beim Speichern der regenerierten HP:", error);
-                        });
-                } else {
-                    console.log("HP ist bereits maximal.");
-                }
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
+                    .then(() => {
+                        console.log(`HP erfolgreich regeneriert: ${aktuelleHP} -> ${neueHP}`);
+                        aktualisiereHPLeiste(neueHP, daten.level);
+                        localStorage.setItem("letzteHPRegeneration", new Date().toDateString());
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Speichern der regenerierten HP:", error);
+                    });
             } else {
                 console.error("Keine Fortschrittsdaten gefunden.");
             }
         })
         .catch((error) => {
-            console.error("Fehler beim Abrufen der Fortschrittsdaten:", error);
+            console.error("Fehler beim Abrufen der HP-Daten:", error);
         });
 }
+
 function täglicheMPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. MP-Regeneration übersprungen.");
@@ -383,7 +381,7 @@ function täglicheMPRegeneration() {
 
                 firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
                     .then(() => {
-                        console.log(`MP erfolgreich regeneriert: ${maxMP}`);
+                        console.log(`MP erfolgreich regeneriert auf: ${maxMP}`);
                         aktualisiereMPLeiste(maxMP, daten.level);
                     })
                     .catch((error) => {
@@ -506,7 +504,28 @@ function überprüfeLevelAufstieg() {
         aktualisiereXPAnzeige();
         zeigeLevelUpAnimation();
     }
+
+    // Falls das Level sinkt (z.B. durch Tod)
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                const neueMaxHP = berechneMaxHP(level);
+
+                if (daten.hp > neueMaxHP) {
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueMaxHP)
+                        .then(() => {
+                            console.log(`HP auf neues Max-HP gesenkt: ${neueMaxHP}`);
+                            aktualisiereHPLeiste(neueMaxHP, level);
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Setzen des neuen Max-HP:", error);
+                        });
+                }
+            }
+        });
 }
+
 
 function zeigeLevelUpAnimation() {
     console.log("zeigeLevelUpAnimation() aufgerufen");
