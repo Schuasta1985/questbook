@@ -225,7 +225,6 @@ button:hover {
     align-items: center;
 }
 
-
 /* Button für "Erledigt" am rechten Rand positionieren */
 button.erledigt-button {
     background-color: #4CAF50; /* Grün */
@@ -279,6 +278,7 @@ button:hover {
     color: #FFFFFF; /* Weiße Schriftfarbe */
     text-shadow: 1px 1px 2px #000000; /* Schwarzer Textschatten */
 }
+
 #hp-bar-container {
     display: flex;
     justify-content: center;
@@ -385,6 +385,7 @@ button:hover {
 .mp-bar .progress {
     background: blue;
 }
+
 /* Logbuch-Container immer unten in der Mitte, aber etwas höher gesetzt */
 #logbuch-container {
     position: fixed;
@@ -448,17 +449,15 @@ button:hover {
 
 /* NPC Login immer unten rechts fixiert */
 #npc-login-section {
-    /* Entferne position: fixed; */
-    position: static; /* oder ganz weglassen */
-    bottom: auto;
-    right: auto;
-    /* Behalte Hintergrund, Padding, etc. bei */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     background-color: rgba(0,0,0,0.7);
     padding: 10px;
     border-radius: 8px;
-    z-index: 1; /* Ein niedriger z-index, damit es nicht über anderen Elementen steht */
+    z-index: 999; /* Höherer z-index, damit der Button sichtbar bleibt */
     width: 200px;
-    margin: 20px auto; /* z.B. zentrieren oder woanders platzieren */
+    /* margin: entfernt, da fixed-Elemente nicht zentriert werden sollen */
 }
 
 #zauber-menu {
@@ -490,6 +489,7 @@ button:hover {
 #zauber-menu button:hover {
     background-color: #FFC107;
 }
+
 /* Verbesserte Tabelle mit dunklem Stil */
 #aktionen-tabelle {
     background-color: rgba(33, 37, 41, 0.95); /* Dunkler Hintergrund */
@@ -557,5 +557,21 @@ button:hover {
     border: none;
 }
 
-
-
+/* ============================= */
+/* Mobile Optimierungen (Responsive Design) */
+@media (max-width: 600px) {
+    /* Tabelle und Container anpassen */
+    #aktionen-container {
+        width: 95%;
+        overflow-x: auto; /* Ermöglicht horizontales Scrollen, falls erforderlich */
+    }
+    #aktionen-tabelle {
+        width: 100%;
+        font-size: 0.8em; /* Etwas kleinere Schrift */
+    }
+    #aktionen-tabelle th,
+    #aktionen-tabelle td {
+        white-space: normal;  /* Erlaubt Zeilenumbruch */
+        word-wrap: break-word;
+    }
+}
