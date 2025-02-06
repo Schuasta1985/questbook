@@ -377,35 +377,52 @@ function täglicheMPRegeneration() {
     }
 
     const heutigesDatum = new Date().toDateString();
-    const letzterTagMP = localStorage.getItem("letzteMPRegeneration");
+    const letzterTagMP = localStorage.getItem(`letzteMPRegeneration_${currentUser}`); // Benutzer-spezifisch
 
-    // Nur fortfahren, wenn MP heute noch nicht regeneriert wurden
     if (letzterTagMP !== heutigesDatum) {
         firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
             .then((snapshot) => {
                 if (snapshot.exists()) {
                     const daten = snapshot.val();
-                    const maxMP = berechneMaxMP(daten.level);
+                    const maxMP = berechneMaxMP(daten.level || 1); // Falls Level fehlt, nehme 1
+
+                    console.log(`[${currentUser}] Setze MP auf Maximum: ${maxMP}`);
 
                     firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
                         .then(() => {
-                            console.log(`MP erfolgreich auf Maximum gesetzt: ${maxMP}`);
-                            aktualisiereMPLeiste(maxMP, daten.level);
-                            // MP-Regeneration im LocalStorage speichern
-                            localStorage.setItem("letzteMPRegeneration", heutigesDatum);
+                            console.log(`[${currentUser}] MP erfolgreich auf ${maxMP} gesetzt.`);
+                            aktualisiereMPLeiste(maxMP, daten.level || 1);
+                            localStorage.setItem(`letzteMPRegeneration_${currentUser}`, heutigesDatum);
                         })
                         .catch((error) => {
-                            console.error("Fehler beim Speichern der regenerierten MP:", error);
+                            console.error(`[${currentUser}] Fehler beim Speichern der MP:`, error);
                         });
                 } else {
-                    console.error("Keine Fortschrittsdaten gefunden.");
+                    console.warn(`[${currentUser}] Keine Fortschrittsdaten gefunden! Setze Standardwerte.`);
+
+                    // Falls keine Daten existieren, neue Standardwerte setzen
+                    const standardWerte = {
+                        level: 1,
+                        mp: 50,
+                        maxMP: 50
+                    };
+
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).set(standardWerte)
+                        .then(() => {
+                            console.log(`[${currentUser}] Standardwerte für MP gesetzt: ${standardWerte.mp}`);
+                            aktualisiereMPLeiste(50, 1);
+                            localStorage.setItem(`letzteMPRegeneration_${currentUser}`, heutigesDatum);
+                        })
+                        .catch((error) => {
+                            console.error(`[${currentUser}] Fehler beim Setzen der Standardwerte:`, error);
+                        });
                 }
             })
             .catch((error) => {
-                console.error("Fehler beim Abrufen der MP-Daten:", error);
+                console.error(`[${currentUser}] Fehler beim Abrufen der MP-Daten:`, error);
             });
     } else {
-        console.log("MP wurde heute bereits regeneriert.");
+        console.log(`[${currentUser}] MP wurde heute bereits regeneriert.`);
     }
 }
 
