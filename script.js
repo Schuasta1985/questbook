@@ -373,27 +373,37 @@ function täglicheMPRegeneration() {
         return;
     }
 
-    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-        .then((snapshot) => {
-            if (snapshot.exists()) {
-                const daten = snapshot.val();
-                const maxMP = berechneMaxMP(daten.level);
+    const heutigesDatum = new Date().toDateString();
+    const letzterTagMP = localStorage.getItem("letzteMPRegeneration");
 
-                firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
-                    .then(() => {
-                        console.log(`MP erfolgreich regeneriert auf: ${maxMP}`);
-                        aktualisiereMPLeiste(maxMP, daten.level);
-                    })
-                    .catch((error) => {
-                        console.error("Fehler beim Speichern der regenerierten MP:", error);
-                    });
-            } else {
-                console.error("Keine Fortschrittsdaten gefunden.");
-            }
-        })
-        .catch((error) => {
-            console.error("Fehler beim Abrufen der MP-Daten:", error);
-        });
+    // Nur fortfahren, wenn MP heute noch nicht regeneriert wurden
+    if (letzterTagMP !== heutigesDatum) {
+        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+            .then((snapshot) => {
+                if (snapshot.exists()) {
+                    const daten = snapshot.val();
+                    const maxMP = berechneMaxMP(daten.level);
+
+                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                        .then(() => {
+                            console.log(`MP erfolgreich auf Maximum gesetzt: ${maxMP}`);
+                            aktualisiereMPLeiste(maxMP, daten.level);
+                            // MP-Regeneration im LocalStorage speichern
+                            localStorage.setItem("letzteMPRegeneration", heutigesDatum);
+                        })
+                        .catch((error) => {
+                            console.error("Fehler beim Speichern der regenerierten MP:", error);
+                        });
+                } else {
+                    console.error("Keine Fortschrittsdaten gefunden.");
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Abrufen der MP-Daten:", error);
+            });
+    } else {
+        console.log("MP wurde heute bereits regeneriert.");
+    }
 }
 
 
