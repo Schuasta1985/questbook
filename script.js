@@ -54,6 +54,7 @@ const spezialFähigkeitenTexte = {
     ],
     Elke: [
         { name: "Massiere mich", kosten: 2 },
+        { name: "TV gucken mit...", kosten: 1 },
         { name: "Ich will gekuschelt werden", kosten: 1 },
         { name: "Mach mir was zu essen", kosten: 3 },
         { name: "Wunsch frei", kosten: 5 },
@@ -1616,6 +1617,7 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
         "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`
+        "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`
     };
 
     return lustigeTexte[fähigkeit] || "Unbekannte Fähigkeit!";
