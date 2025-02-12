@@ -1616,7 +1616,7 @@ function generiereLustigenText(fähigkeit, ausführer, ziel) {
         "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
         "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
         "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-        "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`
+        "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`,
         "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`
     };
 
