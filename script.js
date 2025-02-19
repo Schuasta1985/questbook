@@ -49,6 +49,7 @@ const spezialFähigkeitenTexte = {
     Jamie: [
         { name: "Massiere mich", kosten: 2 },
         { name: "Ich will gekuschelt werden", kosten: 1 },
+        { name: "TV gucken mit...", kosten: 3 },
         { name: "30 Min Gaming Zeit", kosten: 2 },
         { name: "Unendliche Spielzeit", kosten: 5 }
     ],
