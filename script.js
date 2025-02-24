@@ -1585,7 +1585,10 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             const erfolg = randomWert <= erfolgswahrscheinlichkeit;
 
             // Level-Kosten abziehen
+            console.log(`Fähigkeit: ${fähigkeit}, Kosten: ${kosten}, Level vorher: ${level}`);
             level -= kosten;
+            console.log(`Level nachher: ${level}`);
+
             aktualisiereXPAnzeige();
 
             let lustigerText = "";
