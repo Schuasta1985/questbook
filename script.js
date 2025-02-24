@@ -1623,16 +1623,18 @@ function verwendeFähigkeit(fähigkeit, kosten) {
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
-        "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
-        "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
-        "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
-        "30 Min Gaming Zeit": `${ziel}  schenkt ${ausführer} 30 Minuten pure Gaming-Freude!`,
-        "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
-        "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
-        "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-        "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`,
-        "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`
-    };
+    "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
+    "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
+    "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
+    "30 Min Gaming Zeit": `${ziel} schenkt ${ausführer} 30 Minuten pure Gaming-Freude!`,
+    "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
+    "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
+    "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+    "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`,
+    "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`,
+    "TV gucken mit...": `${ziel} und ${ausführer} machen es sich gemütlich und starten einen Serien-Marathon! 🍿🎮`
+};
+
 
     return lustigeTexte[fähigkeit] || "Unbekannte Fähigkeit!";
 }
