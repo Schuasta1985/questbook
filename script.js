@@ -1537,6 +1537,14 @@ setInterval(() => {
     löscheAlteAktionen();
 }, 24 * 60 * 60 * 1000); // Einmal täglich
 
+function sanitizePath(path) {
+    return path
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Entfernt Unicode-Akzentzeichen
+        .replace(/[.#$[\]]/g, "_") // Ersetzt verbotene Zeichen
+        .replace(/…/g, "...") // Ersetzt „…“ mit normalen drei Punkten
+        .replace(/\s+/g, "_"); // Ersetzt Leerzeichen durch "_"
+}
+
 function verwendeFähigkeit(fähigkeit, kosten) {
     if (level < kosten) {
         alert("Du hast nicht genug Level, um diese Fähigkeit zu nutzen.");
@@ -1549,7 +1557,10 @@ function verwendeFähigkeit(fähigkeit, kosten) {
         return;
     }
 
-    firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).get()
+    // **Hier muss die Bereinigung des Pfads erfolgen**
+    let bereinigteFähigkeit = sanitizePath(fähigkeit);
+
+    firebase.database().ref(`fähigkeiten/${currentUser}/${bereinigteFähigkeit}`).get()
         .then((snapshot) => {
             const heute = new Date();
             if (snapshot.exists() && heute < new Date(snapshot.val())) {
@@ -1560,13 +1571,13 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             // Erfolgswahrscheinlichkeit basierend auf den Kosten
             let erfolgswahrscheinlichkeit;
             if (kosten === 1) {
-                erfolgswahrscheinlichkeit = 85; // 80% für Kosten 1 Level
+                erfolgswahrscheinlichkeit = 85; // 85% für Kosten 1 Level
             } else if (kosten === 2) {
-                erfolgswahrscheinlichkeit = 80; // 70% für Kosten 2 Level
+                erfolgswahrscheinlichkeit = 80; // 80% für Kosten 2 Level
             } else if (kosten === 3) {
-                erfolgswahrscheinlichkeit = 75; // 60% für Kosten 3 Level
+                erfolgswahrscheinlichkeit = 75; // 75% für Kosten 3 Level
             } else {
-                erfolgswahrscheinlichkeit = 70; // 50% für Kosten 4+ Level
+                erfolgswahrscheinlichkeit = 70; // 70% für Kosten 4+ Level
             }
 
             // Erfolg oder Misserfolg berechnen
@@ -1583,7 +1594,8 @@ function verwendeFähigkeit(fähigkeit, kosten) {
                 const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
                 const sperrdatum = new Date();
                 sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
-                firebase.database().ref(`fähigkeiten/${currentUser}/${fähigkeit}`).set(sperrdatum.toISOString());
+
+                firebase.database().ref(`fähigkeiten/${currentUser}/${bereinigteFähigkeit}`).set(sperrdatum.toISOString());
 
                 // Lustigen Text generieren
                 lustigerText = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
@@ -1607,6 +1619,7 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             ladeAktionenLog();
         });
 }
+
 
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
