@@ -321,35 +321,42 @@ function speichereFortschritte() {
 
 // Benutzerfortschritte aus Firebase laden
 function ladeFortschritte(callback) {
-    if (currentUser) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const daten = snapshot.val();
-                    xp = daten.xp || 0;
-                    level = daten.level || 1;
-                    aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
-                    maxHP = berechneMaxHP(level);
-                    aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
-                    maxMP = berechneMaxMP(level);
-
-                    aktualisiereXPAnzeige();
-                    aktualisiereHPLeiste(aktuelleHP, level);
-                    aktualisiereMPLeiste(aktuelleMP, level);
-
-                    // Callback aufrufen, wenn vorhanden
-                    if (typeof callback === "function") {
-                        callback();
-                    }
-                } else {
-                    console.log("Keine Fortschrittsdaten gefunden für den Benutzer:", currentUser);
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Laden der Fortschrittsdaten:", error);
-            });
+    if (!currentUser) {
+        console.warn("Kein Benutzer angemeldet. Fortschritte werden nicht geladen.");
+        return;
     }
+
+    firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const daten = snapshot.val();
+                
+                // Stelle sicher, dass Level nicht fälschlicherweise auf 1 gesetzt wird
+                xp = daten.xp || 0;
+                level = daten.level !== undefined ? daten.level : level; // Nur überschreiben, wenn vorhanden
+                aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
+                maxHP = berechneMaxHP(level);
+                aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
+                maxMP = berechneMaxMP(level);
+
+                aktualisiereXPAnzeige();
+                aktualisiereHPLeiste(aktuelleHP, level);
+                aktualisiereMPLeiste(aktuelleMP, level);
+
+                console.log(`Fortschritte geladen: Level ${level}, XP ${xp}`);
+
+                if (typeof callback === "function") {
+                    callback();
+                }
+            } else {
+                console.warn(`Keine gespeicherten Fortschritte für ${currentUser} gefunden.`);
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Laden der Fortschrittsdaten:", error);
+        });
 }
+
 
 function täglicheHPRegeneration() {
     if (!currentUser) {
@@ -1879,18 +1886,28 @@ function setzeFähigkeitenZurück(spieler) {
 }
 
 function initialisiereBenutzerDaten(benutzername) {
-    const standardWerte = {
-        hp: 100,
-        maxHP: 100,
-        mp: 50,
-        maxMP: 50,
-        level: 1,
-        xp: 0,
-    };
+    firebase.database().ref(`benutzer/${benutzername}/fortschritte`).get()
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                const standardWerte = {
+                    level: 1,
+                    xp: 0,
+                    hp: 100,
+                    maxHP: 100,
+                    mp: 50,
+                    maxMP: 50
+                };
 
-    firebase.database().ref(`benutzer/${benutzername}/fortschritte`).set(standardWerte)
-        .then(() => console.log(`Benutzerdaten für ${benutzername} initialisiert.`))
-        .catch((error) => console.error("Fehler beim Initialisieren der Benutzerdaten:", error));
+                firebase.database().ref(`benutzer/${benutzername}/fortschritte`).set(standardWerte)
+                    .then(() => console.log(`Benutzerdaten für ${benutzername} neu initialisiert.`))
+                    .catch((error) => console.error("Fehler beim Initialisieren der Benutzerdaten:", error));
+            } else {
+                console.log(`Benutzerdaten für ${benutzername} existieren bereits. Keine Änderungen vorgenommen.`);
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Überprüfen der Benutzerdaten:", error);
+        });
 }
 
 function löscheSpezialfähigkeitenLog() {
