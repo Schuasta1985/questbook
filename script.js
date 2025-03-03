@@ -878,18 +878,31 @@ function zeigeAvatar() {
         Thomas: { width: "170px", height: "170px" },
         Elke: { width: "170px", height: "170px" },
         Jamie: { width: "140px", height: "140px" },
-        Julian: { width: "140px", height: "140px" }
+        Julian: { width: "140px", height: "140px" } // Julian hat nun auch eine definierte Größe
     };
 
     // Standardgröße verwenden, falls der Benutzer nicht definiert ist
     const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
 
-    // Avatar & Buttons einfügen
-    avatarContainer.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    // HTML für den Avatar abhängig von Video oder Bild
+    let avatarHTML = "";
+    if (currentUser === "Julian") {
+        avatarHTML = `
+            <img src="${avatarPath}" alt="Avatar von Julian" 
+                 style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height}; object-fit: cover;">
+        `;
+    } else {
+        avatarHTML = `
             <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
                 <source src="${avatarPath}" type="video/mp4">
             </video>
+        `;
+    }
+
+    // Avatar & Buttons einfügen
+    avatarContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            ${avatarHTML}
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
                 <button id="zauber-button" onclick="zeigeZauberMenu()" 
                         style="padding: 5px 10px; background-color: #FFD700; 
@@ -1095,9 +1108,12 @@ function getAvatarForUser(user) {
         return "avatars/elke.mp4";
     } else if (user === "Jamie") {
         return "avatars/jamie.mp4";
+    } else if (user === "Julian") {
+        return "avatars/julian.jpg"; // Julian hat ein Bild statt eines Videos
     }
-    return "https://via.placeholder.com/100?text=Avatar";
+    return "https://via.placeholder.com/100?text=Avatar"; // Platzhalter für unbekannte Benutzer
 }
+
 
 function berechneMaxHP(level) {
     return 100 + Math.floor((level - 1) / 10) * 200;
