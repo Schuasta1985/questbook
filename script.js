@@ -173,6 +173,7 @@ function zeigeStartseite() {
                 <option value="Thomas">Thomas</option>
                 <option value="Elke">Elke</option>
                 <option value="Jamie">Jamie</option>
+                <option value="Julian">Julian</option>
             </select>
             <input type="password" id="spielerPasswort" placeholder="Passwort eingeben">
             <button id="benutzerLoginButton">Anmelden</button>
@@ -205,7 +206,6 @@ function zeigeQuestbook() {
         logbuchButton.style.display = "block";
     }
 }
-
 function benutzerAnmeldung() {
     console.log("benutzerAnmeldung() aufgerufen");
 
@@ -228,6 +228,7 @@ function benutzerAnmeldung() {
         Thomas: "12345",
         Elke: "julian0703",
         Jamie: "602060",
+        Julian: "julian123"
     };
 
     if (!benutzername || !benutzerPasswoerter[benutzername]) {
@@ -240,9 +241,13 @@ function benutzerAnmeldung() {
         return;
     }
 
-    // Benutzer erfolgreich angemeldet
+    // **Benutzer erfolgreich angemeldet**
     currentUser = benutzername;
     isAdmin = false;
+    
+    // **Benutzerdaten initialisieren, falls noch nicht vorhanden**
+    initialisiereBenutzerDaten(currentUser);
+
     console.log(`${benutzername} erfolgreich angemeldet`);
 
     if (logbuchButton) {
@@ -254,15 +259,16 @@ function benutzerAnmeldung() {
 
     zeigeQuestbook();
     ladeFortschritte(() => {
-        täglicheHPRegeneration(); // HP-Regeneration erst nach erfolgreichem Laden der Fortschritte
-        täglicheMPRegeneration(); // MP-Regeneration erst nach erfolgreichem Laden der Fortschritte
+        täglicheHPRegeneration();
+        täglicheMPRegeneration();
     });
-    
+
     zeigeAvatar();
     ladeGlobaleQuests();
 
     console.log("Benutzeranmeldung abgeschlossen!");
 }
+
 
 // NPC Login
 function npcLogin() {
@@ -850,65 +856,62 @@ function questBearbeiten(questNummer) {
 function zeigeAvatar() {
     console.log("zeigeAvatar() aufgerufen für Benutzer:", currentUser);
 
-    if (currentUser) {
-        const avatarContainer = document.getElementById("avatar-container");
-
-        if (!avatarContainer) {
-            console.error("Avatar-Container wurde nicht gefunden!");
-            return;
-        }
-
-        const avatarPath = getAvatarForUser(currentUser);
-
-        if (!avatarPath) {
-            console.error(`Kein Avatar gefunden für Benutzer: ${currentUser}`);
-            return;
-        }
-
-        // Konfiguration für die Größe der Avatare basierend auf dem Benutzer
-        const avatarConfig = {
-            Thomas: { width: "170px", height: "170px" },
-            Elke: { width: "170px", height: "170px" },
-            Jamie: { width: "140px", height: "140px" },
-        };
-
-        // Standardgröße verwenden, falls der Benutzer nicht definiert ist
-        const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
-
-        avatarContainer.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
-                    <source src="${avatarPath}" type="video/mp4">
-                </video>
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                    <button id="zauber-button" onclick="zeigeZauberMenu()" 
-                            style="padding: 5px 10px; background-color: #FFD700; 
-                                   color: black; font-weight: bold; border: none; border-radius: 5px;
-                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
-                        Zauber
-                    </button>
-                    <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
-                            style="padding: 5px 10px; background-color: #FFD700; 
-                                   color: black; font-weight: bold; border: none; border-radius: 5px;
-                                   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
-                        Spezialfähigkeiten
-                    </button>
-                </div>
-            </div>
-        `;
-
-        avatarContainer.style.display = "flex";
-        avatarContainer.style.flexDirection = "column";
-        avatarContainer.style.alignItems = "center";
-        avatarContainer.style.marginTop = "20px";
-    } else {
+    if (!currentUser) {
         console.error("Kein Benutzer angemeldet. Avatar kann nicht angezeigt werden.");
+        return;
     }
 
-    const questsSection = document.getElementById("quests-section");
-    if (questsSection) {
-        questsSection.style.marginTop = "30px";
+    const avatarContainer = document.getElementById("avatar-container");
+    if (!avatarContainer) {
+        console.error("Avatar-Container nicht gefunden!");
+        return;
     }
+
+    const avatarPath = getAvatarForUser(currentUser);
+    if (!avatarPath) {
+        console.error(`Kein Avatar für ${currentUser} gefunden.`);
+        return;
+    }
+
+    // Konfiguration für die Größe der Avatare basierend auf dem Benutzer
+    const avatarConfig = {
+        Thomas: { width: "170px", height: "170px" },
+        Elke: { width: "170px", height: "170px" },
+        Jamie: { width: "140px", height: "140px" },
+        Julian: { width: "140px", height: "140px" }
+    };
+
+    // Standardgröße verwenden, falls der Benutzer nicht definiert ist
+    const userConfig = avatarConfig[currentUser] || { width: "120px", height: "120px" };
+
+    // Avatar & Buttons einfügen
+    avatarContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <video autoplay loop muted style="border-radius: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); width: ${userConfig.width}; height: ${userConfig.height};">
+                <source src="${avatarPath}" type="video/mp4">
+            </video>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+                <button id="zauber-button" onclick="zeigeZauberMenu()" 
+                        style="padding: 5px 10px; background-color: #FFD700; 
+                               color: black; font-weight: bold; border: none; border-radius: 5px;
+                               box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                    Zauber
+                </button>
+                <button id="spezial-button" onclick="zeigeSpezialfähigkeitenMenu()"
+                        style="padding: 5px 10px; background-color: #FFD700; 
+                               color: black; font-weight: bold; border: none; border-radius: 5px;
+                               box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); font-size: 14px;">
+                    Spezialfähigkeiten
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Avatar sichtbar machen
+    avatarContainer.style.display = "flex";
+    avatarContainer.style.flexDirection = "column";
+    avatarContainer.style.alignItems = "center";
+    avatarContainer.style.marginTop = "20px";
 }
 
 
@@ -999,17 +1002,33 @@ let benutzerDaten = [];
 
 function ladeBenutzerdaten() {
     console.log("ladeBenutzerdaten() aufgerufen");
-    firebase.database().ref('benutzer').get().then((snapshot) => {
-        if (snapshot.exists()) {
-            benutzerDaten = snapshot.val();
-            zeigeBenutzerAufStartseite();
-        } else {
-            console.log("Keine Benutzerdaten gefunden.");
-        }
-    }).catch((error) => {
-        console.error("Fehler beim Laden der Benutzerdaten:", error);
-    });
+
+    firebase.database().ref('benutzer').get()
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                benutzerDaten = snapshot.val();
+                
+                // Prüfen, ob alle Standardbenutzer existieren
+                const erwarteteBenutzer = ["Thomas", "Elke", "Jamie", "Julian"];
+                erwarteteBenutzer.forEach(benutzername => {
+                    if (!(benutzername in benutzerDaten)) {
+                        console.warn(`Benutzer ${benutzername} fehlt – wird erstellt.`);
+                        initialisiereBenutzerDaten(benutzername);
+                    }
+                });
+
+                zeigeBenutzerAufStartseite();
+            } else {
+                console.log("Keine Benutzerdaten gefunden. Standardbenutzer werden angelegt.");
+                ["Thomas", "Elke", "Jamie", "Julian"].forEach(initialisiereBenutzerDaten);
+            }
+        })
+        .catch(error => {
+            console.error("Fehler beim Laden der Benutzerdaten:", error);
+        });
 }
+
+
 
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
