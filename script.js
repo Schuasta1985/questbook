@@ -1059,12 +1059,22 @@ function zeigeBenutzerAufStartseite() {
         const benutzerElement = document.createElement("div");
         benutzerElement.className = "benutzer-item";
 
-        const avatarElement = document.createElement("video");
-        avatarElement.src = getAvatarForUser(benutzername);
-        avatarElement.autoplay = true;
-        avatarElement.loop = true;
-        avatarElement.muted = true;
-        avatarElement.style.width = "100px";
+        let avatarElement;
+        const avatarPath = getAvatarForUser(benutzername);
+
+        if (benutzername === "Julian") {
+            avatarElement = document.createElement("img");
+            avatarElement.src = avatarPath;
+            avatarElement.style.width = "100px";
+            avatarElement.style.borderRadius = "10px";
+        } else {
+            avatarElement = document.createElement("video");
+            avatarElement.src = avatarPath;
+            avatarElement.autoplay = true;
+            avatarElement.loop = true;
+            avatarElement.muted = true;
+            avatarElement.style.width = "100px";
+        }
 
         const nameElement = document.createElement("h3");
         nameElement.textContent = benutzername;
@@ -1076,37 +1086,13 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
-        const mpElement = document.createElement("div");
-        mpElement.className = "mp-bar";
-        const aktuelleMP = daten.fortschritte?.mp || 0;
-        const maxMP = daten.fortschritte?.maxMP || berechneMaxMP(daten.fortschritte?.level || 1);
-        const mpProzent = (aktuelleMP / maxMP) * 100;
-        mpElement.innerHTML = `
-            <div class="progress" style="width: ${mpProzent}%; background-color: blue;"></div>
-            <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
-        `;
-        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
-
-        const hpElement = document.createElement("div");
-        hpElement.className = "hp-bar";
-        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
-        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
-        const hpProzent = (aktuelleHP / maxHP) * 100;
-        hpElement.innerHTML = `
-            <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
-            <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
-        `;
-        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
-
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
-        benutzerElement.appendChild(hpElement);
-        benutzerElement.appendChild(mpElement);
-
         benutzerContainer.appendChild(benutzerElement);
     }
 }
+
 
 function getAvatarForUser(user) {
     if (user === "Thomas") {
