@@ -60,8 +60,15 @@ const spezialFähigkeitenTexte = {
         { name: "Mach mir was zu essen", kosten: 3 },
         { name: "Wunsch frei", kosten: 5 },
         { name: "Ich habe mir eine Auszeit verdient", kosten: 6 }
+    ],
+    Julian: [
+        { name: "Hol mich bitte ab", kosten: 1 },
+        { name: "Zug fahren mit ...", kosten: 5 },
+        { name: "Einkaufen fahren mit ...", kosten: 2 },
+        { name: "Wellnessen fahren mit ...", kosten: 6 }
     ]
 };
+
 
 // Logbuch nur auf der Startseite ausblenden
 function steuerungLogbuch(anzeigen) {
@@ -1592,7 +1599,7 @@ function verwendeFähigkeit(fähigkeit, kosten) {
         return;
     }
 
-    // **Hier muss die Bereinigung des Pfads erfolgen**
+    // **Pfad für Firebase bereinigen**
     let bereinigteFähigkeit = sanitizePath(fähigkeit);
 
     firebase.database().ref(`fähigkeiten/${currentUser}/${bereinigteFähigkeit}`).get()
@@ -1606,13 +1613,13 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             // Erfolgswahrscheinlichkeit basierend auf den Kosten
             let erfolgswahrscheinlichkeit;
             if (kosten === 1) {
-                erfolgswahrscheinlichkeit = 85; // 85% für Kosten 1 Level
+                erfolgswahrscheinlichkeit = 85;
             } else if (kosten === 2) {
-                erfolgswahrscheinlichkeit = 80; // 80% für Kosten 2 Level
+                erfolgswahrscheinlichkeit = 80;
             } else if (kosten === 3) {
-                erfolgswahrscheinlichkeit = 75; // 75% für Kosten 3 Level
+                erfolgswahrscheinlichkeit = 75;
             } else {
-                erfolgswahrscheinlichkeit = 70; // 70% für Kosten 4+ Level
+                erfolgswahrscheinlichkeit = 70;
             }
 
             // Erfolg oder Misserfolg berechnen
@@ -1629,7 +1636,7 @@ function verwendeFähigkeit(fähigkeit, kosten) {
             let lustigerText = "";
             if (erfolg) {
                 // Sperrzeit nur bei Erfolg setzen
-                const sperrzeit = kosten > 3 ? 7 : 1; // 1 Woche oder 1 Tag
+                const sperrzeit = kosten > 3 ? 7 : 1;
                 const sperrdatum = new Date();
                 sperrdatum.setDate(sperrdatum.getDate() + sperrzeit);
 
@@ -1639,7 +1646,7 @@ function verwendeFähigkeit(fähigkeit, kosten) {
                 lustigerText = generiereLustigenText(fähigkeit, currentUser, zielSpieler);
             }
 
-            // Animation zeigen
+            // Animation anzeigen
             zeigeAnimation(erfolg);
 
             // Logbuch aktualisieren
@@ -1650,32 +1657,40 @@ function verwendeFähigkeit(fähigkeit, kosten) {
                 ziel: zielSpieler,
                 erfolg,
                 zeitpunkt,
-                lustigerText // Nur bei Erfolg gefüllt
+                lustigerText
             });
 
             // Anzeige aktualisieren
             ladeAktionenLog();
+        })
+        .catch((error) => {
+            console.error("Fehler beim Abrufen der Fähigkeit:", error);
         });
 }
 
-
 function generiereLustigenText(fähigkeit, ausführer, ziel) {
     const lustigeTexte = {
-    "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
-    "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
-    "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
-    "30 Min Gaming Zeit": `${ziel} schenkt ${ausführer} 30 Minuten pure Gaming-Freude!`,
-    "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
-    "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
-    "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
-    "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`,
-    "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`,
-    "TV gucken mit...": `${ziel} und ${ausführer} machen es sich gemütlich und starten einen Serien-Marathon! 🍿🎮`
-};
+        "Massiere mich": `${ziel} zaubert eine Massage, die sogar Steine entspannt. Bravo, ${ausführer}!`,
+        "Ich will gekuschelt werden": `${ziel} kuschelt mit ${ausführer}, bis beide wie Teddybären aussehen!`,
+        "Mach mir Kaiserschmarren": `${ziel} serviert ${ausführer} den fluffigsten Kaiserschmarren aller Zeiten!`,
+        "30 Min Gaming Zeit": `${ziel} schenkt ${ausführer} 30 Minuten pure Gaming-Freude!`,
+        "Ich brauche das Auto": `${ziel} überreicht ${ausführer} die Autoschlüssel mit einem strahlenden Lächeln.`,
+        "Unendliche Spielzeit": `${ziel} ermöglicht ${ausführer} endloses Spielen – ein Traum wird wahr!`,
+        "Ich habe mir eine Auszeit verdient": `${ziel} schickt ${ausführer} auf eine wohlverdiente Pause mit Schokolade!`,
+        "Wunsch frei": `${ausführer} erfüllt ${ziel} einen Wunsch mit einer Prise Magie und Liebe!`,
+        "TV schauen": `${ausführer} entfaltet den ultimativen "Fernbedienungs-Zauber"! Lass die Serien beginnen!`,
+        "TV gucken mit...": `${ziel} und ${ausführer} machen es sich gemütlich und starten einen Serien-Marathon! 🍿🎮`,
 
+        // 🎉 Neue Einträge für Julian
+        "Hol mich bitte ab": `${ziel} springt ins Batmobil und rettet ${ausführer} aus dem Alltagstrott! 🦸‍♂️🚗`,
+        "Zug fahren mit .....": `${ausführer} und ${ziel} steigen in den Hogwarts Express – doch es geht nur bis zum nächsten Bahnhof. 🚂✨`,
+        "Einkaufen fahren mit ....": `${ziel} kutschiert ${ausführer} durch den Supermarkt, während dieser wie ein König auf dem Einkaufswagen thront! 🛒👑`,
+        "Wellnessen fahren mit ...": `${ausführer} und ${ziel} entspannen sich königlich im Spa – bis einer im Whirlpool Blubberblasen macht! 💆‍♂️🛀😂`
+    };
 
     return lustigeTexte[fähigkeit] || "Unbekannte Fähigkeit!";
 }
+
 
 function zeigeSpezialfähigkeitenMenu() {
     // Vorheriges Menü entfernen, falls vorhanden
@@ -1698,7 +1713,7 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.style.zIndex = '1000';
     spezialMenu.style.width = '80%';
     spezialMenu.style.maxWidth = '500px';
-    spezialMenu.style.animation = 'fadeIn 0.5s ease-in-out'; // Animation anwenden
+    spezialMenu.style.animation = 'fadeIn 0.5s ease-in-out';
 
     spezialMenu.innerHTML = `<h3 style="color: #FFD700; text-align: center; margin-bottom: 10px;">Spezialfähigkeiten von ${currentUser}</h3>`;
 
@@ -1737,7 +1752,7 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.appendChild(dropdownLabel);
     spezialMenu.appendChild(spielerDropdown);
 
-    // Buttons für die Fähigkeiten
+    // Spezialfähigkeiten anzeigen
     const fähigkeiten = spezialFähigkeitenTexte[currentUser] || [];
     const buttonContainer = document.createElement("div");
     buttonContainer.style.display = "grid";
@@ -1762,7 +1777,7 @@ function zeigeSpezialfähigkeitenMenu() {
 
         // Event-Listener für die Buttons
         button.onclick = () => {
-            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten, 100 - (fähigkeit.kosten * 10));
+            verwendeFähigkeit(fähigkeit.name, fähigkeit.kosten);
             if (spezialMenu && spezialMenu.parentNode) {
                 spezialMenu.parentNode.removeChild(spezialMenu);
             }
@@ -1795,6 +1810,7 @@ function zeigeSpezialfähigkeitenMenu() {
     spezialMenu.appendChild(schließenButton);
     document.body.appendChild(spezialMenu);
 }
+
 
 // Animation (optional)
 const style = document.createElement("style");
