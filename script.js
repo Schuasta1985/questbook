@@ -1048,8 +1048,6 @@ function ladeBenutzerdaten() {
         });
 }
 
-
-
 function zeigeBenutzerAufStartseite() {
     console.log("zeigeBenutzerAufStartseite() aufgerufen");
     const benutzerContainer = document.getElementById("benutzer-container");
@@ -1059,10 +1057,10 @@ function zeigeBenutzerAufStartseite() {
         const benutzerElement = document.createElement("div");
         benutzerElement.className = "benutzer-item";
 
-        let avatarElement;
         const avatarPath = getAvatarForUser(benutzername);
+        let avatarElement;
 
-        if (benutzername === "Julian") {
+        if (benutzername.toLowerCase() === "julian") {
             avatarElement = document.createElement("img");
             avatarElement.src = avatarPath;
             avatarElement.style.width = "100px";
@@ -1086,13 +1084,40 @@ function zeigeBenutzerAufStartseite() {
         levelElement.style.borderRadius = "5px";
         levelElement.style.textAlign = "center";
 
+        // MP-Leiste wieder einfügen
+        const mpElement = document.createElement("div");
+        mpElement.className = "mp-bar";
+        const aktuelleMP = daten.fortschritte?.mp || 0;
+        const maxMP = daten.fortschritte?.maxMP || berechneMaxMP(daten.fortschritte?.level || 1);
+        const mpProzent = (aktuelleMP / maxMP) * 100;
+        mpElement.innerHTML = `
+            <div class="progress" style="width: ${mpProzent}%; background-color: blue;"></div>
+            <span class="mp-text">${aktuelleMP} / ${maxMP} MP</span>
+        `;
+        mpElement.title = `${aktuelleMP} / ${maxMP} MP`;
+
+        // HP-Leiste wieder einfügen
+        const hpElement = document.createElement("div");
+        hpElement.className = "hp-bar";
+        const aktuelleHP = daten.fortschritte?.hp || berechneMaxHP(1);
+        const maxHP = berechneMaxHP(daten.fortschritte?.level || 1);
+        const hpProzent = (aktuelleHP / maxHP) * 100;
+        hpElement.innerHTML = `
+            <div class="progress" style="width: ${hpProzent}%; background-color: ${berechneHPFarbe(hpProzent)};"></div>
+            <span class="hp-text">${aktuelleHP} / ${maxHP} HP</span>
+        `;
+        hpElement.title = `${aktuelleHP} / ${maxHP} HP`;
+
+        // Elemente hinzufügen
         benutzerElement.appendChild(avatarElement);
         benutzerElement.appendChild(nameElement);
         benutzerElement.appendChild(levelElement);
+        benutzerElement.appendChild(hpElement);
+        benutzerElement.appendChild(mpElement);
+
         benutzerContainer.appendChild(benutzerElement);
     }
 }
-
 
 function getAvatarForUser(user) {
     if (user === "Thomas") {
