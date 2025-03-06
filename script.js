@@ -606,7 +606,7 @@ function zeigeLevelUpAnimation() {
             video.pause();
             document.body.removeChild(videoContainer);
         }
-    }, 1000); // Video nach 10 Sekunden entfernen
+    }, 5000); // Video nach 10 Sekunden entfernen
 }
 
 function questErledigt(questNummer) {
