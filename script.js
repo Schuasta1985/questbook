@@ -331,22 +331,39 @@ function ladeFortschritte(callback) {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
                 
-                // Setze Werte aus Firebase oder Standardwerte
+                // Stelle sicher, dass Level nicht fälschlicherweise auf 1 gesetzt wird
                 xp = daten.xp || 0;
-                level = daten.level !== undefined ? daten.level : level;
+                level = daten.level !== undefined ? daten.level : level; // Nur überschreiben, wenn vorhanden
                 aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
                 maxHP = berechneMaxHP(level);
                 aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
                 maxMP = berechneMaxMP(level);
 
-                console.log(`Fortschritte geladen: Level ${level}, XP ${xp}, HP ${aktuelleHP}/${maxHP}, MP ${aktuelleMP}/${maxMP}`);
-
-                // Aktualisiere die UI erst nach dem Laden der Daten
                 aktualisiereXPAnzeige();
                 aktualisiereHPLeiste(aktuelleHP, level);
                 aktualisiereMPLeiste(aktuelleMP, level);
 
-                // Falls ein Callback übergeben wurde, rufe ihn nach vollständigem Laden auf
+                console.log(`Fortschritte geladen: Level ${level}, XP ${xp}`);
+
+                // Letzte Regenerationsdaten aus Firebase abrufen
+                firebase.database().ref(`benutzer/${currentUser}/letzteHPRegeneration`).get()
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            console.log(`Letzte HP-Regeneration: ${snapshot.val()}`);
+                        } else {
+                            console.log("Keine HP-Regeneration in Firebase gespeichert.");
+                        }
+                    });
+
+                firebase.database().ref(`benutzer/${currentUser}/letzteMPRegeneration`).get()
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            console.log(`Letzte MP-Regeneration: ${snapshot.val()}`);
+                        } else {
+                            console.log("Keine MP-Regeneration in Firebase gespeichert.");
+                        }
+                    });
+
                 if (typeof callback === "function") {
                     callback();
                 }
@@ -360,7 +377,6 @@ function ladeFortschritte(callback) {
 }
 
 
-
 function täglicheHPRegeneration() {
     if (!currentUser) {
         console.warn("Kein Benutzer angemeldet. HP-Regeneration übersprungen.");
@@ -368,37 +384,44 @@ function täglicheHPRegeneration() {
     }
 
     const heutigesDatum = new Date().toDateString();
-    const letzterTagHP = localStorage.getItem(`letzteHPRegeneration_${currentUser}`); // Benutzer-spezifisch speichern
 
-    if (letzterTagHP !== heutigesDatum) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const daten = snapshot.val();
-                    const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
-                    const maxHP = berechneMaxHP(daten.level);
-                    const neueHP = Math.min(aktuelleHP + 100, maxHP); // Maximal auf maxHP
+    // Letzte HP-Regeneration aus Firebase abrufen
+    firebase.database().ref(`benutzer/${currentUser}/letzteHPRegeneration`).get()
+        .then((snapshot) => {
+            const letzterTagHP = snapshot.exists() ? snapshot.val() : null;
 
-                    console.log(`[${currentUser}] HP regeneriert: ${aktuelleHP} ➝ ${neueHP}`);
+            if (letzterTagHP !== heutigesDatum) {
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const daten = snapshot.val();
+                            const aktuelleHP = daten.hp || berechneMaxHP(daten.level);
+                            const maxHP = berechneMaxHP(daten.level);
+                            const neueHP = Math.min(aktuelleHP + 100, maxHP); // Maximal auf maxHP
 
-                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
-                        .then(() => {
-                            aktualisiereHPLeiste(neueHP, daten.level);
-                            localStorage.setItem(`letzteHPRegeneration_${currentUser}`, heutigesDatum);
-                        })
-                        .catch((error) => {
-                            console.error("Fehler beim Speichern der regenerierten HP:", error);
-                        });
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Abrufen der HP-Daten:", error);
-            });
-    } else {
-        console.log(`[${currentUser}] HP wurde heute bereits regeneriert.`);
-    }
+                            console.log(`[${currentUser}] HP regeneriert: ${aktuelleHP} ➝ ${neueHP}`);
+
+                            firebase.database().ref(`benutzer/${currentUser}/fortschritte/hp`).set(neueHP)
+                                .then(() => {
+                                    firebase.database().ref(`benutzer/${currentUser}/letzteHPRegeneration`).set(heutigesDatum);
+                                    aktualisiereHPLeiste(neueHP, daten.level);
+                                })
+                                .catch((error) => {
+                                    console.error("Fehler beim Speichern der regenerierten HP:", error);
+                                });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Abrufen der HP-Daten:", error);
+                    });
+            } else {
+                console.log(`[${currentUser}] HP wurde heute bereits regeneriert.`);
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Abrufen der letzten HP-Regeneration aus Firebase:", error);
+        });
 }
-
 
 function täglicheMPRegeneration() {
     if (!currentUser) {
@@ -407,35 +430,42 @@ function täglicheMPRegeneration() {
     }
 
     const heutigesDatum = new Date().toDateString();
-    const letzterTagMP = localStorage.getItem(`letzteMPRegeneration_${currentUser}`); // Benutzer-spezifisch speichern
 
-    if (letzterTagMP !== heutigesDatum) {
-        firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
-            .then((snapshot) => {
-                if (snapshot.exists()) {
-                    const daten = snapshot.val();
-                    const maxMP = berechneMaxMP(daten.level || 1); // Falls Level fehlt, nehme 1
+    // Letzte MP-Regeneration aus Firebase abrufen
+    firebase.database().ref(`benutzer/${currentUser}/letzteMPRegeneration`).get()
+        .then((snapshot) => {
+            const letzterTagMP = snapshot.exists() ? snapshot.val() : null;
 
-                    console.log(`[${currentUser}] MP auf Maximum gesetzt: ${maxMP}`);
+            if (letzterTagMP !== heutigesDatum) {
+                firebase.database().ref(`benutzer/${currentUser}/fortschritte`).get()
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const daten = snapshot.val();
+                            const maxMP = berechneMaxMP(daten.level || 1); // Falls Level fehlt, nehme 1
 
-                    firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
-                        .then(() => {
-                            aktualisiereMPLeiste(maxMP, daten.level || 1);
-                            localStorage.setItem(`letzteMPRegeneration_${currentUser}`, heutigesDatum);
-                        })
-                        .catch((error) => {
-                            console.error("Fehler beim Speichern der MP:", error);
-                        });
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Abrufen der MP-Daten:", error);
-            });
-    } else {
-        console.log(`[${currentUser}] MP wurde heute bereits regeneriert.`);
-    }
+                            console.log(`[${currentUser}] MP auf Maximum gesetzt: ${maxMP}`);
+
+                            firebase.database().ref(`benutzer/${currentUser}/fortschritte/mp`).set(maxMP)
+                                .then(() => {
+                                    firebase.database().ref(`benutzer/${currentUser}/letzteMPRegeneration`).set(heutigesDatum);
+                                    aktualisiereMPLeiste(maxMP, daten.level || 1);
+                                })
+                                .catch((error) => {
+                                    console.error("Fehler beim Speichern der MP:", error);
+                                });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Fehler beim Abrufen der MP-Daten:", error);
+                    });
+            } else {
+                console.log(`[${currentUser}] MP wurde heute bereits regeneriert.`);
+            }
+        })
+        .catch((error) => {
+            console.error("Fehler beim Abrufen der letzten MP-Regeneration aus Firebase:", error);
+        });
 }
-
 function speichereQuestsInFirebase(quests) {
     if (currentUser) {
         firebase.database().ref(`benutzer/${currentUser}/quests`).set(quests)
