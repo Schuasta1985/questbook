@@ -331,20 +331,22 @@ function ladeFortschritte(callback) {
             if (snapshot.exists()) {
                 const daten = snapshot.val();
                 
-                // Stelle sicher, dass Level nicht fälschlicherweise auf 1 gesetzt wird
+                // Setze Werte aus Firebase oder Standardwerte
                 xp = daten.xp || 0;
-                level = daten.level !== undefined ? daten.level : level; // Nur überschreiben, wenn vorhanden
+                level = daten.level !== undefined ? daten.level : level;
                 aktuelleHP = daten.hp !== undefined ? daten.hp : berechneMaxHP(level);
                 maxHP = berechneMaxHP(level);
                 aktuelleMP = daten.mp !== undefined ? daten.mp : berechneMaxMP(level);
                 maxMP = berechneMaxMP(level);
 
+                console.log(`Fortschritte geladen: Level ${level}, XP ${xp}, HP ${aktuelleHP}/${maxHP}, MP ${aktuelleMP}/${maxMP}`);
+
+                // Aktualisiere die UI erst nach dem Laden der Daten
                 aktualisiereXPAnzeige();
                 aktualisiereHPLeiste(aktuelleHP, level);
                 aktualisiereMPLeiste(aktuelleMP, level);
 
-                console.log(`Fortschritte geladen: Level ${level}, XP ${xp}`);
-
+                // Falls ein Callback übergeben wurde, rufe ihn nach vollständigem Laden auf
                 if (typeof callback === "function") {
                     callback();
                 }
@@ -356,6 +358,7 @@ function ladeFortschritte(callback) {
             console.error("Fehler beim Laden der Fortschrittsdaten:", error);
         });
 }
+
 
 
 function täglicheHPRegeneration() {
